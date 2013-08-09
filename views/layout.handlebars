@@ -6,7 +6,9 @@
   <title>{{site_title}}</title>
 
   <link href="/bootstrap/css/bootstrap.min.css" media="all" rel="stylesheet" />
-  <link href="/bootstrap/css/bootstrap-responsive.min.css" media="all" rel="stylesheet" /></head>
+  <link href="/bootstrap/css/bootstrap-glyphicons.css" media="all" rel="stylesheet" />
+  <link href="/css/styles.css" media="all" rel="stylesheet" />
+</head>
 
 <body lang="en">
 
@@ -17,10 +19,84 @@
         {{{body}}}
   </div>
 
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="panel" id="tool_library">
+        <div class="panel-heading">Tool Library</div>
+        <ul class="list-group">
+          <li class="list-group-item">Cras justo odio</li>
+          <li class="list-group-item">Dapibus ac facilisis in</li>
+          <li class="list-group-item">Morbi leo risus</li>
+          <li class="list-group-item">Porta ac consectetur ac</li>
+          <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+      </div>
+      <div class="panel" id="pipeline_library">
+        <div class="panel-heading">Pipeline Library</div>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <div class="btn-group">
+              <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
+              <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
+              <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button>
+            </div>
+            Cras justo odio
+          </li>
+          <li class="list-group-item">Dapibus ac facilisis in</li>
+          <li class="list-group-item">Morbi leo risus</li>
+          <li class="list-group-item">Porta ac consectetur ac</li>
+          <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-lg-9">
+    </div>
+  </div>
+</div>
+
+  <div id="app">
+    <div id="editor">
+    </div>
+    <div id="libraries">
+      
+      <ul id="pipeline_library">
+      </ul>
+    </div>
+  </div>
+
 </body>
 
-<script src="/js/ios-orientationchange-fix.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script>var server_data = {{{builder_json}}};</script>
+<script src="/js/lib/ios-orientationchange-fix.js"></script>
+<script src="/js/lib/json2.js"></script>
+<script src="/js/lib/lodash.min.js"></script>
+<script src="/js/lib/jquery.js"></script>
+<script src="/js/lib/backbone.js"></script>
+<script src="/js/lib/backbone.localStorage.js"></script>
 <script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/models/tool.js"></script>
+<script src="/js/models/tool_library.js"></script>
+<script src="/js/models/pipeline.js"></script>
+<script src="/js/models/pipeline_library.js"></script>
+<script src="/js/views/tool_library.js"></script>
+<script src="/js/views/pipeline_library.js"></script>
+<script src="/js/views/pipeline_editor.js"></script>
+<!-- <script src="/js/routers/router.js"></script> -->
+<script src="/js/app.js"></script>
+
+<!-- Tool
+Tool Option
+Tool Input
+Tool Output -->
+
+<!-- Tools
+Tasks
+Task Options
+Task Inputs
+Task Outputs
+Pipeline Inputs
+Pipeline Outputs -->
 
 </html>

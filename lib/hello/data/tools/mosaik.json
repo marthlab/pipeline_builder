@@ -1,0 +1,58 @@
+[
+  {
+    "name": "mosaik-build-reference",
+    "options": {},
+    "inputs": {
+      "reference-sequence-fasta": {
+        "legal_file_extensions": ["fasta", "fa"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+    "outputs": {
+      "mosaik-reference-data": {
+        "file_extension": "dat"
+      }
+    }
+  },
+  {
+    "name": "mosaik-jump",
+    "options": {
+      "-hs": {
+        "description": "Hash size [4 - 32]",
+        "required": false,
+        "type": "integer",
+        "default": 15
+      },
+      "-kd": {
+        "description" : "Keeps the key database on disk",
+        "required": false,
+        "type": "flag"
+      },
+      "-iupac": {
+        "description" : "Considers IUPAC codes",
+        "required": false,
+        "type": "flag"
+      }
+    },
+    "inputs": {
+      "mosaik-reference-data" : {
+        "legal_file_extensions": ["dat"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+    "outputs": {
+      "keys": {
+        "file_extension": "jmp"
+      },
+      "meta": {
+        "file_extension": "jmp"
+      },
+      "positions": {
+        "file_extension": "jmp"
+      }
+    }
+  }
+]
+

@@ -1,0 +1,12 @@
+#canvas {
+  display: block;
+}
+#pipeline_library .btn-group {
+  float: right;
+}
+#pipeline_library .btn-group > .btn {
+  padding: 2px 5px 0 5px;
+}
+#pipeline_library .btn-group > .btn span {
+  vertical-align: middle;
+}
