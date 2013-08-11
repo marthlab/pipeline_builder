@@ -7,8 +7,9 @@
       "task_options": {},
       "task_inputs": {
         "reference-sequence-fasta": {
-          "source_type": "pipeline_input",
-          "pipeline_input_id": "reference-sequence-fasta"
+          "source": {
+            "pipeline_input_id": "reference-sequence-fasta"
+          }
         }
       }
     },
@@ -19,9 +20,10 @@
       },
       "task_inputs": {
         "mosaik-reference-data": {
-          "source_type": "task_output",
-          "task_id": "build-reference",
-          "tool_output_id": "mosaik-reference-data"
+          "source": {
+            "task_id": "build-reference",
+            "tool_output_id": "mosaik-reference-data"
+          }
         } 
       }
     }
@@ -33,14 +35,26 @@
     }
   },
   "pipeline_outputs": {
-    "keys": {
-      "file_extension": "jmp"
+    "keys_out": {
+      "file_extension": "jmp",
+      "source": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "keys"
+      }
     },
-    "meta": {
-      "file_extension": "jmp"
+    "meta_out": {
+      "file_extension": "jmp",
+      "source": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "meta"
+      }
     },
-    "positions": {
-      "file_extension": "jmp"
+    "positions_out": {
+      "file_extension": "jmp",
+      "source": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "meta"
+      }
     }
   }
 }
