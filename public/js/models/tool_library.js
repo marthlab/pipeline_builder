@@ -11,6 +11,10 @@ var ToolLibrary = function(tool_cfgs) {
   
 }
 _.extend(ToolLibrary.prototype, {
+
+  // GET RID OF TOOL DISPLAY NAME IDEA: allow for client tool and pipeline libraries, along with tool and pipeline libraries inside of each pipeline.
+  // when you load a pipeline, create a components library just for that tool. you can then move components to and from the client library, but you get naming collision warnings.
+
   // get_or_create_tool: function(tool_cfg) {
   //   return this.getTool(tool_cfg) 
   // },
