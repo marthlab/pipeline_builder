@@ -2,6 +2,8 @@
 
 var Tool = function(tool_cfg) {
   this.name = tool_cfg.name;
+  this.component_type = 'tool';
+
   this.options = _.map(tool_cfg.options, function(option_cfg, option_id) {
     return new ToolOption(this, _.extend(option_cfg, {id: option_id}));
   }, this);
@@ -16,6 +18,7 @@ _.extend(Tool.prototype, {
   toJSON: function() {
     return {
       name: this.name,
+      component_type: 'tool',
       options: _.object(_.pluck(this.options, "id"), _.map(this.options, _.partialRight(_.omit, ["id", "tool"]))),
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "tool"]))),
       outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "tool"])))

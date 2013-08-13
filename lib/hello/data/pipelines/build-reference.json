@@ -1,10 +1,16 @@
 {
+  "component_type": "pipeline",
   "name": "build-reference",
-  "tools": ["mosaik-build-reference", "mosaik-jump"],
+  "components": ["mosaik-build-reference", "mosaik-jump"],
   "tasks": {
     "build-reference": {
-      "tool_id": "mosaik-build-reference",
-      "option_values": {},
+      "component_id": "mosaik-build-reference",
+      "option_assignments": {
+        "-test": {
+          "assignment_type": "value",
+          "value": 123
+        }
+      },
       "input_assignments": {
         "reference-sequence-fasta": {
           "src": {
@@ -14,18 +20,27 @@
       }
     },
     "build-jump-database": {
-      "tool_id": "mosaik-jump",
-      "option_values": {
-        "-hs": 10
+      "component_id": "mosaik-jump",
+      "option_assignments": {
+        "-hs": {
+          "assignment_type": "pipeline_option",
+          "pipeline_option_id": "--hash-size"
+        }
       },
       "input_assignments": {
         "mosaik-reference-data": {
           "src": {
             "task_id": "build-reference",
-            "tool_output_id": "mosaik-reference-data"
+            "component_output_id": "mosaik-reference-data"
           }
         } 
       }
+    }
+  },
+  "options": {
+    "--hash-size" : {
+      "description" : "hash-size",
+      "type" : "integer",
     }
   },
   "inputs": {
@@ -38,19 +53,19 @@
     "keys_out": {
       "src": {
         "task_id": "build-jump-database",
-        "tool_output_id": "keys"
+        "component_output_id": "keys"
       }
     },
     "meta_out": {
       "src": {
         "task_id": "build-jump-database",
-        "tool_output_id": "meta"
+        "component_output_id": "meta"
       }
     },
     "positions_out": {
       "src": {
         "task_id": "build-jump-database",
-        "tool_output_id": "meta"
+        "component_output_id": "meta"
       }
     }
   }

@@ -1,6 +1,6 @@
-var PipelineLibrary = function(pipeline_cfgs) {
+var ComponentCollection = function(parent, cmpt_cfgs) {
 
-  _.each(pipeline_cfgs, function(pl_cfg){
+  _.each(cmpt_cfgs, function(cmpt_cfg){
     if(!this.hasPipelineWithName(pl_cfg.name) ) {
       this.savePipelineFromConfig(pl_cfg);
     }

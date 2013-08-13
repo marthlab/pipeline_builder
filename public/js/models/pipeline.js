@@ -1,8 +1,13 @@
 var Pipeline = function(pl_cfg) {
   this.name = pl_cfg.name;
+  this.component_type = 'pipeline';
 
-  this.tools = _.map(pl_cfg.tools, function(tool_cfg) {
-    return tool_library.getTool(tool_cfg);
+  this.components = _.map(pl_cfg.components, function(cmpt_cfg) {
+    if(cmpt_cfg.type === 'tool') {
+      return new Tool(cmpt_cfg);
+    } else if (cmpt_cfg.type === 'pipeline') {
+      return new Pipeline(cmpt_cfg);
+    }
   });
 
   this.tasks = [];
@@ -55,7 +60,7 @@ var Pipeline = function(pl_cfg) {
   var sorted_node_objects = _.map(jsnx.topological_sort(dependency_graph), function(i) { return node_objects[i];});
 
   _.each(sorted_node_objects, function(node_object) {
-    if('task_id' in node_object && 'tool_output_id' in node_object) {
+    if('task_id' in node_object && 'component_output_id' in node_object) {
       this.tasks.push(new Task(this, node_object));
     } else if ('pipeline_input_id' in node_object) {
       this.inputs.push(new PipelineInput(this, node_object));
@@ -68,7 +73,15 @@ debugger;
 }
 _.extend(Pipeline.prototype, {
   toJSON: function() {
-
+    return {
+      name: this.name,
+      component_type: 'pipeline',
+      components: this.components,
+      tasks: this.tasks,
+      options: _.object(_.pluck(this.options, "id"), _.map(this.options, _.partialRight(_.omit, ["id", "pipeline"]))),
+      inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "pipeline"]))),
+      outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "pipeline"])))
+    };
   }
 })
 
@@ -86,8 +99,8 @@ var PipelineOutput = function(pipeline, pl_output_cfg) {
   this.pipeline = pipeline;
   this.id = pl_input_cfg.pipeline_output_id;
   var src = pl_output_cfg.src;
-  if('task_id' in src && 'tool_output_id' in src) {
-    this.src = this.pipeline.getTask(src.task_id).getOutput(src.tool_output_id);
+  if('task_id' in src && 'component_output_id' in src) {
+    this.src = this.pipeline.getTask(src.task_id).getOutput(src.component_output_id);
   } else if ('pipeline_input_id' in src) {
     this.src = this.pipeline.getInput(src.pipeline_input_id);
   }

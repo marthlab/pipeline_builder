@@ -22,7 +22,15 @@ var Task = function(pipeline, task_cfg) {
 
 }
 _.extend(Task.prototype, {
-
+  toJSON: function() {
+    return {
+      name: this.name,
+      component_type: 'tool',
+      options: _.object(_.pluck(this.options, "id"), _.map(this.options, _.partialRight(_.omit, ["id", "tool"]))),
+      inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "tool"]))),
+      outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "tool"])))
+    };
+  }
 })
 
 var TaskOption function(task, tool_option, option_value) {

@@ -1,8 +1,6 @@
 var piper = {};
 
-var tool_library = new ToolLibrary(_.cloneDeep(server_data.tool_configs));
-
-var pipeline_library = new PipelineLibrary(_.cloneDeep(server_data.pipeline_configs));
+var component_library = new ComponentLibrary(piper, _.cloneDeep(server_data.component_configs));
 
 
 
