@@ -36,7 +36,7 @@ _.extend(Task.prototype, {
     };
   },
   getOutput: function(component_output_id) {
-    return _.find(this.outputs, function(output){ return output.component_output.id === component_output_id;});
+    return _.find(this.outputs, {component_output: this.component.getOutput(component_output_id)}, this);
   }
 });
 
