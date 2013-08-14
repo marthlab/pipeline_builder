@@ -59,7 +59,6 @@ var Pipeline = function(pl_cfg) {
   var sorted_node_objects = _.map(jsnx.topological_sort(dependency_graph), function(i) { return node_objects[i];});
 
   _.each(sorted_node_objects, function(node_object) {
-    console.log(node_object)
     if('task_id' in node_object) {
       this.tasks.push(new Task(this, node_object));
     } else if ('pipeline_input_id' in node_object) {
@@ -77,11 +76,18 @@ _.extend(Pipeline.prototype, {
     return {
       id: this.id,
       component_type: 'pipeline',
-      components: this.components,
-      tasks: this.tasks,
+      components: _.methodMap(this.components, "toJSON"),
+      tasks: _.object(_.pluck(this.tasks, "id"), _.methodMap(this.tasks, "toJSON")),
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "pipeline"]))),
       outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, function(output){
-        //if(output.src === )
+        var src = output.src;
+        if(_.isUndefined(src)) {
+          return {};
+        } else if(src.constructor === TaskOutput) {
+          return {src:{task_id: src.task.id, component_output_id: src.component_output.id}};
+        } else if(src.constructor === PipelineInput) {
+          return {src:{pipeline_input_id: src.id}};
+        }
       }))
     };
   },

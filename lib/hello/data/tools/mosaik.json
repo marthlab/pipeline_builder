@@ -2,7 +2,14 @@
   {
     "component_type": "tool",
     "id": "mosaik-build-reference",
-    "options": {},
+    "options": {
+      "-test": {
+        "description": "test",
+        "required": false,
+        "type": "integer",
+        "default": 123456
+      }
+    },
     "inputs": {
       "reference-sequence-fasta": {
         "legal_file_extensions": ["fasta", "fa"],

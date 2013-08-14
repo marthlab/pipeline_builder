@@ -1,3 +1,16 @@
+_.mixin({  
+  methodMap: function(collection, methodName, thisArg) {
+    return _.map(collection, function(value) {
+      return value[methodName]();
+    }, thisArg);
+  },
+  methodFilter: function(collection, methodName, thisArg) {
+    return _.filter(collection, function(value) {
+      return value[methodName]();
+    }, thisArg);
+  }  
+});
+
 var piper = {};
 
 piper.pipeline_handler_URL = "/pipeline_handler?pipeline_json="; // the service that runs a pipeline from a provided JSON config

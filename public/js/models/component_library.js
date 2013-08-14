@@ -1,7 +1,7 @@
 var ComponentLibrary = function(cmpt_cfgs) {
   
   _.each(cmpt_cfgs, function(cmpt_cfg){
-    if(!this._hasStoredComponent(cmpt_cfg.id) ) {
+    if(!this._hasStoredComponent(cmpt_cfg.id) || true) { // always overwrite in development
       this._saveComponentFromConfig(cmpt_cfg);
     }
   }, this);
@@ -23,7 +23,7 @@ _.extend(ComponentLibrary.prototype, {
 
   // PRIVATE
   _saveComponentFromConfig: function(cmpt_cfg) {
-    localStorage[cmpt_cfg.component_type+":"+cmpt_cfg.id] = JSON.stringify(cmpt_cfg);
+    localStorage[cmpt_cfg.component_type+":"+cmpt_cfg.id] = _.stableStringify(cmpt_cfg);
   },
   _hasStoredComponent: function(id) {
     return _(["tool", "pipeline"]).any(function(type) {return _(localStorage).has(type+":"+id);} );

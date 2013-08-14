@@ -24,6 +24,9 @@ _.extend(Tool.prototype, {
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "tool"]))),
       outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "tool"])))
     };
+  },
+  getOutput: function(output_id) {
+    return _.find(this.outputs, {id: output_id});
   }
 })
 

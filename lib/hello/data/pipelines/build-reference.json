@@ -5,7 +5,7 @@
   "tasks": {
     "build-reference": {
       "component_id": "mosaik-build-reference",
-      "option_values": {
+      "option_assignments": {
         "-test": 123
       },
       "input_assignments": {
@@ -18,7 +18,7 @@
     },
     "build-jump-database": {
       "component_id": "mosaik-jump",
-      "option_values": {
+      "option_assignments": {
         "-hs": 12
       },
       "input_assignments": {

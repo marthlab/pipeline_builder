@@ -5,7 +5,7 @@ var Task = function(pipeline, task_cfg) {
   this.component = this.pipeline.getComponent(task_cfg.component_id);
 
   this.options = _.map(this.component.options || [], function(component_option) {
-    return new TaskOption(this, component_option, task_cfg.option_values[component_option.id]);
+    return new TaskOption(this, component_option, task_cfg.option_assignments[component_option.id]);
   }, this);
   this.inputs = _.map(this.component.inputs || [], function(component_input) {
     return new TaskInput(this, component_input, task_cfg.input_assignments[component_input.id]);
@@ -17,12 +17,26 @@ var Task = function(pipeline, task_cfg) {
 }
 _.extend(Task.prototype, {
   toJSON: function() {
+    var assigned_options = _.methodFilter(this.options, "isAssigned");
+    var assigned_inputs = _.methodFilter(this.inputs, "isAssigned");
     return {
-
+      component_id: this.component.id,
+      option_assignments: _.object(_.pluck(_.pluck(assigned_options, "component_option"), "id"), _.pluck(assigned_options, "option_value")),
+      input_assignments: _.object(
+        _.pluck(_.pluck(assigned_inputs, "component_input"), "id"),
+        _.map(assigned_inputs, function(output){
+          var src = output.src;
+          if(src.constructor === TaskOutput) {
+            return {src:{task_id: src.task.id, component_output_id: src.component_output.id}};
+          } else if(src.constructor === PipelineInput) {
+            return {src:{pipeline_input_id: src.id}};
+          }
+        })
+      )
     };
   },
-  getOutput: function(output_id) {
-    return _.find(this.outputs, {id: output_id});
+  getOutput: function(component_output_id) {
+    return _.find(this.outputs, function(output){ return output.component_output.id === component_output_id;});
   }
 });
 
@@ -35,7 +49,7 @@ var TaskOption = function(task, component_option, option_value) {
   
 }
 _.extend(TaskOption.prototype, {
-
+  isAssigned: function() { return !_.isUndefined(this.option_value); }
 })
 
 var TaskInput = function(task, component_input, input_assignment_cfg) {
@@ -52,7 +66,7 @@ var TaskInput = function(task, component_input, input_assignment_cfg) {
 
 }
 _.extend(TaskInput.prototype, {
-
+  isAssigned: function() { return !_.isUndefined(this.src); }
 })
 
 var TaskOutput = function(task, component_output) {
