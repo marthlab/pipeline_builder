@@ -1,6 +1,10 @@
 var piper = {};
 
-var component_library = new ComponentLibrary(piper, _.cloneDeep(server_data.component_configs));
+piper.pipeline_handler_URL = "/pipeline_handler?pipeline_json="; // the service that runs a pipeline from a provided JSON config
+
+var components = _.cloneDeep(_.union(server_data.pipeline_configs, server_data.tool_configs))
+
+var component_library = new ComponentLibrary(components);
 
 
 

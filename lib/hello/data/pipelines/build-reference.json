@@ -1,15 +1,12 @@
 {
   "component_type": "pipeline",
-  "name": "build-reference",
+  "id": "build-reference",
   "components": ["mosaik-build-reference", "mosaik-jump"],
   "tasks": {
     "build-reference": {
       "component_id": "mosaik-build-reference",
-      "option_assignments": {
-        "-test": {
-          "assignment_type": "value",
-          "value": 123
-        }
+      "option_values": {
+        "-test": 123
       },
       "input_assignments": {
         "reference-sequence-fasta": {
@@ -21,11 +18,8 @@
     },
     "build-jump-database": {
       "component_id": "mosaik-jump",
-      "option_assignments": {
-        "-hs": {
-          "assignment_type": "pipeline_option",
-          "pipeline_option_id": "--hash-size"
-        }
+      "option_values": {
+        "-hs": 12
       },
       "input_assignments": {
         "mosaik-reference-data": {
@@ -37,16 +31,10 @@
       }
     }
   },
-  "options": {
-    "--hash-size" : {
-      "description" : "hash-size",
-      "type" : "integer",
-    }
-  },
   "inputs": {
     "reference-sequence-fasta": {
       "description": "FASTA formatted reference sequence",
-      "legal_file_extensions": ["fasta", "fa"]
+      "data_URL": "http://localhost:3000/my_data/test_data.fasta"
     }
   },
   "outputs": {

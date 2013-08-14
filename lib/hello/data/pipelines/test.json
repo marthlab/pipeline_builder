@@ -1,7 +1,8 @@
 {
+  "component_type": "pipeline",
   "name": "test-pipeline",
-  "tools": [],
+  "components": [],
   "tasks": {},
-  "pipeline_inputs": {},
-  "pipeline_outputs": {}
+  "inputs": {},
+  "outputs": {}
 }

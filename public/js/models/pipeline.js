@@ -1,11 +1,10 @@
 var Pipeline = function(pl_cfg) {
-  this.name = pl_cfg.name;
-  this.component_type = 'pipeline';
+  this.id = pl_cfg.id;
 
   this.components = _.map(pl_cfg.components, function(cmpt_cfg) {
-    if(cmpt_cfg.type === 'tool') {
+    if(cmpt_cfg.component_type === 'tool') {
       return new Tool(cmpt_cfg);
-    } else if (cmpt_cfg.type === 'pipeline') {
+    } else if (cmpt_cfg.component_type === 'pipeline') {
       return new Pipeline(cmpt_cfg);
     }
   });
@@ -60,7 +59,8 @@ var Pipeline = function(pl_cfg) {
   var sorted_node_objects = _.map(jsnx.topological_sort(dependency_graph), function(i) { return node_objects[i];});
 
   _.each(sorted_node_objects, function(node_object) {
-    if('task_id' in node_object && 'component_output_id' in node_object) {
+    console.log(node_object)
+    if('task_id' in node_object) {
       this.tasks.push(new Task(this, node_object));
     } else if ('pipeline_input_id' in node_object) {
       this.inputs.push(new PipelineInput(this, node_object));
@@ -69,19 +69,30 @@ var Pipeline = function(pl_cfg) {
     }
   }, this);
 
-debugger;
+
 }
 _.extend(Pipeline.prototype, {
+  // PUBLIC
   toJSON: function() {
     return {
-      name: this.name,
+      id: this.id,
       component_type: 'pipeline',
       components: this.components,
       tasks: this.tasks,
-      options: _.object(_.pluck(this.options, "id"), _.map(this.options, _.partialRight(_.omit, ["id", "pipeline"]))),
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "pipeline"]))),
-      outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "pipeline"])))
+      outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, function(output){
+        //if(output.src === )
+      }))
     };
+  },
+  getComponent: function(component_id) {
+    return _.find(this.components, {id: component_id});
+  },
+  getTask: function(task_id) {
+    return _.find(this.tasks, {id: task_id});
+  },
+  getInput: function(input_id) {
+    return _.find(this.inputs, {id: input_id});
   }
 })
 
@@ -89,7 +100,7 @@ var PipelineInput = function(pipeline, pl_input_cfg) {
   this.pipeline = pipeline;
   this.id = pl_input_cfg.pipeline_input_id;
   this.description = pl_input_cfg.description;
-  this.legal_file_extensions = pl_input_cfg.legal_file_extensions;
+  this.data_URL = pl_input_cfg.data_URL;
 }
 _.extend(PipelineInput.prototype, {
 
@@ -97,7 +108,7 @@ _.extend(PipelineInput.prototype, {
 
 var PipelineOutput = function(pipeline, pl_output_cfg) {
   this.pipeline = pipeline;
-  this.id = pl_input_cfg.pipeline_output_id;
+  this.id = pl_output_cfg.pipeline_output_id;
   var src = pl_output_cfg.src;
   if('task_id' in src && 'component_output_id' in src) {
     this.src = this.pipeline.getTask(src.task_id).getOutput(src.component_output_id);

@@ -1,7 +1,7 @@
 [
   {
     "component_type": "tool",
-    "name": "mosaik-build-reference",
+    "id": "mosaik-build-reference",
     "options": {},
     "inputs": {
       "reference-sequence-fasta": {
@@ -18,7 +18,8 @@
   },
   {
     "component_type": "tool",
-    "name": "mosaik-jump",
+    "id": "mosaik-jump",
+    "service_URL": "http://localhost:3000/tool_services/mosaik-jump",
     "options": {
       "-hs": {
         "description": "Hash size [4 - 32]",

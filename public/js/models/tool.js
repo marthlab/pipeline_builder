@@ -1,8 +1,8 @@
 // here we assume the cfg is valid; this should be checked prior to instantiating business objects
 
 var Tool = function(tool_cfg) {
-  this.name = tool_cfg.name;
-  this.component_type = 'tool';
+  this.id = tool_cfg.id;
+  this.service_URL = tool_cfg.service_URL || undefined;
 
   this.options = _.map(tool_cfg.options, function(option_cfg, option_id) {
     return new ToolOption(this, _.extend(option_cfg, {id: option_id}));
@@ -17,8 +17,9 @@ var Tool = function(tool_cfg) {
 _.extend(Tool.prototype, {
   toJSON: function() {
     return {
-      name: this.name,
+      id: this.id,
       component_type: 'tool',
+      service_URL: this.service_URL,
       options: _.object(_.pluck(this.options, "id"), _.map(this.options, _.partialRight(_.omit, ["id", "tool"]))),
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "tool"]))),
       outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "tool"])))
