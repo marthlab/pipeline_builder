@@ -6,7 +6,9 @@
     "build-reference": {
       "component_id": "mosaik-build-reference",
       "option_assignments": {
-        "-test": 123
+        "-test": {
+          "value": 123
+        }
       },
       "input_assignments": {
         "reference-sequence-fasta": {
@@ -19,7 +21,11 @@
     "build-jump-database": {
       "component_id": "mosaik-jump",
       "option_assignments": {
-        "-hs": 12
+        "-hs": {
+          "src": {
+            "pipeline_option_id": 123
+          }
+        }
       },
       "input_assignments": {
         "mosaik-reference-data": {
@@ -30,6 +36,10 @@
         } 
       }
     }
+  },
+  "options": {
+    "-test_pipeline_option_1": 123,
+    "-test_pipeline_option_2": "abc"
   },
   "inputs": {
     "reference-sequence-fasta": {
@@ -56,5 +66,15 @@
         "component_output_id": "meta"
       }
     }
-  }
+  },
+  "instances":[
+    {
+      "option_values": {
+
+      },
+      "input_values": {
+
+      }  
+    }
+  ]
 }

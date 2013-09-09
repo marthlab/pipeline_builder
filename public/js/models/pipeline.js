@@ -1,4 +1,4 @@
-var Pipeline = function(pl_cfg) {
+function Pipeline(pl_cfg) {
   this.id = pl_cfg.id;
 
   this.components = _.map(pl_cfg.components, function(cmpt_cfg) {
@@ -12,7 +12,9 @@ var Pipeline = function(pl_cfg) {
   this._constructNodes(pl_cfg.inputs, pl_cfg.outputs, pl_cfg.tasks);
 
 }
+Pipeline.prototype = Object.create(abstract_pipeline_component);
 _.extend(Pipeline.prototype, {
+  constructor: Pipeline,
   // PRIVATE
   _constructNodes: function(pl_input_cfgs, pl_output_cfgs, task_cfgs) {
 
@@ -100,13 +102,10 @@ _.extend(Pipeline.prototype, {
   },
   getTask: function(task_id) {
     return _.find(this.tasks, {id: task_id});
-  },
-  getInput: function(input_id) {
-    return _.find(this.inputs, {id: input_id});
   }
 })
 
-var PipelineInput = function(pipeline, pl_input_cfg) {
+function PipelineInput(pipeline, pl_input_cfg) {
   this.pipeline = pipeline;
   this.id = pl_input_cfg.pipeline_input_id;
   this.description = pl_input_cfg.description;
@@ -116,7 +115,7 @@ _.extend(PipelineInput.prototype, {
 
 })
 
-var PipelineOutput = function(pipeline, pl_output_cfg) {
+function PipelineOutput(pipeline, pl_output_cfg) {
   this.pipeline = pipeline;
   this.id = pl_output_cfg.pipeline_output_id;
   var src = pl_output_cfg.src;

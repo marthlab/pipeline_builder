@@ -1,6 +1,6 @@
 // here we assume the cfg is valid; this should be checked prior to instantiating business objects
 
-var Tool = function(tool_cfg) {
+function Tool(tool_cfg) {
   this.id = tool_cfg.id;
   this.service_URL = tool_cfg.service_URL || undefined;
 
@@ -14,7 +14,9 @@ var Tool = function(tool_cfg) {
     return new ToolOutput(this, _.extend(output_cfg, {id: output_id}));
   }, this);
 }
+Tool.prototype = Object.create(abstract_pipeline_component);
 _.extend(Tool.prototype, {
+  constructor: Tool,
   toJSON: function() {
     return {
       id: this.id,
@@ -24,13 +26,10 @@ _.extend(Tool.prototype, {
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "tool"]))),
       outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "tool"])))
     };
-  },
-  getOutput: function(output_id) {
-    return _.find(this.outputs, {id: output_id});
   }
 })
 
-var ToolOption = function(tool, tool_option_cfg) {
+function ToolOption(tool, tool_option_cfg) {
   this.tool = tool;
   this.id = tool_option_cfg.id;
   this.description = tool_option_cfg.description;
@@ -42,7 +41,7 @@ _.extend(ToolOption.prototype, {
   
 })
 
-var ToolInput = function(tool, tool_input_cfg) {
+function ToolInput(tool, tool_input_cfg) {
   this.tool = tool;
   this.id = tool_input_cfg.id;
   this.legal_file_extensions = tool_input_cfg.legal_file_extensions;
@@ -53,7 +52,7 @@ _.extend(ToolInput.prototype, {
   
 })
 
-var ToolOutput = function(tool, tool_output_cfg) {
+function ToolOutput(tool, tool_output_cfg) {
   this.tool = tool;
   this.id = tool_output_cfg.id;
   this.file_extension = tool_output_cfg.file_extension;

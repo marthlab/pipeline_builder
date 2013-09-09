@@ -1,4 +1,4 @@
-var Task = function(pipeline, task_cfg) {
+function Task(pipeline, task_cfg) {
 
   this.pipeline = pipeline;
   this.id = task_cfg.task_id;
@@ -21,7 +21,16 @@ _.extend(Task.prototype, {
     var assigned_inputs = _.methodFilter(this.inputs, "isAssigned");
     return {
       component_id: this.component.id,
-      option_assignments: _.object(_.pluck(_.pluck(assigned_options, "component_option"), "id"), _.pluck(assigned_options, "option_value")),
+      option_assignments: _.object(
+        _.pluck(_.pluck(assigned_options, "component_option"), "id"),
+        _.map(assigned_options, function(option){
+          if('src' in option) {
+            return {src:{pipeline_option_id: option.src.id}};
+          } else if('value' in option) {
+            return {value: option.value};
+          }
+        })
+      ),
       input_assignments: _.object(
         _.pluck(_.pluck(assigned_inputs, "component_input"), "id"),
         _.map(assigned_inputs, function(output){
@@ -40,19 +49,22 @@ _.extend(Task.prototype, {
   }
 });
 
-var TaskOption = function(task, component_option, option_value) {
+function TaskOption(task, component_option, option_assignment_cfg) {
   this.task = task;
   this.component_option = component_option;
-  if(!_.isUndefined(option_value)) {
-    this.option_value = option_value;
+  if(!_.isUndefined(option_assignment_cfg)) {
+    if('src' in option_assignment_cfg) {
+      this.src = this.task.pipeline.getOption(option_assignment_cfg.src.pipeline_option_id);
+    } else if ('value' in option_assignment_cfg) {
+      this.value = option_assignment_cfg.value;
+    }
   }
-  
 }
 _.extend(TaskOption.prototype, {
-  isAssigned: function() { return !_.isUndefined(this.option_value); }
+  isAssigned: function() { return !_.isUndefined(this.value) || !_.isUndefined(this.src); }
 })
 
-var TaskInput = function(task, component_input, input_assignment_cfg) {
+function TaskInput(task, component_input, input_assignment_cfg) {
   this.task = task;
   this.component_input = component_input;
   if(!_.isUndefined(input_assignment_cfg)) {
@@ -69,7 +81,7 @@ _.extend(TaskInput.prototype, {
   isAssigned: function() { return !_.isUndefined(this.src); }
 })
 
-var TaskOutput = function(task, component_output) {
+function TaskOutput(task, component_output) {
   this.task = task;
   this.component_output = component_output;
 
