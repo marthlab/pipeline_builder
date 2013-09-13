@@ -1,18 +1,18 @@
 function Pipeline(pl_cfg) {
+
+  if(!_.isUndefined(pl_cfg)) {
+    pl_cfg = {id: 'auto', tools: [], inputs: [], outputs: [], tasks: []};
+  }
+
   this.id = pl_cfg.id;
 
-  this.components = _.map(pl_cfg.components, function(cmpt_cfg) {
-    if(cmpt_cfg.component_type === 'tool') {
-      return new Tool(cmpt_cfg);
-    } else if (cmpt_cfg.component_type === 'pipeline') {
-      return new Pipeline(cmpt_cfg);
-    }
+  this.tools = _.map(pl_cfg.tools, function(cmpt_cfg) {
+    return new Tool(cmpt_cfg);
   });
 
   this._constructNodes(pl_cfg.inputs, pl_cfg.outputs, pl_cfg.tasks);
 
 }
-Pipeline.prototype = Object.create(abstract_pipeline_component);
 _.extend(Pipeline.prototype, {
   constructor: Pipeline,
   // PRIVATE
@@ -81,8 +81,7 @@ _.extend(Pipeline.prototype, {
   toJSON: function() {
     return {
       id: this.id,
-      component_type: 'pipeline',
-      components: _.methodMap(this.components, "toJSON"),
+      tools: _.methodMap(this.tools, "toJSON"),
       tasks: _.object(_.pluck(this.tasks, "id"), _.methodMap(this.tasks, "toJSON")),
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "pipeline"]))),
       outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, function(output){
@@ -90,18 +89,24 @@ _.extend(Pipeline.prototype, {
         if(_.isUndefined(src)) {
           return {};
         } else if(src.constructor === TaskOutput) {
-          return {src:{task_id: src.task.id, component_output_id: src.component_output.id}};
+          return {src:{task_id: src.task.id, tool_output_id: src.tool_output.id}};
         } else if(src.constructor === PipelineInput) {
           return {src:{pipeline_input_id: src.id}};
         }
       }))
     };
   },
-  getComponent: function(component_id) {
-    return _.find(this.components, {id: component_id});
+  getTool: function(tool_id) {
+    return _.find(this.tools, {id: tool_id});
   },
   getTask: function(task_id) {
     return _.find(this.tasks, {id: task_id});
+  },
+  getInput: function(input_id) {
+    return _.find(this.inputs, {id: input_id});
+  },
+  getOutput: function(output_id) {
+    return _.find(this.outputs, {id: output_id});
   }
 })
 
@@ -112,15 +117,17 @@ function PipelineInput(pipeline, pl_input_cfg) {
   this.data_URL = pl_input_cfg.data_URL;
 }
 _.extend(PipelineInput.prototype, {
-
+  getFileExt: function() {
+    //
+  }
 })
 
 function PipelineOutput(pipeline, pl_output_cfg) {
   this.pipeline = pipeline;
   this.id = pl_output_cfg.pipeline_output_id;
   var src = pl_output_cfg.src;
-  if('task_id' in src && 'component_output_id' in src) {
-    this.src = this.pipeline.getTask(src.task_id).getOutput(src.component_output_id);
+  if('task_id' in src && 'tool_output_id' in src) {
+    this.src = this.pipeline.getTask(src.task_id).getOutput(src.tool_output_id);
   } else if ('pipeline_input_id' in src) {
     this.src = this.pipeline.getInput(src.pipeline_input_id);
   }

@@ -14,18 +14,28 @@ function Tool(tool_cfg) {
     return new ToolOutput(this, _.extend(output_cfg, {id: output_id}));
   }, this);
 }
-Tool.prototype = Object.create(abstract_pipeline_component);
 _.extend(Tool.prototype, {
   constructor: Tool,
   toJSON: function() {
     return {
       id: this.id,
-      component_type: 'tool',
       service_URL: this.service_URL,
       options: _.object(_.pluck(this.options, "id"), _.map(this.options, _.partialRight(_.omit, ["id", "tool"]))),
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "tool"]))),
       outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "tool"])))
     };
+  },
+  getInput: function(input_id) {
+    return _.find(this.inputs, {id: input_id});
+  },
+  getOutput: function(output_id) {
+    return _.find(this.outputs, {id: output_id});
+  },
+  getOption: function(option_id) {
+    return _.find(this.options, {id: option_id});
+  },
+  acceptsFileExtension: function(file_ext) {
+    return _.some(this.inputs, function(tool_input){return _.contains(tool_input.legal_file_extensions, file_ext);});
   }
 })
 
