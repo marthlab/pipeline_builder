@@ -1,6 +1,6 @@
 function Pipeline(pl_cfg) {
 
-  if(!_.isUndefined(pl_cfg)) {
+  if(_.isUndefined(pl_cfg)) {
     pl_cfg = {id: 'auto', tools: [], inputs: [], outputs: [], tasks: []};
   }
 

@@ -20,7 +20,7 @@ _.extend(ToolLibrary.prototype, {
   },
   getToolsAcceptingFileExt: function(file_ext) {
     return _.filter(this._tools, function(tool) {return tool.acceptsFileExtension(file_ext);});
-  }
+  },
 
   // need public functions to add/remove tool so we get persistence.
 
@@ -36,7 +36,7 @@ _.extend(ToolLibrary.prototype, {
            .filter(function(key) {return key.lastIndexOf("tool:", 0) === 0; })
            .map(function(key){return JSON.parse(localStorage[key]); })
            .map(function(tool_cfg){
-              return new Tool(cmpt_cfg);
+              return new Tool(tool_cfg);
            }).value();
   }
 })

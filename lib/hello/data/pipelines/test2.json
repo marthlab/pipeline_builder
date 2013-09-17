@@ -1,0 +1,71 @@
+{
+  "id": "test-2",
+  "tools": ["mosaik-build-reference", "mosaik-jump-test"],
+  "tasks": {
+    "build-reference": {
+      "tool_id": "mosaik-build-reference",
+      "option_assignments": {
+        "-test": 123
+      },
+      "input_assignments": {
+        "reference-sequence-fasta": {
+          "src": {
+            "pipeline_input_id": "reference-sequence-fasta"
+          }
+        }
+      }
+    },
+    "build-jump-database": {
+      "tool_id": "mosaik-jump-test",
+      "option_assignments": {
+        "-hs": 10
+      },
+      "input_assignments": {
+        "mosaik-reference-data": {
+          "src": {
+            "task_id": "build-reference",
+            "tool_output_id": "mosaik-reference-data"
+          }
+        } 
+      }
+    }
+  },
+  "inputs": {
+    "reference-sequence-fasta": {
+      "description": "FASTA formatted reference sequence",
+      "data_URL": "http://localhost:3000/my_data/test_data.fasta"
+    }
+  },
+  "outputs": {
+    "keys_out": {
+      "src": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "keys"
+      }
+    },
+    "meta_out": {
+      "src": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "meta"
+      }
+    },
+    "positions_out": {
+      "src": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "meta"
+      }
+    },
+    "another_out": {
+      "src": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "another"
+      }
+    },
+    "yet_another_out": {
+      "src": {
+        "task_id": "build-jump-database",
+        "tool_output_id": "yet_another"
+      }
+    }
+  }
+}

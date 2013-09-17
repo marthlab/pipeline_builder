@@ -23,13 +23,7 @@ _.extend(Task.prototype, {
       tool_id: this.tool.id,
       option_assignments: _.object(
         _.pluck(_.pluck(assigned_options, "tool_option"), "id"),
-        _.map(assigned_options, function(option){
-          if('src' in option) {
-            return {src:{pipeline_option_id: option.src.id}};
-          } else if('value' in option) {
-            return {value: option.value};
-          }
-        })
+        _.pluck(assigned_options, 'value')
       ),
       input_assignments: _.object(
         _.pluck(_.pluck(assigned_inputs, "tool_input"), "id"),
@@ -53,15 +47,11 @@ function TaskOption(task, tool_option, option_assignment_cfg) {
   this.task = task;
   this.tool_option = tool_option;
   if(!_.isUndefined(option_assignment_cfg)) {
-    if('src' in option_assignment_cfg) {
-      this.src = this.task.pipeline.getOption(option_assignment_cfg.src.pipeline_option_id);
-    } else if ('value' in option_assignment_cfg) {
-      this.value = option_assignment_cfg.value;
-    }
+    this.value = option_assignment_cfg;
   }
 }
 _.extend(TaskOption.prototype, {
-  isAssigned: function() { return !_.isUndefined(this.value) || !_.isUndefined(this.src); }
+  isAssigned: function() { return !_.isUndefined(this.value); }
 })
 
 function TaskInput(task, tool_input, input_assignment_cfg) {
