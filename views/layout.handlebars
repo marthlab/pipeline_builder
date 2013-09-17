@@ -13,16 +13,17 @@
   <div id="left_container">
     <div id="focal">test1</div>
     <div id="global_container">
-      <div id="global">
-        <div class="inner1">
-          <div class="inner2"></div>
-        </div>
-
-      </div>
+      <div id="global"></div>
     </div>
   </div>
   <div id="monitor">test3</div>
 </body>
+
+<script type="text/html" id='global-view-template'>
+  <div class="resizer">
+    <div class="graph_subviews"></div>
+  </div>
+</script>
 
 <script>var server_data = {{{builder_json}}};</script>
 <script src="/js/lib/ios-orientationchange-fix.js"></script>

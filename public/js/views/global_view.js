@@ -1,12 +1,7 @@
 var GlobalView = Backbone.View.extend({
+  template: _.template($('#global-view-template').html()),
   initialize: function(options) {
     this.app = options.app;
-
-    this.inner1_el = this.$el.children('.inner1')[0];
-    this.$inner1_el = $(this.inner1_el);
-
-    this.inner2_el = this.$inner1_el.children('.inner2')[0];
-    this.$inner2_el = $(this.inner2_el);
 
     this.graph = new GlobalGraph(this.app.pipeline);
     this.primary_node_views = _.map(this.graph.primary_nodes, function(primary_node){
@@ -24,8 +19,12 @@ var GlobalView = Backbone.View.extend({
     this.render();
   },
   render: function() {
-    this.$inner2_el.append(_.pluck(this.node_views, 'el'));
-    this.$inner2_el.append(_.pluck(this.edge_views, 'el'));
+    this.$el.html(this.template());
+    this.$resizer_el = this.$el.children('.resizer');
+    this.$graph_subviews_el = this.$resizer_el.children('.graph_subviews');
+
+    this.$graph_subviews_el.append(_.pluck(this.node_views, 'el'));
+    this.$graph_subviews_el.append(_.pluck(this.edge_views, 'el'));
 
     _.methodEach(this.node_views, 'setNodeDimensions');
 
@@ -39,15 +38,6 @@ var GlobalView = Backbone.View.extend({
       .debugLevel(0)
       .run();
 
-      // jsPlumb.bind("connection", function(info) {
-      //   if(info.connection.connector.type === "Bezier") {
-      //     var start = info.sourceEndpoint.endpoint;
-      //     var end = info.targetEndpoint.endpoint;
-      //     //debugger;
-      //     console.log(end.x-start.x);
-      //   }
-      // });
-
     _.methodEach(this.node_views, 'applyLayout');
     _.methodEach(this.edge_views, 'applyLayout');
     
@@ -60,7 +50,7 @@ var GlobalView = Backbone.View.extend({
     var scale = Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height);
     var translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
     var translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
-    this.$inner1_el.css({"transform": "scale("+scale+","+scale+") translate("+translate_x+"px,"+translate_y+"px)"});
+    this.$resizer_el.css({"transform": "scale("+scale+","+scale+") translate("+translate_x+"px,"+translate_y+"px)"});
   },
   getNodeElem: function(node) {
     return _.find(this.node_views, {'node': node}).el;
@@ -111,25 +101,23 @@ var GlobalEdgeView = Backbone.View.extend({
     this.source_el = this.global_view.getNodeElem(this.edge.source);
     this.target_el = this.global_view.getNodeElem(this.edge.target);
     this.connections = [];
-    this.dummy_nodes = [];
     this.render();
   },
   render: function() {
-    //this.$el.html(this.node.label);
+    
   },
   applyLayout: function() {
     if(this.edge.dagre.points.length === 2) {
-      //create dummy nodes at both points, then use bezier, line, bezier
-      this.dummy_nodes = _.map(this.edge.dagre.points, function(point) {
+      var dummy_nodes = _.map(this.edge.dagre.points, function(point) {
         return $('<div class="dummy_node"></div>')
           .appendTo(this.el)
           .css("transform", 'translate('+ (point.x) +'px,'+ (point.y) +'px)')[0];
       }, this);
 
       this.connections = [
-        this._bezierConnection(this.source_el, this.dummy_nodes[0]),
-        this._straightConnection(this.dummy_nodes[0], this.dummy_nodes[1]),
-        this._bezierConnection(this.dummy_nodes[1], this.target_el)
+        this._bezierConnection(this.source_el, dummy_nodes[0]),
+        this._straightConnection(dummy_nodes[0], dummy_nodes[1]),
+        this._bezierConnection(dummy_nodes[1], this.target_el)
       ];
     } else {
       this.connections = [

@@ -5,12 +5,12 @@ html {height: 100%; }
       #focal {flex-grow:3; border-right:1px black solid; border-bottom:1px black solid;}
       #global_container {flex-grow:2; border-right:1px black solid; border-top:1px black solid; position:relative; overflow:hidden;
         #global {position:absolute; top:5%; bottom:5%; left:5%; right:5%;
-          > .inner1 {position:relative; width:100%; height:100%;
-            > .inner2 {position:relative; display:inline;
-              .dummy_node {position:absolute;}
-              .node {position:absolute; text-align:center;}
-              .primary_node {font-size:12px; color:#000; background:#fff; border: 1px solid #000; padding:12px; border-radius:12px;}
-              .secondary_node {font-size:8px; color:#fff; background:#000; padding:8px; border-radius:8px;}
+          > .resizer {position:relative; width:100%; height:100%;
+            > .graph_subviews {position:relative; display:inline;
+                .dummy_node {position:absolute;}
+                .node {position:absolute; text-align:center;}
+                .primary_node {font-size:12px; color:#000; background:#fff; border: 1px solid #000; padding:12px; border-radius:12px;}
+                .secondary_node {font-size:8px; color:#fff; background:#000; padding:8px; border-radius:8px;}
             }
           }
         }
