@@ -43,6 +43,9 @@ body {
   position: relative;
   display: inline;
 }
+#global_container #global > .inner1 > .inner2 .dummy_node {
+  position: absolute;
+}
 #global_container #global > .inner1 > .inner2 .node {
   position: absolute;
   text-align: center;

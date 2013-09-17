@@ -13,25 +13,25 @@ function FocalGraph(pipeline, focus_item) {
     this.outbound_data_nodes = _.map(this.task.task_outputs, function(task_output){return new FocalOutboundDataNode(this, task_output);}, this);
 
     this.nodes.push(this.task_node);
-    this.nodes.pushArray(this.task_input_nodes);
-    this.nodes.pushArray(this.task_input_src_nodes);
-    this.nodes.pushArray(this.task_input_potential_src_nodes);
+    _(this.nodes).pushArray(this.task_input_nodes);
+    _(this.nodes).pushArray(this.task_input_src_nodes);
+    _(this.nodes).pushArray(this.task_input_potential_src_nodes);
 
-    this.edges.pushArray(_.map(this.task_input_nodes, function(ti_node){
+    _(this.edges).pushArray(_.map(this.task_input_nodes, function(ti_node){
       return new FocalEdge({
         graph: this,
         source: ti_node,
         target: this.task_node
       });
     }, this)); 
-    this.edges.pushArray(_.map(this.task_input_src_nodes, function(tis_node){
+    _(this.edges).pushArray(_.map(this.task_input_src_nodes, function(tis_node){
       return new FocalEdge({
         graph: this,
         source: tis_node,
         target: _.find(this.task_input_nodes, {task_input: tis_node.task_input})
       });
     }, this));
-    this.edges.pushArray(_.map(this.task_input_potential_src_nodes, function(tips_node){
+    _(this.edges).pushArray(_.map(this.task_input_potential_src_nodes, function(tips_node){
       return new FocalEdge({
         graph: this,
         source: tips_node,
@@ -42,7 +42,7 @@ function FocalGraph(pipeline, focus_item) {
     this.outbound_data_nodes = _.map(this.pipeline.inputs, function(pl_input){return new FocalOutboundDataNode(this, pl_input);}, this);
   }
 
-  this.nodes.pushArray(this.outbound_data_nodes);
+  _(this.nodes).pushArray(this.outbound_data_nodes);
 
   this.outbound_dest_nodes = _.flatten(_.map(this.outbound_data_nodes, function(o_data_node){
     var outbound_tasks =  _.filter(this.pipeline.tasks, function(task){return _.contains(_.pluck(task.task_inputs, 'src'), o_data_node.output_datum); });
@@ -56,32 +56,32 @@ function FocalGraph(pipeline, focus_item) {
     return _.some(this.outbound_potential_dest_nodes, {outbound_datum: o_data_node.outbound_datum});
   }, this), function(o_data_node) {return new FocalOutboundPotentialGroupNode(this, o_data_node.output_datum);}, this);
 
-  this.nodes.pushArray(this.outbound_dest_nodes);
-  this.nodes.pushArray(this.outbound_potential_dest_nodes);
-  this.nodes.pushArray(this.outbound_potential_group_nodes);
+  _(this.nodes).pushArray(this.outbound_dest_nodes);
+  _(this.nodes).pushArray(this.outbound_potential_dest_nodes);
+  _(this.nodes).pushArray(this.outbound_potential_group_nodes);
 
-  this.edges.pushArray(_.map(this.outbound_data_nodes, function(od_node){
+  _(this.edges).pushArray(_.map(this.outbound_data_nodes, function(od_node){
     return new FocalEdge({
       graph: this,
       source: this.task_node,
       target: od_node
     });
   }), this);
-  this.edges.pushArray(_.map(this.outbound_dest_nodes, function(o_dest_node){
+  _(this.edges).pushArray(_.map(this.outbound_dest_nodes, function(o_dest_node){
     return new FocalEdge({
       graph: this,
       source: _.find(this.outbound_data_nodes, {outbound_datum: o_dest_node.outbound_datum}),
       target: o_dest_node
     });
   }, this));
-  this.edges.pushArray(_.map(this.outbound_potential_group_nodes, function(o_pot_group_node){
+  _(this.edges).pushArray(_.map(this.outbound_potential_group_nodes, function(o_pot_group_node){
     return new FocalEdge({
       graph: this,
       source: _.find(this.outbound_data_nodes, {outbound_datum: o_pot_group_node.outbound_datum}),
       target: o_pot_group_node
     });
   }, this));
-  this.edges.pushArray(_.map(this.outbound_potential_dest_nodes, function(o_pot_dest_node){
+  _(this.edges).pushArray(_.map(this.outbound_potential_dest_nodes, function(o_pot_dest_node){
     return new FocalEdge({
       graph: this,
       source: _.find(this.outbound_potential_group_nodes, {outbound_datum: o_pot_dest_node.outbound_datum}),

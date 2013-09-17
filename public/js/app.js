@@ -1,19 +1,27 @@
-_.mixin({  
-  methodMap: function(collection, methodName, thisArg) {
-    return _.map(collection, function(value) {
-      return value[methodName].call(thisArg);
-    }, thisArg);
+_.mixin({
+  methodEach: function(collection, method_name) {
+    var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
+    _.each(collection, function(value) {
+      value[method_name].apply(value, method_args);
+    });
+    return collection;
   },
-  methodFilter: function(collection, methodName, thisArg) {
+  methodMap: function(collection, method_name) {
+    var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
+    return _.map(collection, function(value) {
+      return value[method_name].apply(value, method_args);
+    });
+  },
+  methodFilter: function(collection, method_name) {
+    var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
     return _.filter(collection, function(value) {
-      return value[methodName].call(thisArg);
-    }, thisArg);
-  }  
+      return value[method_name].call(value, method_args);
+    });
+  },
+  pushArray: function(array, items_to_push) {
+    array.push.apply(array, items_to_push);
+  }
 });
-
-Array.prototype.pushArray = function(arr) {
-  this.push.apply(this, arr);
-};
 
 function s4() {
   return Math.floor((1 + Math.random()) * 0x10000)
