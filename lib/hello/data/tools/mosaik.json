@@ -88,6 +88,11 @@
         "legal_file_extensions": ["dat"],
         "required": true,
         "accepts_multiple": false
+      },
+      "reference-sequence-fasta": {
+        "legal_file_extensions": ["fasta", "fa"],
+        "required": true,
+        "accepts_multiple": false
       }
     },
     "outputs": {

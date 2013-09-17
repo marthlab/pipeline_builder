@@ -31,3 +31,9 @@
   bounds.height = bounds.bottom - bounds.top;
   return bounds;
 }})();
+
+(function() {jQuery.fn['center'] = function () {
+  var offset = $(this[0]).offset();
+  var width = offset.left
+  return {x: offset.left+$(this[0]).outerWidth()/2, y: offset.top+$(this[0]).outerHeight()/2}
+}})();

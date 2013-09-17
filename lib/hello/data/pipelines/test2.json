@@ -26,7 +26,12 @@
             "task_id": "build-reference",
             "tool_output_id": "mosaik-reference-data"
           }
-        } 
+        },
+        "reference-sequence-fasta": {
+          "src": {
+            "pipeline_input_id": "reference-sequence-fasta"
+          }
+        }
       }
     }
   },

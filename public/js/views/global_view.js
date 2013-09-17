@@ -8,7 +8,7 @@ var GlobalView = Backbone.View.extend({
     this.inner2_el = this.$inner1_el.children('.inner2')[0];
     this.$inner2_el = $(this.inner2_el);
 
-    this.graph = new GlobalGraph(app.pipeline);
+    this.graph = new GlobalGraph(this.app.pipeline);
     this.primary_node_views = _.map(this.graph.primary_nodes, function(primary_node){
       return new GlobalPrimaryNodeView({node: primary_node});
     });
@@ -39,22 +39,47 @@ var GlobalView = Backbone.View.extend({
 
     _.each(this.node_views, function(node_view) {
       var dagre = node_view.node.dagre;
-      //node_view.$el.css({top: dagre.y-dagre.height/2, left: dagre.x-dagre.width/2});
       node_view.$el.css("transform", 'translate('+ (dagre.x-dagre.width/2) +'px,'+ (dagre.y-dagre.height/2) +'px)');
     });
 
+    _.each(this.graph.edges, function(edge) {
+      var source_el = _.find(this.node_views, {'node': edge.source}).el;
+      var target_el = _.find(this.node_views, {'node': edge.target}).el;
+
+      if(edge.dagre.points.length === 2) {
+        //create dummy nodes at both points, then use bezier, line, bezier
+      } else {
+        debugger;
+        // connect source and target with one bezier
+        jsPlumb.connect({
+          source: source_el, 
+          target: target_el,           
+          connector: $(source_el).center().y === $(target_el).center().y ? ["Straight"] : ["Bezier", { curviness:20 }],
+          //anchor:["Right", "Left"],
+          //anchor:"Continuous",
+          //anchor:"AutoDefault",
+          anchors:[["Continuous", { faces:["right"] } ], ["Continuous", { faces:["left"] } ]],
+          paintStyle:{ 
+            lineWidth:2,
+            strokeStyle:"#a7b04b",
+            //outlineWidth:1,
+            //outlineColor:"#666"
+          },
+          //container: $(".jsplumb"),
+          endpoint:"Blank"
+        });
+
+      }
+    }, this);
     
     var graph_bbox = $(_.pluck(this.node_views, 'el')).bounds();
     var el_bbox = {width: this.$el.width(), height: this.$el.height()};
-    //var el_offset = this.$el.offset();
-    //el_bbox.left = el_offset.left+(this.$el.outerWidth()-el_bbox.width)/2;
-    //el_bbox.top = el_offset.top+(this.$el.outerHeight()-el_bbox.height)/2;
 
     var scale = Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height);
     var translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
     var translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
     this.$inner1_el.css({"transform": "scale("+scale+","+scale+") translate("+translate_x+"px,"+translate_y+"px)"});
-    
+
   }
 });
 
@@ -62,6 +87,7 @@ var GlobalPrimaryNodeView = Backbone.View.extend({
   className: 'node primary_node',
   initialize: function(options) {
     this.node = options.node;
+    this.$el.attr('id', guid() );
 
     this.render();
   },
@@ -74,6 +100,7 @@ var GlobalSecondaryNodeView = Backbone.View.extend({
   className: 'node secondary_node',
   initialize: function(options) {
     this.node = options.node;
+    this.$el.attr('id', guid() );
 
     this.render();
   },
