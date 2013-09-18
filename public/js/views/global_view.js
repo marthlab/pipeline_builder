@@ -120,16 +120,11 @@ var GlobalEdgeView = Backbone.View.extend({
     }
 
   },
-  _getCurviness: function(start_el, end_el) {
-    var start_right_x = $(start_el).offset().left+$(start_el).outerWidth();
-    var end_left_x = $(end_el).offset().left;
-    return (end_left_x - start_right_x)*0.75;
-  },
   _connectionOptions: {
     anchors:[["Continuous", { faces:["right"] } ], ["Continuous", { faces:["left"] } ]],
     paintStyle:{ 
       lineWidth:2,
-      strokeStyle:"#a7b04b",
+      strokeStyle:"#a7b04b"
     },
     endpoint:"Blank"
   },
@@ -137,7 +132,7 @@ var GlobalEdgeView = Backbone.View.extend({
     return jsPlumb.connect({
       source: source_el, 
       target: target_el,           
-      connector: ["Bezier", {curviness: this._getCurviness(source_el, target_el) }],
+      connector: ["RightBezier", {curviness: 15 }],
       container: this.$el
     }, this._connectionOptions);
   },

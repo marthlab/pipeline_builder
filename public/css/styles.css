@@ -88,6 +88,8 @@ body {
 }
 #global_container #global .dummy_node {
   position: absolute;
+  width: 0px;
+  height: 0px;
 }
 #global_container #global .node {
   position: absolute;
