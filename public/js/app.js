@@ -18,6 +18,12 @@ _.mixin({
       return value[method_name].call(value, method_args);
     });
   },
+  methodReject: function(collection, method_name) {
+    var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
+    return _.reject(collection, function(value) {
+      return value[method_name].call(value, method_args);
+    });
+  },
   pushArray: function(array, items_to_push) {
     array.push.apply(array, items_to_push);
   }
@@ -36,8 +42,6 @@ function guid() {
 
 $(function(){
 
-  var app = {};
-
   app.pipeline_handler_URL = "/pipeline_handler?pipeline_json="; // the service that runs a pipeline from a provided JSON config
 
   //var components = _.cloneDeep(_.union(server_data.pipeline_configs, server_data.tool_configs))
@@ -51,8 +55,8 @@ $(function(){
     app.pipeline = new Pipeline(server_data.pipeline_configs[2]);
   }
 
-  app.global_view = new GlobalView({el: $("#global"), app: app});
-  //app.focal_view = new FocalView({el: $("#focal"), app: app});
+  app.global_view = new GlobalView({el: $("#global")});
+  app.focal_view = new FocalView({el: $("#focal")});
   //var monitor_view = new MonitorView(); 
 
 });

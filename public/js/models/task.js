@@ -80,6 +80,9 @@ function TaskOutput(task, tool_output) {
 
 }
 _.extend(TaskOutput.prototype, {
+  getLabel: function() {
+    return this.tool_output.id;
+  },
   getFileExt: function() {
     return this.tool_output.file_extension;
   }

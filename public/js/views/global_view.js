@@ -1,16 +1,16 @@
 var GlobalView = Backbone.View.extend({
   template: _.template($('#global-view-template').html()),
   initialize: function(options) {
-    this.app = options.app;
+    this.graph = new GlobalGraph(app.pipeline);
 
-    this.graph = new GlobalGraph(this.app.pipeline);
-    this.primary_node_views = _.map(this.graph.primary_nodes, function(primary_node){
-      return new GlobalPrimaryNodeView({global_view: this, node: primary_node});
-    }, this);
-    this.secondary_node_views = _.map(this.graph.secondary_nodes, function(secondary_node){
-      return new GlobalSecondaryNodeView({global_view: this, node: secondary_node});
-    }, this);
-    this.node_views = _.union(this.primary_node_views, this.secondary_node_views);
+    this.node_views = _.union(
+      _.map(this.graph.primary_nodes, function(primary_node){
+        return new GlobalPrimaryNodeView({global_view: this, node: primary_node});
+      }, this),
+      _.map(this.graph.secondary_nodes, function(secondary_node){
+        return new GlobalSecondaryNodeView({global_view: this, node: secondary_node});
+      }, this)
+    );
 
     this.edge_views = _.map(this.graph.edges, function(edge){
       return new GlobalEdgeView({global_view: this, edge: edge});
@@ -57,7 +57,16 @@ var GlobalView = Backbone.View.extend({
   }
 });
 
-var GlobalNodeView = Backbone.View.extend({
+var AbstractGlobalNodeView = Backbone.View.extend({
+  initialize: function(options) {
+    this.global_view = options.global_view;
+    this.node = options.node;
+
+    this.render();
+  },
+  render: function() {
+    this.$el.html(this.node.label);
+  },
   applyLayout: function() {
     var d = this.node.dagre;
     this.$el.css("transform", 'translate('+ (d.x-d.width/2) +'px,'+ (d.y-d.height/2) +'px)');
@@ -67,30 +76,15 @@ var GlobalNodeView = Backbone.View.extend({
   }
 });
 
-var GlobalPrimaryNodeView = GlobalNodeView.extend({
-  className: 'node primary_node',
-  initialize: function(options) {
-    this.global_view = options.global_view;
-    this.node = options.node;
-
-    this.render();
-  },
-  render: function() {
-    this.$el.html(this.node.label);
+var GlobalPrimaryNodeView = AbstractGlobalNodeView.extend({
+  className: 'node primary',
+  events: {
+    'click': function() { app.focal_view.focusOn(this.node.datum); }
   }
 });
 
-var GlobalSecondaryNodeView = GlobalNodeView.extend({
-  className: 'node secondary_node',
-  initialize: function(options) {
-    this.global_view = options.global_view;
-    this.node = options.node;
-
-    this.render();
-  },
-  render: function() {
-    this.$el.html(this.node.label);
-  }
+var GlobalSecondaryNodeView = AbstractGlobalNodeView.extend({
+  className: 'node secondary',
 });
 
 var GlobalEdgeView = Backbone.View.extend({
@@ -137,21 +131,22 @@ var GlobalEdgeView = Backbone.View.extend({
       lineWidth:2,
       strokeStyle:"#a7b04b",
     },
-    container: this.$el,
     endpoint:"Blank"
   },
   _bezierConnection: function(source_el, target_el) {
     return jsPlumb.connect({
       source: source_el, 
       target: target_el,           
-      connector: ["Bezier", {curviness: this._getCurviness(source_el, target_el) }]
+      connector: ["Bezier", {curviness: this._getCurviness(source_el, target_el) }],
+      container: this.$el
     }, this._connectionOptions);
   },
   _straightConnection: function(source_el, target_el) {
     return jsPlumb.connect({
       source: source_el, 
       target: target_el,           
-      connector: ["Straight"]
+      connector: ["Straight"],
+      container: this.$el
     }, this._connectionOptions);
   }
 });

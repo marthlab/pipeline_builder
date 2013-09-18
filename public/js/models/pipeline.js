@@ -109,7 +109,7 @@ _.extend(Pipeline.prototype, {
     return _.find(this.outputs, {id: output_id});
   },
   getTasksAssignedDatum: function (datum) {
-    return _.filter(this.tasks, function(task){return _.contains(_.pluck(task.task_inputs, 'src'), datum); });
+    return _.filter(this.tasks, function(task){return _.contains(_.pluck(task.inputs, 'src'), datum); });
   }
   
 })
@@ -121,6 +121,9 @@ function PipelineInput(pipeline, pl_input_cfg) {
   this.data_URL = pl_input_cfg.data_URL;
 }
 _.extend(PipelineInput.prototype, {
+  getLabel: function() {
+    return this.id;
+  },
   getFileExt: function() {
     //
   }

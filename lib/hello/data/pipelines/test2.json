@@ -10,7 +10,7 @@
       "input_assignments": {
         "reference-sequence-fasta": {
           "src": {
-            "pipeline_input_id": "reference-sequence-fasta"
+            "pipeline_input_id": "ref-seq"
           }
         }
       }
@@ -21,7 +21,7 @@
         "-hs": 10
       },
       "input_assignments": {
-        "mosaik-reference-data": {
+        "mos-ref-data": {
           "src": {
             "task_id": "build-reference",
             "tool_output_id": "mosaik-reference-data"
@@ -29,14 +29,14 @@
         },
         "reference-sequence-fasta": {
           "src": {
-            "pipeline_input_id": "reference-sequence-fasta"
+            "pipeline_input_id": "ref-seq"
           }
         }
       }
     }
   },
   "inputs": {
-    "reference-sequence-fasta": {
+    "ref-seq": {
       "description": "FASTA formatted reference sequence",
       "data_URL": "http://localhost:3000/my_data/test_data.fasta"
     }

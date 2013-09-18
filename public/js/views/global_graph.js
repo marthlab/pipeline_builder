@@ -53,7 +53,7 @@ var abstract_global_node = {};
 function GlobalTaskNode(graph, task) {
   this.graph = graph;
   this.datum = this.task = task;
-  this.label = this.task.tool.id;
+  this.label = this.task.id;
 }
 GlobalTaskNode.prototype = _.extend(Object.create(abstract_global_node), {
   constructor: GlobalTaskNode

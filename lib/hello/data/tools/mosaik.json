@@ -84,7 +84,7 @@
       }
     },
     "inputs": {
-      "mosaik-reference-data" : {
+      "mos-ref-data" : {
         "legal_file_extensions": ["dat"],
         "required": true,
         "accepts_multiple": false
