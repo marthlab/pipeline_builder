@@ -107,7 +107,11 @@ _.extend(Pipeline.prototype, {
   },
   getOutput: function(output_id) {
     return _.find(this.outputs, {id: output_id});
+  },
+  getTasksAssignedDatum: function (datum) {
+    return _.filter(this.tasks, function(task){return _.contains(_.pluck(task.task_inputs, 'src'), datum); });
   }
+  
 })
 
 function PipelineInput(pipeline, pl_input_cfg) {
