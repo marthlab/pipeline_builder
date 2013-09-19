@@ -114,31 +114,13 @@ FocalInputsGraph.prototype = _.extend(Object.create(AbstractFocalGraph.prototype
 
 var abstract_focal_node = {};
 
-function FocalTaskInputNode(graph, task_input) {
-  this.graph = graph;
-  this.task_input = task_input;
-  this.label = 'test' ;//this.task_input.tool_input.id;
-}
-FocalTaskInputNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
-});
-
 function FocalTaskInputSrcNode(graph, task_input) {
   this.graph = graph;
   this.task_input = task_input;
-  this.label = 'test' ;// this.task_input.src.getLabel();
+  this.label = this.task_input.src.getLabel();
 }
-FocalTaskInputSrcNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
-});
-
-function FocalTaskNode(graph, task) {
-  this.graph = graph;
-  this.task = task;
-  this.label = this.task.tool.id;
-}
-FocalTaskNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
+FocalTaskInputSrcNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalTaskInputSrcNode
 });
 
 function FocalTaskInputPotentialSrcNode(graph, task_input) {
@@ -146,8 +128,26 @@ function FocalTaskInputPotentialSrcNode(graph, task_input) {
   this.task_input = task_input;
   this.label = "Select Data Source";
 }
-FocalTaskInputPotentialSrcNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
+FocalTaskInputPotentialSrcNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalTaskInputPotentialSrcNode
+});
+
+function FocalTaskInputNode(graph, task_input) {
+  this.graph = graph;
+  this.task_input = task_input;
+  this.label = this.task_input.tool_input.id;
+}
+FocalTaskInputNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalTaskInputNode
+});
+
+function FocalTaskNode(graph, task) {
+  this.graph = graph;
+  this.task = task;
+  this.label = this.task.tool.id;
+}
+FocalTaskNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalTaskNode
 });
 
 function FocalOutboundDatumNode(graph, outbound_datum) {
@@ -155,8 +155,16 @@ function FocalOutboundDatumNode(graph, outbound_datum) {
   this.outbound_datum = outbound_datum;
   this.label = this.outbound_datum.getLabel();
 }
-FocalOutboundDatumNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
+FocalOutboundDatumNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalOutboundDatumNode
+});
+
+function FocalPotentialDestGroupNode(graph, outbound_datum) {
+  this.graph = graph;
+  this.outbound_datum = outbound_datum;
+}
+FocalPotentialDestGroupNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalPotentialDestGroupNode
 });
 
 function FocalDestNode(graph, outbound_datum, dest) {
@@ -165,8 +173,8 @@ function FocalDestNode(graph, outbound_datum, dest) {
   this.dest = dest;
   this.label = this.dest.tool.id;
 }
-FocalDestNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
+FocalDestNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalDestNode
 });
 
 function FocalPotentialDestNode(graph, outbound_datum, potential_dest) {
@@ -175,17 +183,8 @@ function FocalPotentialDestNode(graph, outbound_datum, potential_dest) {
   this.potential_dest = potential_dest;
   this.label = this.potential_dest.id;
 }
-FocalPotentialDestNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
-});
-
-function FocalPotentialDestGroupNode(graph, outbound_datum) {
-  this.graph = graph;
-  this.outbound_datum = outbound_datum;
-  this.label = 'Add New Task'
-}
-FocalPotentialDestGroupNode.prototype = _.extend(abstract_focal_node, {
-  constructor: FocalInputsGraph
+FocalPotentialDestNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalPotentialDestNode
 });
 
 function FocalEdge(options) {

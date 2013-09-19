@@ -19,6 +19,9 @@
     "outputs": {
       "mosaik-reference-data": {
         "file_extension": "dat"
+      },
+      "stats": {
+        "file_extension": "sta"
       }
     }
   },

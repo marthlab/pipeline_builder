@@ -1,5 +1,5 @@
 var GlobalView = Backbone.View.extend({
-  template: _.template($('#global-view-template').html()),
+  template: _.template($('#GlobalView-template').html()),
   initialize: function(options) {
     this.graph = new GlobalGraph(app.pipeline);
 

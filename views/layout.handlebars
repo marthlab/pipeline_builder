@@ -6,6 +6,7 @@
   <title>{{site_title}}</title>
 
   <link href="/bootstrap/css/bootstrap.min.css" media="all" rel="stylesheet" />
+  <link href="/css/hint.css" media="all" rel="stylesheet" />
   <link href="/css/styles.css" media="all" rel="stylesheet" />
 </head>
 
@@ -21,16 +22,48 @@
   <div id="monitor">test3</div>
 </body>
 
-<script type="text/html" id='global-view-template'>
+<script type="text/html" id='GlobalView-template'>
   <div class="resizer">
     <div class="graph_subviews"></div>
   </div>
 </script>
 
-<script type="text/html" id='focal-view-template'>
+<script type="text/html" id='FocalView-template'>
   <div class="resizer">
     <div class="graph_subviews"></div>
   </div>
+</script>
+
+<script type="text/html" id='FocalTaskInputSrcNodeView-template'>
+  <%= node.label %>
+</script>
+
+<script type="text/html" id='FocalTaskInputPotentialSrcNodeView-template'>
+  <%= node.label %>
+</script>
+
+<script type="text/html" id='FocalTaskInputNodeView-template'>
+
+</script>
+
+<script type="text/html" id='FocalTaskNodeView-template'>
+  <%= node.label %>
+</script>
+
+<script type="text/html" id='FocalOutboundDatumNodeView-template'>
+
+</script>
+
+<script type="text/html" id='FocalDestNodeView-template'>
+  <%= node.label %>
+</script>
+
+<script type="text/html" id='FocalPotentialDestGroupNodeView-template'>
+  <%= node.label %>
+</script>
+
+<script type="text/html" id='FocalPotentialDestNodeView-template'>
+  <%= node.label %>
 </script>
 
 <script>var server_data = {{{builder_json}}}; var app = {};</script>

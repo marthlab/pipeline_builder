@@ -1,8 +1,14 @@
 [
   {
-    "name": "test-tool-1",
+    "id": "stat-analyzer",
     "options": {},
-    "inputs": {},
+    "inputs": {
+      "mos-ref-data" : {
+        "legal_file_extensions": ["sta"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
     "outputs": {}
   }
 ]

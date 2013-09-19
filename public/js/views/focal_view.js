@@ -1,5 +1,5 @@
 var FocalView = Backbone.View.extend({
-  template: _.template($('#focal-view-template').html()),
+  template: _.template($('#FocalView-template').html()),
   initialize: function(options) {
 
   },
@@ -110,7 +110,7 @@ var AbstractFocalNodeView = Backbone.View.extend({
     this.render();
   },
   render: function() {
-    this.$el.html(this.node.label);
+    this.$el.html(this.template(this));
   },
   applyLayout: function() {
     var d = this.node.dagre;
@@ -122,34 +122,44 @@ var AbstractFocalNodeView = Backbone.View.extend({
 });
 
 var FocalTaskInputSrcNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalTaskInputSrcNodeView-template').html()),
   className: 'node task_input_src',
 });
 
 var FocalTaskInputPotentialSrcNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalTaskInputSrcNodeView-template').html()),
   className: 'node task_input_potential_src',
 });
 
 var FocalTaskInputNodeView = AbstractFocalNodeView.extend({
-  className: 'node task_input',
+  template: _.template($('#FocalTaskInputNodeView-template').html()),
+  className: 'node task_input hint--bottom',
+  attributes: function() { return {'data-hint': this.options.node.label}; }
 });
 
 var FocalTaskNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalTaskNodeView-template').html()),
   className: 'node task',
 });
 
 var FocalOutboundDatumNodeView = AbstractFocalNodeView.extend({
-  className: 'node outbound_datum',
+  template: _.template($('#FocalOutboundDatumNodeView-template').html()),
+  className: 'node outbound_datum hint--bottom',
+  attributes: function() { return {'data-hint': this.options.node.label}; }
 });
 
 var FocalDestNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalDestNodeView-template').html()),
   className: 'node dest',
 });
 
 var FocalPotentialDestGroupNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalPotentialDestGroupNodeView-template').html()),
   className: 'node potential_dest_group',
 });
 
 var FocalPotentialDestNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalPotentialDestNodeView-template').html()),
   className: 'node potential_dest',
 });
 
@@ -158,59 +168,30 @@ var AbstractFocalEdgeView = Backbone.View.extend({
   initialize: function(options) {
     this.focal_view = options.focal_view;
     this.edge = options.edge;
-        console.log(this.edge)
     this.source_el = this.focal_view.getNodeElem(this.edge.source);
     this.target_el = this.focal_view.getNodeElem(this.edge.target);
-    this.connections = [];
-    this.render();
-  },
-  render: function() {
-    
+    this.connection_options = {
+      anchors:["Right", "Left"],
+      paintStyle:{ 
+        lineWidth:1,
+        strokeStyle:"#a7b04b",
+      },
+      container: this.$el,
+      endpoint:"Blank"
+    };
   },
   applyLayout: function() {
-    if(this.edge.dagre.points.length === 2) {
-      var dummy_nodes = _.map(this.edge.dagre.points, function(point) {
-        return $('<div class="dummy_node"></div>')
-          .appendTo(this.el)
-          .css("transform", 'translate('+ (point.x) +'px,'+ (point.y) +'px)')[0];
-      }, this);
 
-      this.connections = [
-        this._bezierConnection(this.source_el, dummy_nodes[0]),
-        this._straightConnection(dummy_nodes[0], dummy_nodes[1]),
-        this._bezierConnection(dummy_nodes[1], this.target_el)
-      ];
-    } else {
-      this.connections = [
-        ($(this.source_el).center().y === $(this.target_el).center().y ? this._straightConnection : this._bezierConnection).call(this, this.source_el, this.target_el)
-      ];
-    }
+    this.connection = this._bezierConnection(this.source_el, this.target_el);
 
-  },
-  _connectionOptions: {
-    anchors:[["Continuous", { faces:["right"] } ], ["Continuous", { faces:["left"] } ]],
-    paintStyle:{ 
-      lineWidth:2,
-      strokeStyle:"#a7b04b",
-    },
-    container: this.$el,
-    endpoint:"Blank"
   },
   _bezierConnection: function(source_el, target_el) {
     return jsPlumb.connect({
       source: source_el, 
       target: target_el,           
-      connector: ["RightBezier", {curviness: 15 }],
+      connector: ["RightBezier", {curviness: 15, stub: 60}],
       container: this.$el
-    }, this._connectionOptions);
-  },
-  _straightConnection: function(source_el, target_el) {
-    return jsPlumb.connect({
-      source: source_el, 
-      target: target_el,           
-      connector: ["Straight"],
-      container: this.$el
-    }, this._connectionOptions);
+    }, this.connection_options);
   }
 });
 
@@ -220,6 +201,14 @@ var FocalTaskInputPotentialSrcToTaskInputEdgeView = AbstractFocalEdgeView.extend
 
 var FocalTaskInputSourceToTaskInputEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge task_input_src_to_task_input',
+  initialize: function(options) {
+    AbstractFocalEdgeView.prototype.initialize.call(this, options);
+    _.merge(this.connection_options, {
+      overlays : [
+        [ "PlainArrow", { location:0, direction:-1, width:4, length:8} ]
+      ]
+    });
+  }
 });
 
 var FocalTaskInputToTaskEdgeView = AbstractFocalEdgeView.extend({
@@ -232,12 +221,38 @@ var FocalTaskToOutboundDatumEdgeView = AbstractFocalEdgeView.extend({
 
 var FocalOutboundDatumToDestEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge outbound_datum_to_dest',
+  initialize: function(options) {
+    AbstractFocalEdgeView.prototype.initialize.call(this, options);
+    _.merge(this.connection_options, {
+      overlays : [
+        [ "PlainArrow", { location:1, direction:1, width:4, length:8} ]
+      ]
+    });
+  }
 });
-
 var FocalOutboundDatumToPotentialDestGroupEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge outbound_datum_to_potential_dest_group',
+  initialize: function(options) {
+    AbstractFocalEdgeView.prototype.initialize.call(this, options);
+    _.merge(this.connection_options, {
+      paintStyle: {
+        "stroke-dasharray": "2, 2"
+      }
+    });
+  }
 });
 
 var FocalPotentialDestGroupToPotentialDestEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge potential_dest_group_to_potential_dest',
+  initialize: function(options) {
+    AbstractFocalEdgeView.prototype.initialize.call(this, options);
+    _.merge(this.connection_options, {
+      paintStyle: {
+        "stroke-dasharray": "2, 2"
+      },
+      overlays : [
+        [ "PlainArrow", { location:1, direction:1, width:4, length:8} ]
+      ]
+    });
+  }
 });

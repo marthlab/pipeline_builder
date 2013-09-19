@@ -1,7 +1,9 @@
 var ToolLibrary = function(cmpt_cfgs) {
   
+  localStorage.clear(); // don't cache tools in development
+
   _.each(cmpt_cfgs, function(cmpt_cfg){
-    if(!this._hasStoredTool(cmpt_cfg.id) || true) { // always overwrite in development
+    if(!this._hasStoredTool(cmpt_cfg.id)) {
       this._saveToolFromConfig(cmpt_cfg);
     }
   }, this);
