@@ -53,7 +53,7 @@ var GlobalView = Backbone.View.extend({
     this.$resizer_el.css({"transform": "scale("+scale+","+scale+") translate("+translate_x+"px,"+translate_y+"px)"});
   },
   getNodeElem: function(node) {
-    return _.find(this.node_views, {'node': node}).el;
+    return _.findExact(this.node_views, {'node': node}).el;
   }
 });
 
@@ -132,7 +132,7 @@ var GlobalEdgeView = Backbone.View.extend({
     return jsPlumb.connect({
       source: source_el, 
       target: target_el,           
-      connector: ["RightBezier", {curviness: 15 }],
+      connector: ["RightBezier", {curviness: 12 }],
       container: this.$el
     }, this._connectionOptions);
   },

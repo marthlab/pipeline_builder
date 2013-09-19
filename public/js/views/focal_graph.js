@@ -24,21 +24,21 @@ function AbstractFocalGraph(pipeline, subclass_init) {
   this.outbound_datum_to_dest_edges = _.map(this.dest_nodes, function(o_dest_node){
     return new FocalEdge({
       graph: this,
-      source: _.find(this.outbound_datum_nodes, {outbound_datum: o_dest_node.outbound_datum}),
+      source: _.findExact(this.outbound_datum_nodes, {outbound_datum: o_dest_node.outbound_datum}),
       target: o_dest_node
     });
   }, this);
   this.outbound_datum_to_potential_dest_group_edges = _.map(this.potential_dest_group_nodes, function(o_pot_group_node){
     return new FocalEdge({
       graph: this,
-      source: _.find(this.outbound_datum_nodes, {outbound_datum: o_pot_group_node.outbound_datum}),
+      source: _.findExact(this.outbound_datum_nodes, {outbound_datum: o_pot_group_node.outbound_datum}),
       target: o_pot_group_node
     });
   }, this);
   this.potential_dest_group_to_potential_dest_edges = _.map(this.potential_dest_nodes, function(o_pot_dest_node){
     return new FocalEdge({
       graph: this,
-      source: _.find(this.potential_dest_group_nodes, {outbound_datum: o_pot_dest_node.outbound_datum}),
+      source: _.findExact(this.potential_dest_group_nodes, {outbound_datum: o_pot_dest_node.outbound_datum}),
       target: o_pot_dest_node
     });
   }, this);
@@ -77,14 +77,14 @@ function FocalTaskGraph(task) {
       return new FocalEdge({
         graph: this,
         source: tis_node,
-        target: _.find(this.task_input_nodes, {task_input: tis_node.task_input})
+        target: _.findExact(this.task_input_nodes, {task_input: tis_node.task_input})
       });
     }, this);
     this.task_input_potential_src_to_task_input_edges = _.map(this.task_input_potential_src_nodes, function(tips_node){
       return new FocalEdge({
         graph: this,
         source: tips_node,
-        target: _.find(this.task_input_nodes, {task_input: tips_node.task_input})
+        target: _.findExact(this.task_input_nodes, {task_input: tips_node.task_input})
       });
     }, this);
     this.task_to_outbound_datum_edges = _.map(this.outbound_datum_nodes, function(od_node){
@@ -117,7 +117,7 @@ var abstract_focal_node = {};
 function FocalTaskInputNode(graph, task_input) {
   this.graph = graph;
   this.task_input = task_input;
-  this.label = this.task_input.tool_input.id;
+  this.label = 'test' ;//this.task_input.tool_input.id;
 }
 FocalTaskInputNode.prototype = _.extend(abstract_focal_node, {
   constructor: FocalInputsGraph
@@ -126,7 +126,7 @@ FocalTaskInputNode.prototype = _.extend(abstract_focal_node, {
 function FocalTaskInputSrcNode(graph, task_input) {
   this.graph = graph;
   this.task_input = task_input;
-  this.label = this.task_input.src.getLabel();
+  this.label = 'test' ;// this.task_input.src.getLabel();
 }
 FocalTaskInputSrcNode.prototype = _.extend(abstract_focal_node, {
   constructor: FocalInputsGraph

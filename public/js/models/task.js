@@ -39,7 +39,7 @@ _.extend(Task.prototype, {
     };
   },
   getOutput: function(tool_output_id) {
-    return _.find(this.outputs, {tool_output: this.tool.getOutput(tool_output_id)}, this);
+    return _.findExact(this.outputs, {tool_output: this.tool.getOutput(tool_output_id)}, this);
   },
   hasInputAssignedTo: function(item) {
     return _(this.inputs).some({'src':item});

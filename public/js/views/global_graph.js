@@ -22,7 +22,7 @@ function GlobalGraph(pipeline) {
   this.task_to_task_output_edges = _.map(this.task_output_nodes, function(task_output_node){
     return new GlobalEdge({
       graph: this, 
-      source: _.find(this.task_nodes, {task: task_output_node.task_output.task}), 
+      source: _.findExact(this.task_nodes, {task: task_output_node.task_output.task}), 
       target: task_output_node
     });
   }, this);

@@ -98,7 +98,7 @@ var FocalView = Backbone.View.extend({
     this.$resizer_el.css({"transform": "scale("+scale+","+scale+") translate("+translate_x+"px,"+translate_y+"px)"});
   },
   getNodeElem: function(node) {
-    return _.find(this.node_views, {'node': node}).el;
+    return _.findExact(this.node_views, {'node': node}).el;
   }
 });
 
