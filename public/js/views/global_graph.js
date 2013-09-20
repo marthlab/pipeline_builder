@@ -62,7 +62,7 @@ GlobalTaskNode.prototype = _.extend(Object.create(abstract_global_node), {
 function GlobalPipelineInputsNode(graph) {
   this.graph = graph;
   this.datum = this.pipeline_inputs = this.graph.pipeline.inputs;
-  this.label = "Input Data";
+  this.label = "Pipeline Inputs";
 }
 GlobalPipelineInputsNode.prototype = _.extend(Object.create(abstract_global_node), {
   constructor: GlobalPipelineInputsNode

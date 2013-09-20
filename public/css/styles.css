@@ -1,23 +1,39 @@
-.graph_view_mixin {
+.graph_view {
   position: absolute;
   top: 5%;
   bottom: 5%;
   left: 5%;
   right: 5%;
+  -webkit-transform: translatez(0);
+  -moz-transform: translatez(0);
+  -ms-transform: translatez(0);
+  -o-transform: translatez(0);
+  transform: translatez(0);
 }
-.graph_view_mixin .resizer {
+.graph_view .resizer {
   position: relative;
   width: 100%;
   height: 100%;
 }
-.graph_view_mixin .graph_subviews {
+.graph_view .graph_subviews {
   position: relative;
   display: inline;
 }
-.graph_view_mixin .node {
+.graph_view .node {
   position: absolute;
-  text-align: center;
   z-index: 2;
+  text-align: center;
+}
+.graph_view .edge {
+  position: absolute;
+  z-index: 1;
+}
+.hw_accel {
+  -webkit-transform: translatez(0);
+  -moz-transform: translatez(0);
+  -ms-transform: translatez(0);
+  -o-transform: translatez(0);
+  transform: translatez(0);
 }
 .text_node {
   min-width: 6em;
@@ -59,6 +75,11 @@ body {
   bottom: 5%;
   left: 5%;
   right: 5%;
+  -webkit-transform: translatez(0);
+  -moz-transform: translatez(0);
+  -ms-transform: translatez(0);
+  -o-transform: translatez(0);
+  transform: translatez(0);
 }
 #focal .resizer {
   position: relative;
@@ -71,8 +92,12 @@ body {
 }
 #focal .node {
   position: absolute;
-  text-align: center;
   z-index: 2;
+  text-align: center;
+}
+#focal .edge {
+  position: absolute;
+  z-index: 1;
 }
 #focal .node.task_input_src {
   min-width: 6em;
@@ -158,6 +183,11 @@ body {
   bottom: 5%;
   left: 5%;
   right: 5%;
+  -webkit-transform: translatez(0);
+  -moz-transform: translatez(0);
+  -ms-transform: translatez(0);
+  -o-transform: translatez(0);
+  transform: translatez(0);
 }
 #global .resizer {
   position: relative;
@@ -170,8 +200,12 @@ body {
 }
 #global .node {
   position: absolute;
-  text-align: center;
   z-index: 2;
+  text-align: center;
+}
+#global .edge {
+  position: absolute;
+  z-index: 1;
 }
 #global .dummy_node {
   position: absolute;
