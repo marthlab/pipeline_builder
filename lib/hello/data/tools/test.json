@@ -48,7 +48,7 @@
     "outputs": {}
   },
   {
-    "id": "dat-analyzer-A",
+    "id": "dat-analyzer-B",
     "options": {},
     "inputs": {
       "mos-ref-data" : {
@@ -60,7 +60,7 @@
     "outputs": {}
   },
   {
-    "id": "dat-analyzer-A",
+    "id": "dat-analyzer-C",
     "options": {},
     "inputs": {
       "mos-ref-data" : {

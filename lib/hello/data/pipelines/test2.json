@@ -2,7 +2,7 @@
   "id": "test-pipeline-3",
   "tools": ["mosaik-build-reference", "mosaik-jump-test"],
   "tasks": {
-    "build-reference": {
+    "my first task": {
       "tool_id": "mosaik-build-reference",
       "option_value_assignments": {
         "-test": 123
@@ -16,14 +16,14 @@
         "mosaik-reference-data": "dat1"
       }
     },
-    "build-jump-database": {
+    "my second task": {
       "tool_id": "mosaik-jump-test",
       "option_value_assignments": {
         "-hs": 10
       },
       "input_src_assignments": {
         "mos-ref-data": {
-          "task_id": "build-reference",
+          "task_id": "my first task",
           "tool_output_id": "mosaik-reference-data"
         },
         "reference-sequence-fasta": {

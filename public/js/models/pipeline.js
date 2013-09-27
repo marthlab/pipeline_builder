@@ -94,10 +94,7 @@ function PipelineInput(pipeline, pl_input_cfg) {
   this.data_URL = pl_input_cfg.data_URL;
 }
 _.extend(PipelineInput.prototype, {
-  getLabel: function() {
-    return this.id;
-  },
   getFormat: function() {
-    //
+    return 'fmt';
   }
 })

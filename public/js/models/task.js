@@ -91,9 +91,6 @@ function TaskOutput(task, tool_output, format) {
 
 }
 _.extend(TaskOutput.prototype, {
-  getLabel: function() {
-    return this.tool_output.id;
-  },
   isAssignedFormat: function() {
     return !_.isUndefined(this.format);
   },

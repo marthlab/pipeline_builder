@@ -26,7 +26,7 @@ var GlobalView = Backbone.View.extend({
     this.$graph_subviews_el.append(_.pluck(this.node_views, 'el'));
     this.$graph_subviews_el.append(_.pluck(this.edge_views, 'el'));
 
-    _.methodEach(this.node_views, 'setNodeDimensions');
+    _.methodEach(this.node_views, 'cacheNodeDimensions');
 
     dagre.layout()
       .nodeSep(25)
@@ -71,7 +71,7 @@ var AbstractGlobalNodeView = Backbone.View.extend({
     var d = this.node.dagre;
     this.$el.css("transform", 'translate('+ (d.x-d.width/2) +'px,'+ (d.y-d.height/2) +'px)');
   },
-  setNodeDimensions: function() {
+  cacheNodeDimensions: function() {
     _.extend(this.node, {width: this.$el.outerWidth(), height: this.$el.outerHeight()});
   }
 });

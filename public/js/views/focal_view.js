@@ -11,7 +11,7 @@ var FocalView = Backbone.View.extend({
     this.$graph_subviews_el.append(_.pluck(this.node_views, 'el'));
     this.$graph_subviews_el.append(_.pluck(this.edge_views, 'el'));
 
-    _.methodEach(this.node_views, 'setNodeDimensions');
+    _.methodEach(this.node_views, 'cacheNodeDimensions');
 
     dagre.layout()
       .nodeSep(25)
@@ -33,7 +33,7 @@ var FocalView = Backbone.View.extend({
     if(datum instanceof Task) {
       this.graph = new FocalTaskGraph(datum);
     } else if(datum === app.pipeline.inputs) {
-      this.graph = new FocalInputsGraph(app.pipeline);
+      this.graph = new FocalPipelineInputsGraph(app.pipeline);
     }
 
     this.node_views = _.union(
@@ -49,10 +49,7 @@ var FocalView = Backbone.View.extend({
       _.map(this.graph.task_node ? [this.graph.task_node] : [], function(node){
         return new FocalTaskNodeView({focal_view: this, node: node});
       }, this),
-      _.map(this.graph.outbound_datum_nodes_with_format, function(node){
-        return new FocalOutboundDatumNodeView({focal_view: this, node: node});
-      }, this),
-      _.map(this.graph.outbound_datum_nodes_without_format, function(node){
+      _.map(_.union(this.graph.outbound_datum_nodes_with_format, this.graph.outbound_datum_nodes_without_format), function(node){
         return new FocalOutboundDatumNodeView({focal_view: this, node: node});
       }, this),
       _.map(this.graph.potential_format_nodes, function(node){
@@ -79,8 +76,8 @@ var FocalView = Backbone.View.extend({
       _.map(this.graph.task_input_to_task_edges, function(edge){
         return new FocalTaskInputToTaskEdgeView({focal_view: this, edge: edge});
       }, this),
-      _.map(this.graph.task_to_outbound_datum_edges, function(edge){
-        return new FocalTaskToOutboundDatumEdgeView({focal_view: this, edge: edge});
+      _.map(this.graph.task_to_task_output_edges, function(edge){
+        return new FocalTaskToTaskOutputEdgeView({focal_view: this, edge: edge});
       }, this),
       _.map(this.graph.outbound_datum_to_dest_edges, function(edge){
         return new FocalOutboundDatumToDestEdgeView({focal_view: this, edge: edge});
@@ -125,7 +122,7 @@ var AbstractFocalNodeView = Backbone.View.extend({
     var d = this.node.dagre;
     this.$el.css("transform", 'translate('+ (d.x-d.width/2) +'px,'+ (d.y-d.height/2) +'px)');
   },
-  setNodeDimensions: function() {
+  cacheNodeDimensions: function() {
     _.extend(this.node, {width: this.$el.outerWidth(), height: this.$el.outerHeight()});
   }
 });
@@ -182,11 +179,10 @@ var AbstractFocalEdgeView = Backbone.View.extend({
   initialize: function(options) {
     this.focal_view = options.focal_view;
     this.edge = options.edge;
-    console.log(this)
     this.source_el = this.focal_view.getNodeElem(this.edge.source);
     this.target_el = this.focal_view.getNodeElem(this.edge.target);
     this.connection_options = {
-      anchors:["Right", "Left"],
+      anchors:[["Continuous", { faces:["right"] } ], ["Continuous", { faces:["left"] } ]],
       paintStyle:{ 
         lineWidth:1,
         strokeStyle:"#a7b04b",
@@ -212,6 +208,14 @@ var AbstractFocalEdgeView = Backbone.View.extend({
 
 var FocalTaskInputPotentialSrcToTaskInputEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge potential_src_to_task_input',
+  initialize: function(options) {
+    AbstractFocalEdgeView.prototype.initialize.call(this, options);
+    _.merge(this.connection_options, {
+      paintStyle: {
+        "stroke-dasharray": "2, 2"
+      }
+    });
+  }
 });
 
 var FocalTaskInputSourceToTaskInputEdgeView = AbstractFocalEdgeView.extend({
@@ -230,8 +234,8 @@ var FocalTaskInputToTaskEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge task_input_to_task',
 });
 
-var FocalTaskToOutboundDatumEdgeView = AbstractFocalEdgeView.extend({
-  className: 'edge task_to_outbound_datum',
+var FocalTaskToTaskOutputEdgeView = AbstractFocalEdgeView.extend({
+  className: 'edge task_to_task_output',
 });
 
 var FocalOutboundDatumToPotentialFormatEdgeView = AbstractFocalEdgeView.extend({
@@ -239,9 +243,9 @@ var FocalOutboundDatumToPotentialFormatEdgeView = AbstractFocalEdgeView.extend({
   initialize: function(options) {
     AbstractFocalEdgeView.prototype.initialize.call(this, options);
     _.merge(this.connection_options, {
-      overlays : [
-        [ "PlainArrow", { location:1, direction:1, width:4, length:8} ]
-      ]
+      paintStyle: {
+        "stroke-dasharray": "2, 2"
+      }
     });
   }
 });
@@ -276,10 +280,7 @@ var FocalPotentialDestGroupToPotentialDestEdgeView = AbstractFocalEdgeView.exten
     _.merge(this.connection_options, {
       paintStyle: {
         "stroke-dasharray": "2, 2"
-      },
-      overlays : [
-        [ "PlainArrow", { location:1, direction:1, width:4, length:8} ]
-      ]
+      }
     });
   }
 });
