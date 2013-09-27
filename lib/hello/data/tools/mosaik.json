@@ -11,17 +11,17 @@
     },
     "inputs": {
       "reference-sequence-fasta": {
-        "legal_file_extensions": ["fasta", "fa"],
+        "legal_formats": ["fasta", "fa"],
         "required": true,
         "accepts_multiple": false
       }
     },
     "outputs": {
       "mosaik-reference-data": {
-        "file_extension": "dat"
+        "available_formats": ["dat1", "dat2", "dat3"]
       },
       "stats": {
-        "file_extension": "sta"
+        "available_formats": ["sta1", "sta2", "sta3"]
       }
     }
   },
@@ -48,20 +48,20 @@
     },
     "inputs": {
       "mosaik-reference-data" : {
-        "legal_file_extensions": ["dat"],
+        "legal_file_formats": ["dat"],
         "required": true,
         "accepts_multiple": false
       }
     },
     "outputs": {
       "keys": {
-        "file_extension": "jmp"
+        "available_file_formats": ["jmp"]
       },
       "meta": {
-        "file_extension": "jmp"
+        "available_file_formats": ["jmp"]
       },
       "positions": {
-        "file_extension": "jmp"
+        "available_file_formats": ["jmp"]
       }
     }
   },
@@ -88,31 +88,31 @@
     },
     "inputs": {
       "mos-ref-data" : {
-        "legal_file_extensions": ["dat"],
+        "legal_formats": ["dat", "dat1"],
         "required": true,
         "accepts_multiple": false
       },
       "reference-sequence-fasta": {
-        "legal_file_extensions": ["fasta", "fa"],
+        "legal_formats": ["fasta", "fa"],
         "required": true,
         "accepts_multiple": false
       }
     },
     "outputs": {
       "keys": {
-        "file_extension": "jmp"
+        "available_formats": ["jmp"]
       },
       "meta": {
-        "file_extension": "jmp"
+        "available_formats": ["jmp"]
       },
       "positions": {
-        "file_extension": "jmp"
+        "available_formats": ["jmp"]
       },
       "another": {
-        "file_extension": "ano"
+        "available_formats": ["ano"]
       },
       "yet_another": {
-        "file_extension": "yet"
+        "available_formats": ["yet"]
       }
     }
   }

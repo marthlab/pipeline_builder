@@ -1,10 +1,70 @@
 [
   {
-    "id": "stat-analyzer",
+    "id": "stat-analyzer-A",
     "options": {},
     "inputs": {
       "mos-ref-data" : {
-        "legal_file_extensions": ["sta"],
+        "legal_formats": ["sta1", "sta2", "sta3"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+    "outputs": {}
+  },
+  {
+    "id": "stat-analyzer-B",
+    "options": {},
+    "inputs": {
+      "mos-ref-data" : {
+        "legal_formats": ["sta1", "sta2"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+    "outputs": {}
+  },
+  {
+    "id": "stat-analyzer-C",
+    "options": {},
+    "inputs": {
+      "mos-ref-data" : {
+        "legal_formats": ["sta2", "sta3"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+    "outputs": {}
+  },
+  {
+    "id": "dat-analyzer-A",
+    "options": {},
+    "inputs": {
+      "mos-ref-data" : {
+        "legal_formats": ["dat1", "dat2", "dat3"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+    "outputs": {}
+  },
+  {
+    "id": "dat-analyzer-A",
+    "options": {},
+    "inputs": {
+      "mos-ref-data" : {
+        "legal_formats": ["dat1", "dat2"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+    "outputs": {}
+  },
+  {
+    "id": "dat-analyzer-A",
+    "options": {},
+    "inputs": {
+      "mos-ref-data" : {
+        "legal_formats": ["dat2", "dat3"],
         "required": true,
         "accepts_multiple": false
       }

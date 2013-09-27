@@ -52,6 +52,9 @@ var FocalView = Backbone.View.extend({
       _.map(this.graph.outbound_datum_nodes, function(node){
         return new FocalOutboundDatumNodeView({focal_view: this, node: node});
       }, this),
+      _.map(this.graph.potential_format_nodes, function(node){
+        return new FocalPotentialFormatNodeView({focal_view: this, node: node});
+      }, this),
       _.map(this.graph.dest_nodes, function(node){
         return new FocalDestNodeView({focal_view: this, node: node});
       }, this),
@@ -78,6 +81,9 @@ var FocalView = Backbone.View.extend({
       }, this),
       _.map(this.graph.outbound_datum_to_dest_edges, function(edge){
         return new FocalOutboundDatumToDestEdgeView({focal_view: this, edge: edge});
+      }, this),
+      _.map(this.graph.outbound_datum_to_potential_format_edges, function(edge){
+        return new FocalOutboundDatumToPotentialFormatEdgeView({focal_view: this, edge: edge});
       }, this),
       _.map(this.graph.outbound_datum_to_potential_dest_group_edges, function(edge){
         return new FocalOutboundDatumToPotentialDestGroupEdgeView({focal_view: this, edge: edge});
@@ -146,6 +152,11 @@ var FocalOutboundDatumNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalOutboundDatumNodeView-template').html()),
   className: 'node outbound_datum hint--bottom',
   attributes: function() { return {'data-hint': this.options.node.label}; }
+});
+
+var FocalPotentialFormatNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalPotentialFormatNodeView-template').html()),
+  className: 'node potential_format'
 });
 
 var FocalDestNodeView = AbstractFocalNodeView.extend({
@@ -217,6 +228,18 @@ var FocalTaskInputToTaskEdgeView = AbstractFocalEdgeView.extend({
 
 var FocalTaskToOutboundDatumEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge task_to_outbound_datum',
+});
+
+var FocalOutboundDatumToPotentialFormatEdgeView = AbstractFocalEdgeView.extend({
+  className: 'edge outbound_datum_to_potential_format',
+  initialize: function(options) {
+    AbstractFocalEdgeView.prototype.initialize.call(this, options);
+    _.merge(this.connection_options, {
+      overlays : [
+        [ "PlainArrow", { location:1, direction:1, width:4, length:8} ]
+      ]
+    });
+  }
 });
 
 var FocalOutboundDatumToDestEdgeView = AbstractFocalEdgeView.extend({

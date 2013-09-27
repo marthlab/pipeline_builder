@@ -20,8 +20,8 @@ _.extend(ToolLibrary.prototype, {
            .map(function(key){return key.splice(0, type.length+1);})
            .sortBy('id');
   },
-  getToolsAcceptingFileExt: function(file_ext) {
-    return _.filter(this._tools, function(tool) {return tool.acceptsFileExtension(file_ext);});
+  getToolsAcceptingFormat: function(format) {
+    return _.methodFilter(this._tools, 'acceptsFormat', format);
   },
 
   // need public functions to add/remove tool so we get persistence.

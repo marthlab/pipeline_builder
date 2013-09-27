@@ -34,8 +34,8 @@ _.extend(Tool.prototype, {
   getOption: function(option_id) {
     return _.find(this.options, {id: option_id});
   },
-  acceptsFileExtension: function(file_ext) {
-    return _.some(this.inputs, function(tool_input){return _.contains(tool_input.legal_file_extensions, file_ext);});
+  acceptsFormat: function(format) {
+    return _.methodSome(this.inputs, 'acceptsFormat', format);
   }
 })
 
@@ -54,18 +54,20 @@ _.extend(ToolOption.prototype, {
 function ToolInput(tool, tool_input_cfg) {
   this.tool = tool;
   this.id = tool_input_cfg.id;
-  this.legal_file_extensions = tool_input_cfg.legal_file_extensions;
+  this.legal_formats = tool_input_cfg.legal_formats;
   this.required = tool_input_cfg.required;
   this.accepts_multiple = tool_input_cfg.accepts_multiple;
 }
 _.extend(ToolInput.prototype, {
-  
+  acceptsFormat: function(format) {
+    return _.contains(this.legal_formats, format);
+  }
 })
 
 function ToolOutput(tool, tool_output_cfg) {
   this.tool = tool;
   this.id = tool_output_cfg.id;
-  this.file_extension = tool_output_cfg.file_extension;
+  this.available_formats = tool_output_cfg.available_formats;
 }
 _.extend(ToolOutput.prototype, {
   

@@ -171,6 +171,16 @@ body {
   color: #000;
   background: transparent;
 }
+#focal .node.potential_format {
+  min-width: 6em;
+  padding: 1em;
+  border-radius: 1em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  font-size: 6px;
+  color: #000;
+  background: transparent;
+}
 #global_container {
   flex-grow: 2;
   border-right: 1px black solid;

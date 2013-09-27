@@ -12,6 +12,12 @@ _.mixin({
       return value[method_name].apply(value, method_args);
     });
   },
+  methodSome: function(collection, method_name) {
+    var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
+    return _.some(collection, function(value) {
+      return value[method_name].apply(value, method_args);
+    });
+  },
   methodFilter: function(collection, method_name) {
     var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
     return _.filter(collection, function(value) {
