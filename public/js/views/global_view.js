@@ -4,15 +4,15 @@ var GlobalView = Backbone.View.extend({
     this.graph = new GlobalGraph(app.pipeline);
 
     this.node_views = _.union(
-      _.map(this.graph.primary_nodes, function(primary_node){
+      _.map(this.graph.getPrimaryNodes(), function(primary_node){
         return new GlobalPrimaryNodeView({global_view: this, node: primary_node});
       }, this),
-      _.map(this.graph.secondary_nodes, function(secondary_node){
+      _.map(this.graph.getSecondaryNodes(), function(secondary_node){
         return new GlobalSecondaryNodeView({global_view: this, node: secondary_node});
       }, this)
     );
 
-    this.edge_views = _.map(this.graph.edges, function(edge){
+    this.edge_views = _.map(this.graph.getEdges(), function(edge){
       return new GlobalEdgeView({global_view: this, edge: edge});
     }, this);
 
@@ -33,8 +33,8 @@ var GlobalView = Backbone.View.extend({
       .edgeSep(20)
       .rankSep(30)
       .rankDir("LR")
-      .nodes(this.graph.nodes)
-      .edges(this.graph.edges)
+      .nodes(this.graph.getNodes() )
+      .edges(this.graph.getEdges() )
       .debugLevel(0)
       .run();
 

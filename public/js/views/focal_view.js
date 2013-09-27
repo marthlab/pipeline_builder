@@ -18,8 +18,8 @@ var FocalView = Backbone.View.extend({
       .edgeSep(20)
       .rankSep(30)
       .rankDir("LR")
-      .nodes(this.graph.nodes)
-      .edges(this.graph.edges)
+      .nodes(this.graph.getNodes() )
+      .edges(this.graph.getEdges() )
       .debugLevel(0)
       .run();
 
@@ -49,7 +49,10 @@ var FocalView = Backbone.View.extend({
       _.map(this.graph.task_node ? [this.graph.task_node] : [], function(node){
         return new FocalTaskNodeView({focal_view: this, node: node});
       }, this),
-      _.map(this.graph.outbound_datum_nodes, function(node){
+      _.map(this.graph.outbound_datum_nodes_with_format, function(node){
+        return new FocalOutboundDatumNodeView({focal_view: this, node: node});
+      }, this),
+      _.map(this.graph.outbound_datum_nodes_without_format, function(node){
         return new FocalOutboundDatumNodeView({focal_view: this, node: node});
       }, this),
       _.map(this.graph.potential_format_nodes, function(node){
@@ -179,6 +182,7 @@ var AbstractFocalEdgeView = Backbone.View.extend({
   initialize: function(options) {
     this.focal_view = options.focal_view;
     this.edge = options.edge;
+    console.log(this)
     this.source_el = this.focal_view.getNodeElem(this.edge.source);
     this.target_el = this.focal_view.getNodeElem(this.edge.target);
     this.connection_options = {

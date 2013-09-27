@@ -1,11 +1,7 @@
 function AbstractFocalGraph(pipeline, subclass_init) {
   this.pipeline = pipeline;
-  this.nodes = [];
-  this.edges = [];
 
   subclass_init.call(this);
-
-  _(this.nodes).pushArray(this.outbound_datum_nodes);
 
   this.dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, function(od_node){
     var dest_tasks =  this.pipeline.getTasksAssignedDatum(od_node.outbound_datum);
@@ -18,8 +14,6 @@ function AbstractFocalGraph(pipeline, subclass_init) {
   this.potential_dest_group_nodes = _.map(_.filter(this.outbound_datum_nodes_with_format, function(o_data_node) {
     return _.some(this.potential_dest_nodes, {outbound_datum: o_data_node.outbound_datum});
   }, this), function(od_node) {return new FocalPotentialDestGroupNode(this, od_node.outbound_datum);}, this);
-
-  _(this.nodes).pushArray(_.union(this.dest_nodes, this.potential_dest_nodes, this.potential_dest_group_nodes));
 
   this.outbound_datum_to_dest_edges = _.map(this.dest_nodes, function(o_dest_node){
     return new FocalEdge({
@@ -43,15 +37,14 @@ function AbstractFocalGraph(pipeline, subclass_init) {
     });
   }, this);
 
-  _(this.edges).pushArray(_.union(
-    this.outbound_datum_to_dest_edges,
-    this.outbound_datum_to_potential_dest_group_edges,
-    this.potential_dest_group_to_potential_dest_edges
-  ));
-
 }
 _.extend(AbstractFocalGraph.prototype, {
-
+  getNodes: function() {
+    return _.union(this.outbound_datum_nodes_with_format, this.outbound_datum_nodes_without_format, this.dest_nodes, this.potential_dest_nodes, this.potential_dest_group_nodes);
+  },
+  getEdges: function() {
+    return _.union(this.outbound_datum_to_dest_edges, this.outbound_datum_to_potential_dest_group_edges, this.potential_dest_group_to_potential_dest_edges);
+  }
 });
 
 function FocalTaskGraph(task) {
@@ -65,14 +58,11 @@ function FocalTaskGraph(task) {
     
     this.outbound_datum_nodes_with_format = _.map(_.methodFilter(this.task.outputs, 'isAssignedFormat'), function(task_output){return new FocalOutboundDatumNode(this, task_output);}, this);
     this.outbound_datum_nodes_without_format = _.map(_.methodReject(this.task.outputs, 'isAssignedFormat'), function(task_output){return new FocalOutboundDatumNode(this, task_output);}, this);
-    this.outbound_datum_nodes = _.union(this.outbound_datum_nodes_with_format, this.outbound_datum_nodes_without_format);
 
     this.potential_format_nodes = _.flatten(_.map(this.outbound_datum_nodes_without_format, function(to_node){
       var potential_formats = to_node.outbound_datum.getPotentialFormats();
       return _.map(potential_formats, function(format){return new FocalPotentialFormatNode(this, to_node.outbound_datum, format);}, this);
     }, this), true);
-
-    _(this.nodes).pushArray(_.union([this.task_node], this.task_input_nodes, this.task_input_src_nodes, this.task_input_potential_src_nodes, this.potential_format_nodes));
 
     this.task_input_to_task_edges = _.map(this.task_input_nodes, function(ti_node){
       return new FocalEdge({
@@ -95,7 +85,7 @@ function FocalTaskGraph(task) {
         target: _.findExact(this.task_input_nodes, {task_input: tips_node.task_input})
       });
     }, this);
-    this.task_to_outbound_datum_edges = _.map(this.outbound_datum_nodes, function(od_node){
+    this.task_to_outbound_datum_edges = _.map(_.union(this.outbound_datum_nodes_with_format, this.outbound_datum_nodes_without_format), function(od_node){
       return new FocalEdge({
         graph: this,
         source: this.task_node,
@@ -110,19 +100,25 @@ function FocalTaskGraph(task) {
       });
     }, this);
 
-    _(this.edges).pushArray(_.union(this.task_input_to_task_edges, this.task_input_source_to_task_input_edges, this.task_input_potential_src_to_task_input_edges, this.task_to_outbound_datum_edges, this.outbound_datum_to_potential_format_edges));
   });
-//debugger;
+
 }
 FocalTaskGraph.prototype = _.extend(Object.create(AbstractFocalGraph.prototype), {
-  constructor: FocalTaskGraph
+  constructor: FocalTaskGraph,
+  getNodes: function() {
+    var from_super = AbstractFocalGraph.prototype.getNodes.call(this);
+    return _.union(from_super, [this.task_node], this.task_input_nodes, this.task_input_src_nodes, this.task_input_potential_src_nodes, this.potential_format_nodes);
+  },
+  getEdges: function() {
+    var from_super = AbstractFocalGraph.prototype.getEdges.call(this);
+    return _.union(from_super, this.task_input_to_task_edges, this.task_input_source_to_task_input_edges, this.task_input_potential_src_to_task_input_edges, this.task_to_outbound_datum_edges, this.outbound_datum_to_potential_format_edges);
+  }
 });
 
 function FocalInputsGraph(pipeline) {
   AbstractFocalGraph.call(this, pipeline, function(){
     this.outbound_datum_nodes_with_format = _.map(this.pipeline.inputs, function(pl_input){return new FocalOutboundDatumNode(this, pl_input);}, this);
     this.outbound_datum_nodes_without_format = [];
-    this.outbound_datum_nodes = _.union(this.outbound_datum_nodes_with_format, this.outbound_datum_nodes_without_format);
   });
 }
 FocalInputsGraph.prototype = _.extend(Object.create(AbstractFocalGraph.prototype), {

@@ -14,6 +14,11 @@
         "legal_formats": ["fasta", "fa"],
         "required": true,
         "accepts_multiple": false
+      },
+      "another-input": {
+        "legal_formats": ["foo", "bar"],
+        "required": true,
+        "accepts_multiple": false
       }
     },
     "outputs": {

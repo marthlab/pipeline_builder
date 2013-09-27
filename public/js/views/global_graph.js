@@ -3,13 +3,9 @@ function GlobalGraph(pipeline) {
 
   this.task_nodes = _.map(this.pipeline.tasks, function(task) {return new GlobalTaskNode(this, task);}, this);
   this.inputs_dummy_node = new GlobalPipelineInputsNode(this);
-  this.primary_nodes = _.union(this.task_nodes, [this.inputs_dummy_node]);
 
   this.task_output_nodes = _.map(_.flatten(_.pluck(this.pipeline.tasks, "outputs"), true), function(task_output){return new GlobalTaskOutputNode(this, task_output);}, this);
   this.pipeline_input_nodes = _.map(this.pipeline.inputs, function(pl_input) {return new GlobalPipelineInputNode(this, pl_input);}, this);
-  this.secondary_nodes = _.union(this.task_output_nodes, this.pipeline_input_nodes);
-
-  this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
 
   this.dummy_to_input_edges = _.map(this.pipeline_input_nodes, function(pl_input_node){
     return new GlobalEdge({
@@ -28,7 +24,7 @@ function GlobalGraph(pipeline) {
   }, this);
 
   this.secondary_to_task_edges = _.flatten(
-    _.map(this.secondary_nodes, function(secondary_node){
+    _.map(this.getSecondaryNodes(), function(secondary_node){
       return this.task_nodes
             .filter(function(task_node){ return task_node.task.hasInputAssignedTo(secondary_node.datum);})
             .map(function(task_node) {
@@ -42,10 +38,20 @@ function GlobalGraph(pipeline) {
     true
   );
 
-  this.edges = _.union(this.dummy_to_input_edges, this.task_to_task_output_edges, this.secondary_to_task_edges)
 }
 _.extend(GlobalGraph.prototype, {
-
+  getPrimaryNodes: function() {
+    return _.union(this.task_nodes, [this.inputs_dummy_node]);
+  },
+  getSecondaryNodes: function() {
+    return _.union(this.task_output_nodes, this.pipeline_input_nodes);
+  },
+  getNodes: function() {
+    return _.union(this.getPrimaryNodes(), this.getSecondaryNodes() );
+  },
+  getEdges: function() {
+    return _.union(this.dummy_to_input_edges, this.task_to_task_output_edges, this.secondary_to_task_edges);
+  }
 });
 
 var abstract_global_node = {};
