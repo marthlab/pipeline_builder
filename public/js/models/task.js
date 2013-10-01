@@ -90,7 +90,6 @@ _.extend(TaskInput.prototype, {
     return _.contains(this.sources, item);
   },
   getPotentialSources: function() {
-    debugger;
     return (!this.isAssignedSource() || this.tool_input.accepts_multiple) ? _.difference(this.task.pipeline.getDataHavingFormat(this.tool_input.legal_formats), this.sources) : [];
   },
   hasPotentialSources: function() {

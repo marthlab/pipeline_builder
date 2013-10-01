@@ -4,7 +4,7 @@ function AbstractFocalGraph(pipeline, subclass_init) {
   subclass_init.call(this);
 
   this.dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, function(od_node){
-    var dest_tasks =  this.pipeline.getTasksAssignedDatum(od_node.outbound_datum);
+    var dest_tasks = _.methodFilter(this.pipeline.tasks, 'hasAsInputSource', od_node.outbound_datum);
     return _.map(dest_tasks, function(task){return new FocalDestNode(this, od_node.outbound_datum, task)}, this);
   }, this), true);
   this.potential_dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, function(od_node){

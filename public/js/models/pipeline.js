@@ -86,9 +86,6 @@ _.extend(Pipeline.prototype, {
   getInput: function(input_id) {
     return _.find(this.inputs, {id: input_id});
   },
-  getTasksAssignedDatum: function(datum) {
-    return _.filter(this.tasks, function(task){return _.contains(_.pluck(task.inputs, 'src'), datum); });
-  },
   getTaskOutputs: function() {
     return _.flatten(_.pluck(this.tasks, 'outputs'));
   },
