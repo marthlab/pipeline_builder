@@ -26,7 +26,7 @@ function GlobalGraph(pipeline) {
   this.secondary_to_task_edges = _.flatten(
     _.map(this.getSecondaryNodes(), function(secondary_node){
       return this.task_nodes
-            .filter(function(task_node){ return task_node.task.hasInputAssignedTo(secondary_node.datum);})
+            .filter(function(task_node){ return task_node.task.hasAsInputSource(secondary_node.datum);})
             .map(function(task_node) {
               return new GlobalEdge({
                 graph: this, 

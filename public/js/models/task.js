@@ -47,8 +47,8 @@ _.extend(Task.prototype, {
   getOutputsWithoutAssignedFormat: function() {
     return _.methodReject(this.outputs, 'isAssignedFormat');
   },
-  hasInputAssignedTo: function(item) {
-    return _(this.inputs).some({'src':item});
+  hasAsInputSource: function(item) {
+    return _.methodSome(this.inputs, 'hasAsSource', item);
   },
 });
 
@@ -66,18 +66,36 @@ _.extend(TaskOption.prototype, {
 function TaskInput(task, tool_input, input_src_assignment_cfg) {
   this.task = task;
   this.tool_input = tool_input;
+
   if(!_.isUndefined(input_src_assignment_cfg)) {
-    var src = input_src_assignment_cfg;
-    if('task_id' in src && 'tool_output_id' in src) {
-      this.src = this.task.pipeline.getTask(src.task_id).getOutput(src.tool_output_id);
-    } else if ('pipeline_input_id' in src) {
-      this.src = this.task.pipeline.getInput(src.pipeline_input_id);
-    }
+    this.sources = _.isArray(input_src_assignment_cfg) ?
+      _.map(input_src_assignment_cfg, _.bind(this._getSourceFromCfg, this)) : [this._getSourceFromCfg(input_src_assignment_cfg)];
+  } else {
+    this.sources = [];
   }
 
 }
 _.extend(TaskInput.prototype, {
-  isAssignedSrc: function() { return !_.isUndefined(this.src); }
+  _getSourceFromCfg: function(cfg) {
+    if('task_id' in cfg && 'tool_output_id' in cfg) {
+      return this.task.pipeline.getTask(cfg.task_id).getOutput(cfg.tool_output_id);
+    } else if ('pipeline_input_id' in cfg) {
+      return this.task.pipeline.getInput(cfg.pipeline_input_id);
+    }
+  },
+  isAssignedSource: function() {
+    return this.sources.length > 0;
+  },
+  hasAsSource: function(item) {
+    return _.contains(this.sources, item);
+  },
+  getPotentialSources: function() {
+    debugger;
+    return (!this.isAssignedSource() || this.tool_input.accepts_multiple) ? _.difference(this.task.pipeline.getDataHavingFormat(this.tool_input.legal_formats), this.sources) : [];
+  },
+  hasPotentialSources: function() {
+    return this.getPotentialSources().length > 0;
+  }
 })
 
 function TaskOutput(task, tool_output, format) {

@@ -10,13 +10,13 @@
       }
     },
     "inputs": {
-      "reference-sequence-fasta": {
+      "reference-sequences": {
         "legal_formats": ["fasta", "fa"],
         "required": true,
-        "accepts_multiple": false
+        "accepts_multiple": true
       },
       "another-input": {
-        "legal_formats": ["foo", "bar"],
+        "legal_formats": ["foo", "bar", "fasta"],
         "required": true,
         "accepts_multiple": false
       }
@@ -97,7 +97,7 @@
         "required": true,
         "accepts_multiple": false
       },
-      "reference-sequence-fasta": {
+      "reference-sequence": {
         "legal_formats": ["fasta", "fa"],
         "required": true,
         "accepts_multiple": false

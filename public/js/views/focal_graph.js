@@ -53,8 +53,14 @@ function FocalTaskGraph(task) {
 
     this.task_node = new FocalTaskNode(this, this.task);
     this.task_input_nodes = _.map(this.task.inputs, function(task_input){return new FocalTaskInputNode(this, task_input);}, this);
-    this.task_input_src_nodes = _.map(_.methodFilter(this.task.inputs, 'isAssignedSrc'), function(task_input){return new FocalTaskInputSrcNode(this, task_input);}, this);
-    this.task_input_potential_src_nodes = _.map(_.methodReject(this.task.inputs, 'isAssignedSrc'), function(task_input){return new FocalTaskInputPotentialSrcNode(this, task_input);}, this);
+    this.task_input_src_nodes = _.flatten(_.map(this.task.inputs, function(task_input) {
+      return _.map(task_input.sources, function(source) {
+        return new FocalTaskInputSrcNode(this, task_input, source);
+      }, this);
+    }, this));
+    this.task_input_potential_src_nodes = _.flatten(_.map(_.methodFilter(this.task.inputs, 'hasPotentialSources'), function(task_input){
+      return new FocalTaskInputPotentialSrcNode(this, task_input);
+    }, this));
     
     this.outbound_datum_nodes_with_format = _.map(_.methodFilter(this.task.outputs, 'isAssignedFormat'), function(task_output){return new FocalTaskOutputNode(this, task_output);}, this);
     this.outbound_datum_nodes_without_format = _.map(_.methodReject(this.task.outputs, 'isAssignedFormat'), function(task_output){return new FocalTaskOutputNode(this, task_output);}, this);
@@ -127,15 +133,15 @@ FocalPipelineInputsGraph.prototype = _.extend(Object.create(AbstractFocalGraph.p
 
 var abstract_focal_node = {};
 
-function FocalTaskInputSrcNode(graph, task_input) {
+function FocalTaskInputSrcNode(graph, task_input, source) {
   this.graph = graph;
   this.task_input = task_input;
+  this.source = source;
 
-  var src = this.task_input.src;
-  if(src instanceof PipelineInput) {
-    this.label = src.id;
-  } else if(src instanceof TaskOutput) {
-    this.label = src.task.id + ' ('+src.tool_output.id+')';
+  if(this.source instanceof PipelineInput) {
+    this.label = this.source.id;
+  } else if(this.source instanceof TaskOutput) {
+    this.label = this.source.task.id + ' ('+this.source.tool_output.id+')';
   }
   
 }

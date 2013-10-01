@@ -32,12 +32,17 @@ _.extend(Pipeline.prototype, {
 
     var sources_to_task_cfgs = _.flatten(
       _.map(task_cfgs, function(task_cfg){
-        return _.map(task_cfg.input_src_assignments, function(task_input_src_assignment_cfg){
-          return {src: task_input_src_assignment_cfg, target: task_cfg};
-        })
-      }),
-      true
-    )
+        return _.flatten(
+          _.map(task_cfg.input_src_assignments, function(task_input_src_assignment_cfg){
+            if(_.isArray(task_input_src_assignment_cfg)) {
+              return _.map(task_input_src_assignment_cfg, function(sub_cfg) {return {src: sub_cfg, target: task_cfg}; });
+            } else {
+              return [{src: task_input_src_assignment_cfg, target: task_cfg}];
+            }
+          }), true
+        );
+      }), true
+    );
 
     var edges = _.map(sources_to_task_cfgs, function(connection) {
       return [
@@ -81,10 +86,15 @@ _.extend(Pipeline.prototype, {
   getInput: function(input_id) {
     return _.find(this.inputs, {id: input_id});
   },
-  getTasksAssignedDatum: function (datum) {
+  getTasksAssignedDatum: function(datum) {
     return _.filter(this.tasks, function(task){return _.contains(_.pluck(task.inputs, 'src'), datum); });
+  },
+  getTaskOutputs: function() {
+    return _.flatten(_.pluck(this.tasks, 'outputs'));
+  },
+  getDataHavingFormat: function(formats) {
+    return _.filter(_.union(this.inputs, this.getTaskOutputs() ), function(datum){return _.contains(formats, datum.getFormat() ); });
   }
-  
 })
 
 function PipelineInput(pipeline, pl_input_cfg) {
@@ -95,6 +105,7 @@ function PipelineInput(pipeline, pl_input_cfg) {
 }
 _.extend(PipelineInput.prototype, {
   getFormat: function() {
-    return 'fmt';
+    var re = /(?:\.([^.]+))?$/;
+    return re.exec(this.data_URL)[1];
   }
 })
