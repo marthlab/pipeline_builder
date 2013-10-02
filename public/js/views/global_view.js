@@ -115,7 +115,7 @@ var GlobalEdgeView = Backbone.View.extend({
       ];
     } else {
       this.connections = [
-        ($(this.source_el).center().y === $(this.target_el).center().y ? this._straightConnection : this._bezierConnection).call(this, this.source_el, this.target_el)
+        this._bezierConnection(this.source_el, this.target_el)
       ];
     }
 

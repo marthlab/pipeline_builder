@@ -88,9 +88,6 @@ _.extend(Pipeline.prototype, {
   },
   getTaskOutputs: function() {
     return _.flatten(_.pluck(this.tasks, 'outputs'));
-  },
-  getDataHavingFormat: function(formats) {
-    return _.filter(_.union(this.inputs, this.getTaskOutputs() ), function(datum){return _.contains(formats, datum.getFormat() ); });
   }
 })
 
@@ -104,5 +101,8 @@ _.extend(PipelineInput.prototype, {
   getFormat: function() {
     var re = /(?:\.([^.]+))?$/;
     return re.exec(this.data_URL)[1];
+  },
+  providesMultiple: function() {
+    return false;
   }
 })

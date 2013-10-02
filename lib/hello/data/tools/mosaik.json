@@ -17,8 +17,7 @@
       },
       "another-input": {
         "legal_formats": ["foo", "bar", "fasta"],
-        "required": true,
-        "accepts_multiple": false
+        "required": true
       }
     },
     "outputs": {
@@ -66,7 +65,8 @@
         "available_file_formats": ["jmp"]
       },
       "positions": {
-        "available_file_formats": ["jmp"]
+        "available_file_formats": ["jmp"],
+        "provides_multiple": true
       }
     }
   },

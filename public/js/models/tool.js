@@ -56,7 +56,7 @@ function ToolInput(tool, tool_input_cfg) {
   this.id = tool_input_cfg.id;
   this.legal_formats = tool_input_cfg.legal_formats;
   this.required = tool_input_cfg.required;
-  this.accepts_multiple = tool_input_cfg.accepts_multiple;
+  this.accepts_multiple = !!tool_input_cfg.accepts_multiple;
 }
 _.extend(ToolInput.prototype, {
   acceptsFormat: function(format) {
@@ -68,6 +68,7 @@ function ToolOutput(tool, tool_output_cfg) {
   this.tool = tool;
   this.id = tool_output_cfg.id;
   this.available_formats = tool_output_cfg.available_formats;
+  this.provides_multiple = !!tool_output_cfg.provides_multiple;
 }
 _.extend(ToolOutput.prototype, {
   

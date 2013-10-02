@@ -43,11 +43,15 @@
   "inputs": {
     "ref-seq-1": {
       "description": "FASTA formatted reference sequence 1",
-      "data_URL": "http://localhost:3000/my_data/test_data_2.fasta"
+      "data_URL": "http://localhost:3000/my_data/test_data_1.fasta"
     },
     "ref-seq-2": {
       "description": "FASTA formatted reference sequence 2",
-      "data_URL": "http://localhost:3000/my_data/test_data_1.fasta"
+      "data_URL": "http://localhost:3000/my_data/test_data_2.fasta"
+    },
+    "ref-seq-3": {
+      "description": "FASTA formatted reference sequence 3",
+      "data_URL": "http://localhost:3000/my_data/test_data_3.fasta"
     }
   }
 }

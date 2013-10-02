@@ -86,11 +86,30 @@ _.extend(TaskInput.prototype, {
   isAssignedSource: function() {
     return this.sources.length > 0;
   },
+  isSaturated: function() {
+    return !this.tool_input.accepts_multiple && this.isAssignedSource();
+  },
   hasAsSource: function(item) {
     return _.contains(this.sources, item);
   },
+  acceptsFormat: function(format) {
+    return this.tool_input.acceptsFormat(format);
+  },
+  acceptsFormatOf: function(datum) {
+    return this.acceptsFormat(datum.getFormat());
+  },
+  acceptsMultiple: function() {
+    return this.tool_input.accepts_multiple;
+  },
+  compatibleWithMultiplicityOf: function(datum) {
+    return this.acceptsMultiple() || !datum.providesMultiple();
+  },
   getPotentialSources: function() {
-    return (!this.isAssignedSource() || this.tool_input.accepts_multiple) ? _.difference(this.task.pipeline.getDataHavingFormat(this.tool_input.legal_formats), this.sources) : [];
+    if(this.isSaturated()) return [];
+
+    return _.union(this.task.pipeline.inputs, this.task.pipeline.getTaskOutputs()).filter(function(datum){
+      return !this.hasAsSource(datum) && this.acceptsFormatOf(datum) && this.compatibleWithMultiplicityOf(datum);
+    }, this);
   },
   hasPotentialSources: function() {
     return this.getPotentialSources().length > 0;
@@ -116,5 +135,8 @@ _.extend(TaskOutput.prototype, {
   },
   getFormat: function() {
     return this.format;
+  },
+  providesMultiple: function() {
+    return this.tool_output.provides_multiple;
   }
 })
