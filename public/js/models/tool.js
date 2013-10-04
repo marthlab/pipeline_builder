@@ -2,11 +2,14 @@
 
 function Tool(tool_cfg) {
   this.id = tool_cfg.id;
+  this.description = this.description || '';
   this.service_URL = tool_cfg.service_URL || undefined;
 
-  this.options = _.map(tool_cfg.options, function(option_cfg, option_id) {
-    return new ToolOption(this, _.extend(option_cfg, {id: option_id}));
-  }, this);
+  this.options = _.flatten(_.map(tool_cfg.options, function(category_option_cfgs, category) {
+    return _.map(category_option_cfgs, function(option_cfg, option_id){
+      return new ToolOption(this, _.extend(option_cfg, {id: option_id, category: category}));
+    }, this);
+  }, this));
   this.inputs = _.map(tool_cfg.inputs, function(input_cfg, input_id) {
     return new ToolInput(this, _.extend(input_cfg, {id: input_id}));
   }, this);
@@ -34,6 +37,12 @@ _.extend(Tool.prototype, {
   getOption: function(option_id) {
     return _.find(this.options, {id: option_id});
   },
+  // getCategoryOptions: function(category) {
+  //   return _.find(this.options, {category: category});
+  // },
+  // getOptionsByCategory: function(category) {
+  //   return _.groupBy(this.options, 'category');
+  // },
   acceptsFormat: function(format) {
     return _.methodSome(this.inputs, 'acceptsFormat', format);
   }
@@ -43,9 +52,8 @@ function ToolOption(tool, tool_option_cfg) {
   this.tool = tool;
   this.id = tool_option_cfg.id;
   this.description = tool_option_cfg.description;
-  this.required = tool_option_cfg.required;
+  this.default = tool_option_cfg.default;
   this.type = tool_option_cfg.type;
-  this.default = tool_option_cfg.hasOwnProperty("default") ? tool_option_cfg.default : undefined;
 }
 _.extend(ToolOption.prototype, {
   
@@ -54,13 +62,13 @@ _.extend(ToolOption.prototype, {
 function ToolInput(tool, tool_input_cfg) {
   this.tool = tool;
   this.id = tool_input_cfg.id;
-  this.legal_formats = tool_input_cfg.legal_formats;
-  this.required = tool_input_cfg.required;
+  this.formats_whitelist = tool_input_cfg.formats_whitelist;
+  this.optional = !!tool_input_cfg.optional;
   this.accepts_multiple = !!tool_input_cfg.accepts_multiple;
 }
 _.extend(ToolInput.prototype, {
   acceptsFormat: function(format) {
-    return _.contains(this.legal_formats, format);
+    return _.isUndefined(this.formats_whitelist) || _.contains(this.formats_whitelist, format);
   }
 })
 

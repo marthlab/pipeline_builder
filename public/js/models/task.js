@@ -5,7 +5,9 @@ function Task(pipeline, task_cfg) {
   this.tool = this.pipeline.getTool(task_cfg.tool_id);
 
   this.options = _.map(this.tool.options || [], function(tool_option) {
-    return new TaskOption(this, tool_option, task_cfg.option_value_assignments && task_cfg.option_value_assignments[tool_option.id]);
+    return new TaskOption(this, tool_option, task_cfg.options && _.find(task_cfg.options, function(option_cfg){
+      return option_cfg === tool_option.id || _.has(option_cfg, tool_option.id);
+    }));
   }, this);
   this.inputs = _.map(this.tool.inputs || [], function(tool_input) {
     return new TaskInput(this, tool_input, task_cfg.input_src_assignments && task_cfg.input_src_assignments[tool_input.id]);
@@ -52,15 +54,14 @@ _.extend(Task.prototype, {
   },
 });
 
-function TaskOption(task, tool_option, option_assignment_cfg) {
+function TaskOption(task, tool_option, option_cfg) {
   this.task = task;
   this.tool_option = tool_option;
-  if(!_.isUndefined(option_assignment_cfg)) {
-    this.value = option_assignment_cfg;
-  }
+  this.enabled = !_.isUndefined(option_cfg);
+  this.value = (this.enabled && _.isPlainObject(option_cfg) && option_cfg[this.tool_option.id]) || undefined;
 }
 _.extend(TaskOption.prototype, {
-  isAssignedValue: function() { return !_.isUndefined(this.value); }
+  
 })
 
 function TaskInput(task, tool_input, input_src_assignment_cfg) {

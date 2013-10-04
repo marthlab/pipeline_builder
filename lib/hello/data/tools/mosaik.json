@@ -2,21 +2,23 @@
   {
     "id": "mosaik-build-reference",
     "options": {
-      "-test": {
-        "description": "test",
-        "required": false,
-        "type": "integer",
-        "default": 123456
+      "general": {
+        "-test": {
+          "description": "test",
+          "required": false,
+          "type": "integer",
+          "default": 123456
+        }
       }
     },
     "inputs": {
       "reference-sequences": {
-        "legal_formats": ["fasta", "fa"],
+        "formats_whitelist": ["fasta", "fa"],
         "required": true,
         "accepts_multiple": true
       },
       "another-input": {
-        "legal_formats": ["foo", "bar", "fasta"],
+        "formats_whitelist": ["foo", "bar", "fasta"],
         "required": true
       }
     },
@@ -33,21 +35,23 @@
     "id": "mosaik-jump",
     "service_URL": "http://localhost:3000/tool_services/mosaik-jump",
     "options": {
-      "-hs": {
-        "description": "Hash size [4 - 32]",
-        "required": false,
-        "type": "integer",
-        "default": 15
-      },
-      "-kd": {
-        "description" : "Keeps the key database on disk",
-        "required": false,
-        "type": "flag"
-      },
-      "-iupac": {
-        "description" : "Considers IUPAC codes",
-        "required": false,
-        "type": "flag"
+      "general": {
+        "-hs": {
+          "description": "Hash size [4 - 32]",
+          "required": false,
+          "type": "integer",
+          "default": 15
+        },
+        "-kd": {
+          "description" : "Keeps the key database on disk",
+          "required": false,
+          "type": "flag"
+        },
+        "-iupac": {
+          "description" : "Considers IUPAC codes",
+          "required": false,
+          "type": "flag"
+        }
       }
     },
     "inputs": {
@@ -74,31 +78,33 @@
     "id": "mosaik-jump-test",
     "service_URL": "http://localhost:3000/tool_services/mosaik-jump",
     "options": {
-      "-hs": {
-        "description": "Hash size [4 - 32]",
-        "required": false,
-        "type": "integer",
-        "default": 15
-      },
-      "-kd": {
-        "description" : "Keeps the key database on disk",
-        "required": false,
-        "type": "flag"
-      },
-      "-iupac": {
-        "description" : "Considers IUPAC codes",
-        "required": false,
-        "type": "flag"
+      "general": {
+        "-hs": {
+          "description": "Hash size [4 - 32]",
+          "required": false,
+          "type": "integer",
+          "default": 15
+        },
+        "-kd": {
+          "description" : "Keeps the key database on disk",
+          "required": false,
+          "type": "flag"
+        },
+        "-iupac": {
+          "description" : "Considers IUPAC codes",
+          "required": false,
+          "type": "flag"
+        }
       }
     },
     "inputs": {
       "mos-ref-data" : {
-        "legal_formats": ["dat", "dat1"],
+        "formats_whitelist": ["dat", "dat1"],
         "required": true,
         "accepts_multiple": false
       },
       "reference-sequence": {
-        "legal_formats": ["fasta", "fa"],
+        "formats_whitelist": ["fasta", "fa"],
         "required": true,
         "accepts_multiple": false
       }

@@ -1,1 +1,482 @@
-[]
+[
+  {
+    "id": "bamtools-convert",
+    "options": {
+      "Input & Output": {
+        "-region": {
+          "description": "genomic region. Index file is recommended for better performance.",
+          "type": "integer"
+        }
+      },
+      "Pileup Options": {
+        "-mapqual": {
+          "description": "print the mapping qualities",
+          "type": "flag"
+        }
+      },
+      "SAM Options": {
+        "-noheader": {
+          "description": "omit the SAM header from output",
+          "type": "flag"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      },
+      "-index": {
+        "formats_whitelist": ["bai"]
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bed", "fasta", "fastq", "json", "pileup", "sam", "yaml"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-count",
+    "options": {
+      "Input & Output": {
+        "-region": {
+          "description": "genomic region. Index file is recommended for better performance.",
+          "type": "integer"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      },
+      "-index": {
+        "formats_whitelist": ["bai"]
+      }
+    },
+    "outputs": {
+      "-num_alignments": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-coverage",
+    "options": {
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "-coverage_stats": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-filter",
+    "options": {
+      "Input & Output": {
+        "-region": {
+          "description": "genomic region. Index file is recommended for better performance.",
+          "type": "integer"
+        },
+        "-forceCompression": {
+          "description": "if results are sent to stdout (like when piping to another tool), default behavior is to leave output uncompressed. Use this flag to override and force compression",
+          "type": "flag"
+        }
+      },
+      "General Filters": {
+        "-alignmentFlag": {
+          "description": "keep reads with this *exact* alignment flag (for more detailed queries, see below)",
+          "type": "integer"
+        },
+        "-insertSize": {
+          "description": "keep reads with insert size that matches pattern",
+          "type": "integer"
+        },
+        "-length": {
+          "description": "keep reads with length that matches pattern",
+          "type": "integer"
+        },
+        "-mapQuality": {
+          "description": "keep reads with map quality that matches pattern",
+          "type": "integer"
+        },
+        "-name": {
+          "description": "keep reads with name that matches pattern",
+          "type": "string"
+        },
+        "-queryBases": {
+          "description": "keep reads with motif that matches pattern",
+          "type": "string"
+        },
+        "-tag": {
+          "description": "keep reads with this key=>value pair",
+          "type": "string"
+        }
+      },
+      "Alignment Flag Filters": {
+        "-isDuplicate": {
+          "description": "keep only alignments that are marked as duplicate?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isFailedQC": {
+          "description": "keep only alignments that failed QC?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isFirstMate": {
+          "description": "keep only alignments marked as first mate?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isMapped": {
+          "description": "keep only alignments that were mapped?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isMateMapped": {
+          "description": "keep only alignments with mates that mapped",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isMateReverseStrand": {
+          "description": "keep only alignments with mate on reverse strand?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isPaired": {
+          "description": "keep only alignments that were sequenced as paired?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isPrimaryAlignment": {
+          "description": "keep only alignments marked as primary?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isProperPair": {
+          "description": "keep only alignments that passed PE resolution?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isReverseStrand": {
+          "description": "keep only alignments on reverse strand?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isSecondMate": {
+          "description": "keep only alignments marked as second mate?",
+          "default": "true",
+          "type": "bool"
+        },
+        "-isSingleton": {
+          "description": "keep only singletons",
+          "default": "true",
+          "type": "bool"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      },
+      "-script": {
+      }
+    },
+    "outputs": {
+      "-coverage_stats": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-header",
+    "options": {
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      }
+    },
+    "outputs": {
+      "-header": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-index",
+    "options": {
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "-index": {
+        "available_formats": ["bai", "bti"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-merge",
+    "options": {
+      "Input & Output": {
+        "-region": {
+          "description": "genomic region. Index file is recommended for better performance.",
+          "type": "integer"
+        },
+        "-forceCompression": {
+          "description": "if results are sent to stdout (like when piping to another tool), default behavior is to leave output uncompressed. Use this flag to override and force compression",
+          "type": "flag"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-random",
+    "options": {
+      "Input & Output": {
+        "-region": {
+          "description": "only pull random alignments from within this genomic region. Index file is recommended for better performance, and is used automatically if it exists.",
+          "type": "integer"
+        },
+        "-forceCompression": {
+          "description": "if results are sent to stdout (like when piping to another tool), default behavior is to leave output uncompressed. Use this flag to override and force compression",
+          "type": "flag"
+        }
+      },
+      "Settings": {
+        "-n": {
+          "description": "number of alignments to grab.",
+          "default": "10000",
+          "type": "integer"
+        },
+        "-seed": {
+          "description": "random number generator seed (for repeatable results). Current time is used if no seed value is provided.",
+          "default": "current time",
+          "type": "integer"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-resolve-makeStats",
+    "options": {
+      "Settings": {
+        "-minMQ": {
+          "description": "minimum map quality. Used as a heuristic for determining a mate's uniqueness",
+          "type": "integer"
+        },
+        "-ci": {
+          "description": "confidence interval. Set min/max fragment lengths such that we capture this fraction of pairs",
+          "type": "float"
+        },
+        "-umt": {
+          "description": "unused model threshold.",
+          "type": "float"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      },
+      "-stats": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-resolve-markPairs",
+    "options": {
+      "Settings": {
+        "-minMQ": {
+          "description": "minimum map quality. Used as a filter for marking candidate proper pairs.",
+          "type": "integer"
+        },
+        "-force": {
+          "description": "forces all read groups to be marked according to their top 2 'orientation models'.",
+          "type": "float"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      },
+      "-stats": {
+        "formats_whitelist": ["txt"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-revert",
+    "options": {
+      "Input & Output": {
+        "-forceCompression": {
+          "description": "if results are sent to stdout (like when piping to another tool), default behavior is to leave output uncompressed. Use this flag to override and force compression",
+          "type": "flag"
+        }
+      },
+      "Revert Options": {
+        "-keepDuplicate": {
+          "description": "keep duplicates marked",
+          "type": "flag"
+        },
+        "-keepQualities": {
+          "description": "keep base qualities (do not replace with OQ contents)",
+          "type": "flag"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-sort",
+    "options": {
+      "Sorting Methods": {
+        "-byname": {
+          "description": "sort by alignment name",
+          "type": "flag"
+        }
+      },
+      "Memory Settings": {
+        "-n": {
+          "description": "max number of alignments per tempfile",
+          "default": "500000",
+          "type": "integer"
+        },
+        "-mem": {
+          "description": "max memory to use",
+          "default": "1024",
+          "type": "integer"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      }
+    }
+  },
+  {
+    "id": "bamtools-split",
+    "options": {
+      "Input & Output": {
+        "-refPrefix": {
+          "description": "custom prefix for splitting by references. Currently files end with REF_<refName>.bam. This option allows you to replace \"REF_\" with a prefix of your choosing.",
+          "type": "string"
+        },
+        "-tagPrefix": {
+          "description": "custom prefix for splitting by tags. Current files end with TAG_<tagname>_<tagvalue>.bam. This option allows you to replace \"TAG_\" with a prefix of your choosing.",
+          "type": "string"
+        },
+        "-stub": {
+          "description": "prefix stub for output BAM files (default behavior is to use input filename, without .bam extension, as stub). If input is stdin and no stub provided, a timestamp is generated as the stub.",
+          "type": "string"
+        }
+      },
+      "Split Options": {
+        "-mapped": {
+          "description": "split mapped/unmapped alignments",
+          "type": "flag"
+        },
+        "-paired": {
+          "description": "split single-end/paired-end alignments",
+          "type": "flag"
+        },
+        "-reference": {
+          "description": "split alignments by reference",
+          "type": "flag"
+        },
+        "-tag": {
+          "description": "splits alignments based on all values of TAG encountered (i.e. -tag RG creates a BAM file for each read group in original BAM file)",
+          "type": "string"
+        }
+      }
+    },
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      }
+    }
+  }
+]
