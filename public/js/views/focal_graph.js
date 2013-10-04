@@ -8,7 +8,7 @@ function AbstractFocalGraph(pipeline, subclass_init) {
     return _.map(dest_tasks, function(task){return new FocalDestNode(this, od_node.outbound_datum, task)}, this);
   }, this), true);
   this.potential_dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, function(od_node){
-    var potential_dest_tools = app.tool_library.getToolsAcceptingFormat(od_node.outbound_datum.getFormat() );
+    var potential_dest_tools = app.tool_library.getSuggestedToolsByFormat(od_node.outbound_datum.getFormat() );
     return _.map(potential_dest_tools, function(tool){return new FocalPotentialDestNode(this, od_node.outbound_datum, tool);}, this);
   }, this), true);
   this.potential_dest_group_nodes = _.map(_.filter(this.outbound_datum_nodes_with_format, function(o_data_node) {

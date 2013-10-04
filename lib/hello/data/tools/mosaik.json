@@ -56,7 +56,7 @@
     },
     "inputs": {
       "mosaik-reference-data" : {
-        "legal_file_formats": ["dat"],
+        "formats_whitelist": ["dat"],
         "required": true,
         "accepts_multiple": false
       }

@@ -28,7 +28,8 @@
         "accepts_multiple": true
       },
       "-index": {
-        "formats_whitelist": ["bai"]
+        "formats_whitelist": ["bai"],
+        "suggestable": false
       }
     },
     "outputs": {
@@ -54,12 +55,12 @@
         "accepts_multiple": true
       },
       "-index": {
-        "formats_whitelist": ["bai"]
+        "formats_whitelist": ["bai"],
+        "suggestable": false
       }
     },
     "outputs": {
       "-num_alignments": {
-        "available_formats": ["txt"]
       }
     }
   },
@@ -75,7 +76,6 @@
     },
     "outputs": {
       "-coverage_stats": {
-        "available_formats": ["txt"]
       }
     }
   },
@@ -192,11 +192,11 @@
         "accepts_multiple": true
       },
       "-script": {
+        "suggestable": false
       }
     },
     "outputs": {
       "-coverage_stats": {
-        "available_formats": ["txt"]
       }
     }
   },
@@ -213,7 +213,6 @@
     },
     "outputs": {
       "-header": {
-        "available_formats": ["txt"]
       }
     }
   },
@@ -329,7 +328,6 @@
         "available_formats": ["bam"]
       },
       "-stats": {
-        "available_formats": ["txt"]
       }
     }
   },
@@ -354,8 +352,8 @@
         "accepts_multiple": true
       },
       "-stats": {
-        "formats_whitelist": ["txt"],
-        "required": true
+        "required": true,
+        "suggestable": false
       }
     },
     "outputs": {

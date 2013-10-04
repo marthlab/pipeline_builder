@@ -20,8 +20,8 @@ _.extend(ToolLibrary.prototype, {
            .map(function(key){return key.splice(0, type.length+1);})
            .sortBy('id');
   },
-  getToolsAcceptingFormat: function(format) {
-    return _.methodFilter(this._tools, 'acceptsFormat', format);
+  getSuggestedToolsByFormat: function(format) {
+    return _.methodFilter(this._tools, 'acceptsFormatForSuggestableInput', format);
   },
 
   // need public functions to add/remove tool so we get persistence.

@@ -38,5 +38,17 @@ _.mixin({
         return collection_item[property_key] === properties[property_key];
       });
     });
+  },
+  valueOrDefault: function(value, default_val) {
+    return _.isUndefined(value) ? default_val : value;
+  },
+  defaultTrue: function(value) {
+    return _.valueOrDefault(value, true);
+  },
+  defaultFalse: function(value) {
+    return _.valueOrDefault(value, false);
+  },
+  defaultUndefined: function(value) {
+    return _.valueOrDefault(value, undefined);
   }
 });

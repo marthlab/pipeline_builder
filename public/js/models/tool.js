@@ -43,9 +43,12 @@ _.extend(Tool.prototype, {
   // getOptionsByCategory: function(category) {
   //   return _.groupBy(this.options, 'category');
   // },
-  acceptsFormat: function(format) {
-    return _.methodSome(this.inputs, 'acceptsFormat', format);
-  }
+  acceptsFormatForSuggestableInput: function(format) {
+    return _.methodSome(_.filter(this.inputs, 'suggestable'), 'acceptsFormat', format);
+  },
+  // acceptsFormat: function(format) {
+  //   return _.methodSome(this.inputs, 'acceptsFormat', format);
+  // }
 })
 
 function ToolOption(tool, tool_option_cfg) {
@@ -62,9 +65,10 @@ _.extend(ToolOption.prototype, {
 function ToolInput(tool, tool_input_cfg) {
   this.tool = tool;
   this.id = tool_input_cfg.id;
-  this.formats_whitelist = tool_input_cfg.formats_whitelist;
-  this.optional = !!tool_input_cfg.optional;
-  this.accepts_multiple = !!tool_input_cfg.accepts_multiple;
+  this.formats_whitelist = _.defaultUndefined(tool_input_cfg.formats_whitelist);
+  this.optional = _.defaultFalse(tool_input_cfg.optional)
+  this.accepts_multiple = _.defaultFalse(tool_input_cfg.accepts_multiple)
+  this.suggestable = _.defaultTrue(tool_input_cfg.suggestable)
 }
 _.extend(ToolInput.prototype, {
   acceptsFormat: function(format) {
@@ -75,8 +79,8 @@ _.extend(ToolInput.prototype, {
 function ToolOutput(tool, tool_output_cfg) {
   this.tool = tool;
   this.id = tool_output_cfg.id;
-  this.available_formats = tool_output_cfg.available_formats;
-  this.provides_multiple = !!tool_output_cfg.provides_multiple;
+  this.available_formats = _.valueOrDefault(tool_output_cfg.available_formats, [null]);
+  this.provides_multiple = _.defaultFalse(tool_output_cfg.provides_multiple);
 }
 _.extend(ToolOutput.prototype, {
   
