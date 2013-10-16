@@ -1,0 +1,601 @@
+[
+  {
+    "id": "vcfintersect-intersect-bed",
+    "category": "comparison",
+    "options": {
+      "General": {
+        "--invert": {
+          "description": "invert the selection, printing only records which would not have been printed out",
+          "type": "flag"
+        },
+        "--window-size": {
+          "description": "compare records up to this many bp away (default 30)",
+          "type": "integer"
+        },
+        "--loci": {
+          "description": "output whole loci when one alternate allele matches",
+          "type": "flag"
+        },
+        "--tag": {
+          "description": "attach TAG to each record's info field if it would intersect",
+          "type": "flag"
+        },
+        "--tag-value": {
+          "description": "use this value to indicate that the allele is passing '.' will be used otherwise.   default: 'PASS'",
+          "type": "string"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf","vcf.gz"],
+        "required": true
+      },
+      "--bed": {
+        "formats_whitelist": ["bed"],
+        "required": true,
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfintersect-intersect-vcf",
+    "category": "comparison",
+    "options": {
+      "General": {
+        "--invert": {
+          "description": "invert the selection, printing only records which would not have been printed out",
+          "type": "flag"
+        },
+        "--window-size": {
+          "description": "compare records up to this many bp away (default 30)",
+          "type": "integer"
+        },
+        "--loci": {
+          "description": "output whole loci when one alternate allele matches",
+          "type": "flag"
+        },
+        "--tag": {
+          "description": "attach TAG to each record's info field if it would intersect",
+          "type": "flag"
+        },
+        "--tag-value": {
+          "description": "use this value to indicate that the allele is passing '.' will be used otherwise.   default: 'PASS'",
+          "type": "string"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf","vcf.gz"],
+        "required": true
+      },
+      "--intersect-vcf": {
+        "formats_whitelist": ["vcf","vcf.gz"],
+        "required": true,
+        "suggestable": false
+      },
+      "--reference": {
+        "formats_whitelist": ["fa","fasta"],
+        "required": true,
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfintersect-union-vcf",
+    "category": "comparison",
+    "options": {
+      "General": {
+        "--invert": {
+          "description": "invert the selection, printing only records which would not have been printed out",
+          "type": "flag"
+        },
+        "--window-size": {
+          "description": "compare records up to this many bp away (default 30)",
+          "type": "integer"
+        },
+        "--loci": {
+          "description": "output whole loci when one alternate allele matches",
+          "type": "flag"
+        },
+        "--tag": {
+          "description": "attach TAG to each record's info field if it would intersect",
+          "type": "flag"
+        },
+        "--tag-value": {
+          "description": "use this value to indicate that the allele is passing '.' will be used otherwise.   default: 'PASS'",
+          "type": "string"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf","vcf.gz"],
+        "required": true
+      },
+      "--union-vcf": {
+        "formats_whitelist": ["vcf","vcf.gz"],
+        "required": true,
+        "suggestable": false
+      },
+      "--reference": {
+        "formats_whitelist": ["fa","fasta"],
+        "required": true,
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfoverlay",
+    "category": "comparison",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf","vcf.gz"],
+        "required": true
+      },
+      "--overlay": {
+        "formats_whitelist": ["vcf","vcf.gz"],
+        "required": true,
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcf2tsv",
+    "category": "format conversion",
+    "options": {
+      "General": {
+        "-n": {
+          "description": "used to replace empty values in the table",
+          "type": "string"
+        },
+        "-g": {
+          "description": "outputs one line per sample with genotype information",
+          "type": "flag"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["tsv"]
+      }
+    }
+  },
+  {
+    "id": "vcf2sqlite",
+    "category": "format conversion",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["sqlite3"]
+      }
+    }
+  },
+  {
+    "id": "vcffilter",
+    "category": "filtering and subsetting",
+    "options": {
+      "--info-filter": {
+        "description": "specifies a filter to apply to the info fields of records, removes alleles which do not pass the filter",
+        "type": "string"
+      },
+      "--genotype-filter": {
+        "description": "specifies a filter to apply to the genotype fields of records",
+        "type": "string"
+      },
+      "--filter-sites": {
+        "description": "filter entire records, not just alleles",
+        "type": "flag"
+      },
+      "--tag-pass": {
+        "description": "tag vcf records as positively filtered with this tag, print all records",
+        "type": "flag"
+      },
+      "--tag-fail": {
+        "description": "tag vcf records as negatively filtered with this tag, print all records",
+        "type": "flag"
+      },
+      "--append-filter": {
+        "description": "append the existing filter tag, don't just replace it",
+        "type": "flag"
+      },
+      "--allele-tag": {
+        "description": "apply -t on a per-allele basis.  adds or sets the corresponding INFO field tag",
+        "type": "flag"
+      },
+      "--invert": {
+        "description": "inverts the filter, e.g. grep -v",
+        "type": "flag"
+      },
+      "--or": {
+        "description": "use logical OR instead of AND to combine filters",
+        "type": "flag"
+      },
+      "--region": {
+        "description": "specify a region on which to target the filtering, requires a BGZF compressed file which has been indexed with tabix.  any number of regions may be specified.",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--tabix": {
+        "formats_whitelist": ["vcf.gz.tbi"],
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfrandomsample",
+    "category": "filtering and subsetting",
+    "options": {
+      "--rate": {
+        "description": "base sampling probability per locus",
+        "type": "string"
+      },
+      "--scale-by": {
+        "description": "scale sampling likelihood by this Float info field",
+        "type": "string"
+      },
+      "--random-seed": {
+        "description": "use this random seed",
+        "type": "integer"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfaddinfo",
+    "category": "annotation",
+    "options": {
+    },
+    "inputs": {
+      "--target": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--source": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true,
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfannotate",
+    "category": "annotation",
+    "options": {
+      "--key": {
+        "description": "use this INFO field key for the annotations",
+        "type": "string"
+      },
+      "--default": {
+        "description": "use this INFO field key for records without annotations",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--bed": {
+        "formats_whitelist": ["bed"],
+        "required": true,
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfannotategenotypes",
+    "category": "annotation",
+    "options": {
+      "--annotation-tag": {
+        "description": "the name of the sample flag which is added to store the
+annotation",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--target": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--source": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true,
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfdistance",
+    "category": "annotation",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfaltcount",
+    "category": "annotation",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--num_alternate_alleles": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "vcfkeepinfo",
+    "category": "annotation",
+    "options": {
+      "--info-fields": {
+        "description": "INFO fields to retain, space-delimited",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfkeepgeno",
+    "category": "annotation",
+    "options": {
+      "--format-fields": {
+        "description": "FORMAT fields to retain, space-delimited",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfsamplenames",
+    "category": "samples",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--sample-names": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "vcfkeepsamples",
+    "category": "samples",
+    "options": {
+      "--samples": {
+        "description": "samples to retain, space-delimited",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfremovesamples",
+    "category": "samples",
+    "options": {
+      "--samples": {
+        "description": "samples to remove, space-delimited",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfbreakmulti",
+    "category": "variant representation",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfcreatemulti",
+    "category": "variant representation",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfallelicprimitives",
+    "category": "variant representation",
+    "options": {
+      "--use-mnps": {
+        "description": "Retain MNPs as separate events",
+        "default": false,
+        "type": "flag"
+      },
+      "--tag-parsed": {
+        "description": "Tag records which are split apart of a complex allele with this flag",
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfgeno2haplo",
+    "category": "variant representation",
+    "options": {
+      "--window-size": {
+        "description": "compare records up to this many bp away",
+        "default": 30,
+        "type": "integer"
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--reference": {
+        "formats_whitelist": ["fa", "fasta"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  }
+  
+]

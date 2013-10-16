@@ -1,6 +1,13 @@
 {
   "id": "test-pipeline-2",
-  "tools": [],
-  "tasks": {},
-  "inputs": {}
+  "tools": ["mosaik-build-reference", "mosaik-jump-test"],
+  "tasks": {
+
+  },
+  "inputs": {
+    "bam-1": {
+      "description": "bam 1",
+      "data_URL": "http://localhost:3000/my_data/test_data.bam"
+    }
+  }
 }
