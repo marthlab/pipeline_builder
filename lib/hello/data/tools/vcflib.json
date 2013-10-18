@@ -211,45 +211,47 @@
     "id": "vcffilter",
     "category": "filtering and subsetting",
     "options": {
-      "--info-filter": {
-        "description": "specifies a filter to apply to the info fields of records, removes alleles which do not pass the filter",
-        "type": "string"
-      },
-      "--genotype-filter": {
-        "description": "specifies a filter to apply to the genotype fields of records",
-        "type": "string"
-      },
-      "--filter-sites": {
-        "description": "filter entire records, not just alleles",
-        "type": "flag"
-      },
-      "--tag-pass": {
-        "description": "tag vcf records as positively filtered with this tag, print all records",
-        "type": "flag"
-      },
-      "--tag-fail": {
-        "description": "tag vcf records as negatively filtered with this tag, print all records",
-        "type": "flag"
-      },
-      "--append-filter": {
-        "description": "append the existing filter tag, don't just replace it",
-        "type": "flag"
-      },
-      "--allele-tag": {
-        "description": "apply -t on a per-allele basis.  adds or sets the corresponding INFO field tag",
-        "type": "flag"
-      },
-      "--invert": {
-        "description": "inverts the filter, e.g. grep -v",
-        "type": "flag"
-      },
-      "--or": {
-        "description": "use logical OR instead of AND to combine filters",
-        "type": "flag"
-      },
-      "--region": {
-        "description": "specify a region on which to target the filtering, requires a BGZF compressed file which has been indexed with tabix.  any number of regions may be specified.",
-        "type": "string"
+      "General": {
+        "--info-filter": {
+          "description": "specifies a filter to apply to the info fields of records, removes alleles which do not pass the filter",
+          "type": "string"
+        },
+        "--genotype-filter": {
+          "description": "specifies a filter to apply to the genotype fields of records",
+          "type": "string"
+        },
+        "--filter-sites": {
+          "description": "filter entire records, not just alleles",
+          "type": "flag"
+        },
+        "--tag-pass": {
+          "description": "tag vcf records as positively filtered with this tag, print all records",
+          "type": "flag"
+        },
+        "--tag-fail": {
+          "description": "tag vcf records as negatively filtered with this tag, print all records",
+          "type": "flag"
+        },
+        "--append-filter": {
+          "description": "append the existing filter tag, don't just replace it",
+          "type": "flag"
+        },
+        "--allele-tag": {
+          "description": "apply -t on a per-allele basis.  adds or sets the corresponding INFO field tag",
+          "type": "flag"
+        },
+        "--invert": {
+          "description": "inverts the filter, e.g. grep -v",
+          "type": "flag"
+        },
+        "--or": {
+          "description": "use logical OR instead of AND to combine filters",
+          "type": "flag"
+        },
+        "--region": {
+          "description": "specify a region on which to target the filtering, requires a BGZF compressed file which has been indexed with tabix.  any number of regions may be specified.",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -272,17 +274,19 @@
     "id": "vcfrandomsample",
     "category": "filtering and subsetting",
     "options": {
-      "--rate": {
-        "description": "base sampling probability per locus",
-        "type": "string"
-      },
-      "--scale-by": {
-        "description": "scale sampling likelihood by this Float info field",
-        "type": "string"
-      },
-      "--random-seed": {
-        "description": "use this random seed",
-        "type": "integer"
+      "General": {
+        "--rate": {
+          "description": "base sampling probability per locus",
+          "type": "string"
+        },
+        "--scale-by": {
+          "description": "scale sampling likelihood by this Float info field",
+          "type": "string"
+        },
+        "--random-seed": {
+          "description": "use this random seed",
+          "type": "integer"
+        }
       }
     },
     "inputs": {
@@ -323,13 +327,15 @@
     "id": "vcfannotate",
     "category": "annotation",
     "options": {
-      "--key": {
-        "description": "use this INFO field key for the annotations",
-        "type": "string"
-      },
-      "--default": {
-        "description": "use this INFO field key for records without annotations",
-        "type": "string"
+      "General": {
+        "--key": {
+          "description": "use this INFO field key for the annotations",
+          "type": "string"
+        },
+        "--default": {
+          "description": "use this INFO field key for records without annotations",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -353,10 +359,12 @@
     "id": "vcfannotategenotypes",
     "category": "annotation",
     "options": {
-      "--annotation-tag": {
-        "description": "the name of the sample flag which is added to store the
-annotation",
-        "type": "string"
+      "General": {
+        "--annotation-tag": {
+          "description": "the name of the sample flag which is added to store the
+  annotation",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -414,9 +422,11 @@ annotation",
     "id": "vcfkeepinfo",
     "category": "annotation",
     "options": {
-      "--info-fields": {
-        "description": "INFO fields to retain, space-delimited",
-        "type": "string"
+      "General": {
+        "--info-fields": {
+          "description": "INFO fields to retain, space-delimited",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -435,9 +445,11 @@ annotation",
     "id": "vcfkeepgeno",
     "category": "annotation",
     "options": {
-      "--format-fields": {
-        "description": "FORMAT fields to retain, space-delimited",
-        "type": "string"
+      "General": {
+        "--format-fields": {
+          "description": "FORMAT fields to retain, space-delimited",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -473,9 +485,11 @@ annotation",
     "id": "vcfkeepsamples",
     "category": "samples",
     "options": {
-      "--samples": {
-        "description": "samples to retain, space-delimited",
-        "type": "string"
+      "General": {
+        "--samples": {
+          "description": "samples to retain, space-delimited",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -494,9 +508,11 @@ annotation",
     "id": "vcfremovesamples",
     "category": "samples",
     "options": {
-      "--samples": {
-        "description": "samples to remove, space-delimited",
-        "type": "string"
+      "General": {
+        "--samples": {
+          "description": "samples to remove, space-delimited",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -549,14 +565,16 @@ annotation",
     "id": "vcfallelicprimitives",
     "category": "variant representation",
     "options": {
-      "--use-mnps": {
-        "description": "Retain MNPs as separate events",
-        "default": false,
-        "type": "flag"
-      },
-      "--tag-parsed": {
-        "description": "Tag records which are split apart of a complex allele with this flag",
-        "type": "string"
+      "General": {
+        "--use-mnps": {
+          "description": "Retain MNPs as separate events",
+          "default": false,
+          "type": "flag"
+        },
+        "--tag-parsed": {
+          "description": "Tag records which are split apart of a complex allele with this flag",
+          "type": "string"
+        }
       }
     },
     "inputs": {
@@ -575,10 +593,12 @@ annotation",
     "id": "vcfgeno2haplo",
     "category": "variant representation",
     "options": {
-      "--window-size": {
-        "description": "compare records up to this many bp away",
-        "default": 30,
-        "type": "integer"
+      "General": {
+        "--window-size": {
+          "description": "compare records up to this many bp away",
+          "default": 30,
+          "type": "integer"
+        }
       }
     },
     "inputs": {
@@ -588,6 +608,380 @@ annotation",
       },
       "--reference": {
         "formats_whitelist": ["fa", "fasta"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfglxgt",
+    "category": "genotype manipulation",
+    "options": {
+      "General": {
+        "--fix-null-genotypes": {
+          "description": "only apply to null and partly-null genotypes",
+          "type": "flag"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfsamplediff",
+    "category": "genotype manipulation",
+    "options": {
+      "General": {
+        "--tag": {
+          "description": "",
+          "type": "string"
+        },
+        "--samples": {
+          "description": "space-delimited",
+          "type": "string"
+        }
+    }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfremoveaberrantgenotypes",
+    "category": "genotype manipulation",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfstats",
+    "category": "interpretation and classification of variants",
+    "options": {
+      "General": {
+        "--region": {
+          "description": "specify a region on which to target the stats, requires a BGZF compressed file which has been indexed with tabix.  any number of regions may be specified.",
+          "type": "string"
+        },
+        "--add-info": {
+          "description": "add the statistics intermediate information to the VCF file, writing out VCF records instead of summary statistics",
+          "type": "flag"
+        },
+        "--no-length-frequency": {
+          "description": "don't out the indel and mnp length-frequency spectra",
+          "type": "flag"
+        },
+        "--match-score": {
+          "description": "match score for SW algorithm",
+          "type": "integer"
+        },
+        "--mismatch-score": {
+          "description": "mismatch score for SW algorithm",
+          "type": "integer"
+        },
+        "--gap-open-penalty": {
+          "description": "gap open penalty for SW algorithm",
+          "type": "integer"
+        },
+        "--gap-extend-penalty": {
+          "description": "gap extension penalty for SW algorithm",
+          "type": "integer"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--tabix": {
+        "formats_whitelist": ["vcf.gz.tbi"],
+        "suggestable": false
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfroc",
+    "category": "interpretation and classification of variants",
+    "options": {
+      "General": {
+        "--window-size": {
+          "description": "compare records up to this many bp away",
+          "default": 30,
+          "type": "integer"
+        },
+        "--complex": {
+          "description": "directly compare complex alleles, don't parse into primitives",
+          "type": "flag"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--truth-vcf": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--reference": {
+        "formats_whitelist": ["fa", "fasta"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfentropy",
+    "category": "interpretation and classification of variants",
+    "options": {
+      "General": {
+        "--window-size": {
+          "description": "compare records up to this many bp away",
+          "default": 30,
+          "type": "integer"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--fasta-reference": {
+        "formats_whitelist": ["fa", "fasta"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfhetcount",
+    "category": "interpretation and classification of variants",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "vcfprimers",
+    "category": "interpretation and classification of variants",
+    "options": {
+      "General": {
+        "--primer-length": {
+          "description": "The length of the primer sequences on each side of the variant",
+          "default": 30,
+          "type": "integer",
+          "required": true
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--fasta-reference": {
+        "formats_whitelist": ["fasta", "fa"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "vcfgenotypes",
+    "category": "interpretation and classification of variants",
+    "options": {
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["txt"]
+      }
+    }
+  },
+  {
+    "id": "vcfremap",
+    "category": "interpretation and classification of variants",
+    "options": {
+      "General": {
+        "--ref-window-size": {
+          "description": "",
+          "type": "integer"
+        },
+        "--alt-window-size": {
+          "description": "",
+          "type": "integer"
+        },
+        "--match-score": {
+          "description": "",
+          "type": "integer"
+        },
+        "--mismatch-score": {
+          "description": "",
+          "type": "integer"
+        },
+        "--gap-open-penalty": {
+          "description": "",
+          "type": "integer"
+        },
+        "--gap-extend-penalty": {
+          "description": "",
+          "type": "integer"
+        },
+        "--entropy-gap-open": {
+          "description": "",
+          "type": "flag"
+        },
+        "--repeat-gap-extend": {
+          "description": "",
+          "type": "integer"
+        },
+        "--adjust-vcf": {
+          "description": "",
+          "type": "string"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--reference": {
+        "formats_whitelist": ["fasta", "fa"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--out": {
+        "available_formats": ["vcf"]
+      }
+    }
+  },
+  {
+    "id": "vcfsom-training",
+    "category": "interpretation and classification of variants",
+    "options": {
+      "General": {
+        "--fields": {
+          "description": "INFO fields to provide to the SOM, space-delimited",
+          "type": "string"
+        },
+        "--width": {
+          "description": "width in columns of the output array",
+          "type": "integer"
+        },
+        "--height": {
+          "description": "height in columns of the output array",
+          "type": "integer"
+        },
+        "--iterations": {
+          "description": "number of training iterations or epochs",
+          "type": "integer"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      }
+    },
+    "outputs": {
+      "--save": {
+        "available_formats": ["som"]
+      }
+    }
+  },
+  {
+    "id": "vcfsom-application",
+    "category": "interpretation and classification of variants",
+    "options": {
+      "General": {
+        "--center": {
+          "description": "annotate with euclidean distance from center (x,y)",
+          "type": "string"
+        },
+        "--false-negative": {
+          "description": "replace FDR% (false detection) with FNR% (false negative)",
+          "type": "flag"
+        },
+        "--paint-tag": {
+          "description": "provide estimated FDR% in TAG in variant INFO",
+          "type": "string"
+        }
+      }
+    },
+    "inputs": {
+      "--in": {
+        "formats_whitelist": ["vcf", "vcf.gz"],
+        "required": true
+      },
+      "--apply": {
+        "formats_whitelist": ["som"],
         "required": true
       }
     },
