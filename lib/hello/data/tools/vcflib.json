@@ -361,8 +361,7 @@
     "options": {
       "General": {
         "--annotation-tag": {
-          "description": "the name of the sample flag which is added to store the
-  annotation",
+          "description": "the name of the sample flag which is added to store the annotation",
           "type": "string"
         }
       }

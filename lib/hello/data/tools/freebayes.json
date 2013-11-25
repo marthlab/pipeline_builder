@@ -97,7 +97,7 @@
         "--no-partial-obvservations": {
           "description": "Exclude observations which do not fully span the dynamically-determined detection window.",
           "type": "flag"
-        },
+        }
       },
       "Indel Realignment": {
         "--dont-left-align-indels": {
@@ -318,7 +318,7 @@
       "--failed-alleles": {
         "available_formats": ["bed"],
         "conditional": true
-      },
+      }
     }
   }
 ]
