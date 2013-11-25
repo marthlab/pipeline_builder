@@ -607,7 +607,8 @@
       },
       "--reference": {
         "formats_whitelist": ["fa", "fasta"],
-        "required": true
+        "required": true,
+        "suggestable": false
       }
     },
     "outputs": {
@@ -757,11 +758,13 @@
       },
       "--truth-vcf": {
         "formats_whitelist": ["vcf", "vcf.gz"],
-        "required": true
+        "required": true,
+        "suggestable": false
       },
       "--reference": {
         "formats_whitelist": ["fa", "fasta"],
-        "required": true
+        "required": true,
+        "suggestable": false
       }
     },
     "outputs": {
@@ -789,7 +792,8 @@
       },
       "--fasta-reference": {
         "formats_whitelist": ["fa", "fasta"],
-        "required": true
+        "required": true,
+        "suggestable": false
       }
     },
     "outputs": {
@@ -835,7 +839,8 @@
       },
       "--fasta-reference": {
         "formats_whitelist": ["fasta", "fa"],
-        "required": true
+        "required": true,
+        "suggestable": false
       }
     },
     "outputs": {
@@ -911,7 +916,8 @@
       },
       "--reference": {
         "formats_whitelist": ["fasta", "fa"],
-        "required": true
+        "required": true,
+        "suggestable": false
       }
     },
     "outputs": {
@@ -981,7 +987,8 @@
       },
       "--apply": {
         "formats_whitelist": ["som"],
-        "required": true
+        "required": true,
+        "suggestable": false
       }
     },
     "outputs": {

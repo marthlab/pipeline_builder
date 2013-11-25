@@ -39,16 +39,7 @@ _.mixin({
       });
     });
   },
-  valueOrDefault: function(value, default_val) {
+  assignWithDefault: function(value, default_val) {
     return _.isUndefined(value) ? default_val : value;
-  },
-  defaultTrue: function(value) {
-    return _.valueOrDefault(value, true);
-  },
-  defaultFalse: function(value) {
-    return _.valueOrDefault(value, false);
-  },
-  defaultUndefined: function(value) {
-    return _.valueOrDefault(value, undefined);
   }
 });

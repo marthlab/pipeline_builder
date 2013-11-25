@@ -272,39 +272,49 @@
         "accepts_multiple": true
       },
       "--fasta-reference": {
-        "formats_whitelist": ["fasta", "fa"]
+        "formats_whitelist": ["fasta", "fa"],
+        "suggestable": false
       },
       "--fasta-reference-index": {
         "formats_whitelist": ["fai"],
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--targets": {
         "formats_whitelist": ["bed"],
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--samples": {
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--populations": {
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--cnv-map": {
         "formats_whitelist": ["bed"],
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--variant-input": {
         "formats_whitelist": ["vcf", "vcf.gz"],
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--haplotype-basis-alleles": {
         "formats_whitelist": ["vcf", "vcf.gz"],
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--observation-bias": {
-        "optional": true
+        "optional": true,
+        "suggestable": false
       },
       "--contamination-estimates": {
-        "optional": true
+        "optional": true,
+        "suggestable": false
       }
     },
     "outputs": {
