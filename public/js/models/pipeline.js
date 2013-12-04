@@ -13,7 +13,7 @@ function Pipeline(pl_cfg) {
   this._constructNodes(pl_cfg.inputs, pl_cfg.tasks);
 
 }
-_.extend(Pipeline.prototype, {
+_.extend(Pipeline.prototype, Backbone.Events, {
   constructor: Pipeline,
   // PRIVATE
   _constructNodes: function(pl_input_cfgs, task_cfgs) {
@@ -62,9 +62,9 @@ _.extend(Pipeline.prototype, {
 
     _.each(sorted_node_objects, function(cfg) {
       if('task_id' in cfg) {
-        this.tasks.push(new Task(this, cfg));
+        this.addTask(cfg);
       } else if ('pipeline_input_id' in cfg) {
-        this.inputs.push(new PipelineInput(this, cfg));
+        this.addInput(cfg);
       }
     }, this);
   },
@@ -88,6 +88,14 @@ _.extend(Pipeline.prototype, {
   },
   getTaskOutputs: function() {
     return _.flatten(_.pluck(this.tasks, 'outputs'));
+  },
+  addInput: function(pl_input_cfg) {
+    this.inputs.push(new PipelineInput(this, pl_input_cfg));
+    this.trigger("change");
+  },
+  addTask: function(task_cfg) {
+    this.tasks.push(new Task(this, task_cfg));
+    this.trigger("change");
   }
 })
 
@@ -97,7 +105,7 @@ function PipelineInput(pipeline, pl_input_cfg) {
   this.description = pl_input_cfg.description;
   this.data_URL = pl_input_cfg.data_URL;
 }
-_.extend(PipelineInput.prototype, {
+_.extend(PipelineInput.prototype, Backbone.Events, {
   getFormat: function() {
     var re = /(?:\.([^.]+))?$/;
     return re.exec(this.data_URL)[1];

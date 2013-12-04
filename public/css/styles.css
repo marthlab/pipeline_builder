@@ -138,6 +138,22 @@ body {
   color: #fff;
   background: #000;
 }
+#focal .node.potential_pipeline_input {
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  background: gray;
+  z-index: 3;
+}
+#focal .node.potential_pipeline_input .icon {
+  font-size: 5px;
+  position: absolute;
+  color: #fff;
+  left: 4px;
+  top: 3px;
+}
 #focal .node.outbound_datum {
   width: 6px;
   height: 6px;
@@ -254,4 +270,7 @@ body {
   font-size: 6px;
   line-height: 12px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+.input-group {
+  width: 100%;
 }

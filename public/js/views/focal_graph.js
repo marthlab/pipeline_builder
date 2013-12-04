@@ -125,9 +125,14 @@ function FocalPipelineInputsGraph(pipeline) {
   AbstractFocalGraph.call(this, pipeline, function(){
     this.outbound_datum_nodes_with_format = _.map(this.pipeline.inputs, function(pl_input){return new FocalPipelineInputNode(this, pl_input);}, this);
     this.outbound_datum_nodes_without_format = [];
+    this.potential_pipeline_input_node = new FocalPotentialPipelineInputNode(this);
   });
 }
 FocalPipelineInputsGraph.prototype = _.extend(Object.create(AbstractFocalGraph.prototype), {
+  getNodes: function() {
+    var from_super = AbstractFocalGraph.prototype.getNodes.call(this);
+    return _.union(from_super, [this.potential_pipeline_input_node]);
+  },
   constructor: FocalPipelineInputsGraph
 });
 
@@ -174,6 +179,14 @@ function FocalTaskNode(graph, task) {
 }
 FocalTaskNode.prototype = _.extend(Object.create(abstract_focal_node), {
   constructor: FocalTaskNode
+});
+
+function FocalPotentialPipelineInputNode(graph) {
+  this.graph = graph;
+  this.label = "Add New Input";
+}
+FocalPotentialPipelineInputNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalPotentialPipelineInputNode
 });
 
 function AbstractFocalOutboundDatumNode(graph, outbound_datum) {

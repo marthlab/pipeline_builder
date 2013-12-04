@@ -43,6 +43,9 @@ html {width:100%; height: 100%; overflow:hidden;}
           .node.task_input_potential_src  {.text_node; font-size:6px; color:#000; background:transparent;}
           .node.task_input                {.dot_node(3px); }
           .node.task                      {.text_node; font-size:8px; color:#fff; background:#000;}
+          .node.potential_pipeline_input  {.dot_node(6px);
+            .icon {font-size:5px; position: absolute; color:#fff; left: 4px; top: 3px;}
+          }
           .node.outbound_datum            {.dot_node(3px);}
           .node.dest                      {.text_node; font-size:6px; color:#000; background:transparent;}
           .node.potential_dest_group      {width:0; height:0;}
@@ -65,3 +68,5 @@ html {width:100%; height: 100%; overflow:hidden;}
     line-height: 12px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
+
+  .input-group {width:100%;}

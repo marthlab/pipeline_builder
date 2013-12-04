@@ -2,37 +2,14 @@ var FocalView = Backbone.View.extend({
   template: _.template($('#FocalView-template').html()),
   initialize: function(options) {
 
+    this.listenTo(app.pipeline, 'change', _.bind(this.render, this));
+
   },
   render: function() {
-    this.$el.html(this.template());
-    this.$resizer_el = this.$el.children('.resizer');
-    this.$graph_subviews_el = this.$resizer_el.children('.graph_subviews');
 
-    this.$graph_subviews_el.append(_.pluck(this.node_views, 'el'));
-    this.$graph_subviews_el.append(_.pluck(this.edge_views, 'el'));
-
-    _.methodEach(this.node_views, 'cacheNodeDimensions');
-
-    dagre.layout()
-      .nodeSep(25)
-      .edgeSep(20)
-      .rankSep(30)
-      .rankDir("LR")
-      .nodes(this.graph.getNodes() )
-      .edges(this.graph.getEdges() )
-      .debugLevel(0)
-      .run();
-
-    _.methodEach(this.node_views, 'applyLayout');
-    _.methodEach(this.edge_views, 'applyLayout');
-    
-    this.resizeContents();
-
-  },
-  focusOn: function(datum) {
-    if(datum instanceof Task) {
-      this.graph = new FocalTaskGraph(datum);
-    } else if(datum === app.pipeline.inputs) {
+    if(this.datum instanceof Task) {
+      this.graph = new FocalTaskGraph(this.datum);
+    } else if(this.datum === app.pipeline.inputs) {
       this.graph = new FocalPipelineInputsGraph(app.pipeline);
     }
 
@@ -48,6 +25,9 @@ var FocalView = Backbone.View.extend({
       }, this),
       _.map(this.graph.task_node ? [this.graph.task_node] : [], function(node){
         return new FocalTaskNodeView({focal_view: this, node: node});
+      }, this),
+      _.map(this.graph.potential_pipeline_input_node ? [this.graph.potential_pipeline_input_node] : [], function(node){
+        return new FocalPotentialPipelineInputNodeView({focal_view: this, node: node});
       }, this),
       _.map(_.union(this.graph.outbound_datum_nodes_with_format, this.graph.outbound_datum_nodes_without_format), function(node){
         return new FocalOutboundDatumNodeView({focal_view: this, node: node});
@@ -92,6 +72,35 @@ var FocalView = Backbone.View.extend({
         return new FocalPotentialDestGroupToPotentialDestEdgeView({focal_view: this, edge: edge});
       }, this)
     )
+
+    this.$el.html(this.template());
+    this.$resizer_el = this.$el.children('.resizer');
+    this.$graph_subviews_el = this.$resizer_el.children('.graph_subviews');
+
+    this.$graph_subviews_el.append(_.pluck(this.node_views, 'el'));
+    this.$graph_subviews_el.append(_.pluck(this.edge_views, 'el'));
+
+    _.methodEach(this.node_views, 'cacheNodeDimensions');
+
+    dagre.layout()
+      .nodeSep(25)
+      .edgeSep(20)
+      .rankSep(30)
+      .rankDir("LR")
+      .nodes(this.graph.getNodes() )
+      .edges(this.graph.getEdges() )
+      .debugLevel(0)
+      .run();
+
+    _.methodEach(this.node_views, 'applyLayout');
+    _.methodEach(this.edge_views, 'applyLayout');
+    
+    this.resizeContents();
+
+  },
+  focusOn: function(datum) {
+
+    this.datum = datum;
 
     this.render();
   },
@@ -147,6 +156,49 @@ var FocalTaskNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalTaskNodeView-template').html()),
   className: 'node task',
 });
+
+var FocalPotentialPipelineInputNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalPotentialPipelineInputNodeView-template').html()),
+  className: 'node potential_pipeline_input',
+  events: {
+    'click': 'doModal'
+  },
+  doModal: function() {
+    var modal_view = new ModalPipelineInputCreationView(this.node);
+  }
+});
+
+var ModalPipelineInputCreationView = Backbone.View.extend({
+    template: _.template($('#ModalPipelineInputCreationView-template').html()),
+    className: 'modal',
+    events: {
+      'click .cancel': function() {
+        this.teardown();
+      },
+      'click .save': function() {
+        app.pipeline.addInput({data_URL: this.$input_url.val(), id: this.$input_id.val()});
+        this.teardown();
+      }
+    },
+
+    initialize: function() {
+      this.render();
+      this.$input_url = this.$el.find('input.url');
+      this.$input_id = this.$el.find('input.id');
+      this.$el.modal();
+    },
+
+    teardown: function() {
+      this.$el.modal('hide');
+      this.$el.data('modal', null);
+      this.remove();
+    },
+
+    render: function() {
+      this.$el.html(this.template());
+    }
+
+ });
 
 var FocalOutboundDatumNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalOutboundDatumNodeView-template').html()),

@@ -3,6 +3,12 @@ var GlobalView = Backbone.View.extend({
   initialize: function(options) {
     this.graph = new GlobalGraph(app.pipeline);
 
+    this.listenTo(app.pipeline, 'change', _.bind(this.render, this));
+
+    this.render();
+  },
+  render: function() {
+
     this.node_views = _.union(
       _.map(this.graph.getPrimaryNodes(), function(primary_node){
         return new GlobalPrimaryNodeView({global_view: this, node: primary_node});
@@ -16,9 +22,6 @@ var GlobalView = Backbone.View.extend({
       return new GlobalEdgeView({global_view: this, edge: edge});
     }, this);
 
-    this.render();
-  },
-  render: function() {
     this.$el.html(this.template());
     this.$resizer_el = this.$el.children('.resizer');
     this.$graph_subviews_el = this.$resizer_el.children('.graph_subviews');
