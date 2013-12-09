@@ -2,7 +2,8 @@
 
 function Tool(tool_cfg) {
   this.id = tool_cfg.id;
-  this.description = this.description || '';
+  this.package = tool_cfg.package || undefined;
+  this.description = tool_cfg.description || '';
   this.service_URL = tool_cfg.service_URL || undefined;
 
   this.options = _.flatten(_.map(tool_cfg.options, function(category_option_cfgs, category) {

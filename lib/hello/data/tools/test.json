@@ -1,6 +1,7 @@
 [
   {
     "id": "stat-analyzer-A",
+    "category": "test-cat-1",
     "options": {},
     "inputs": {
       "mos-ref-data" : {
@@ -13,6 +14,7 @@
   },
   {
     "id": "stat-analyzer-B",
+    "category": "test-cat-1",
     "options": {},
     "inputs": {
       "mos-ref-data" : {
@@ -25,6 +27,7 @@
   },
   {
     "id": "stat-analyzer-C",
+    "category": "test-cat-1",
     "options": {},
     "inputs": {
       "mos-ref-data" : {
@@ -37,6 +40,7 @@
   },
   {
     "id": "dat-analyzer-A",
+    "category": "test-cat-2",
     "options": {},
     "inputs": {
       "mos-ref-data" : {
@@ -49,6 +53,7 @@
   },
   {
     "id": "dat-analyzer-B",
+    "category": "test-cat-2",
     "options": {},
     "inputs": {
       "mos-ref-data" : {
@@ -61,6 +66,7 @@
   },
   {
     "id": "dat-analyzer-C",
+    "category": "test-cat-2",
     "options": {},
     "inputs": {
       "mos-ref-data" : {

@@ -25,7 +25,8 @@ $(function(){
   if(!_.isUndefined(pipeline_JSON)) {
     app.pipeline = new Pipeline(JSON.parse(pipeline_JSON));
   } else {
-    app.pipeline = new Pipeline(server_data.pipeline_configs[2]);
+    //app.pipeline = new Pipeline(server_data.pipeline_configs[2]);
+    app.pipeline = new Pipeline();
   }
 
   app.global_view = new GlobalView({el: $("#global")});

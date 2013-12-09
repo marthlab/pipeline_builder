@@ -146,6 +146,7 @@ body {
   -webkit-border-radius: 6px;
   background: gray;
   z-index: 3;
+  cursor: pointer;
 }
 #focal .node.potential_pipeline_input .icon {
   font-size: 5px;
