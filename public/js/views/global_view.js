@@ -1,13 +1,13 @@
 var GlobalView = Backbone.View.extend({
   template: _.template($('#GlobalView-template').html()),
   initialize: function(options) {
-    this.graph = new GlobalGraph(app.pipeline);
 
-    this.listenTo(app.pipeline, 'change', _.bind(this.render, this));
+    this.listenTo(app.pipeline, 'change', this.render);
 
     this.render();
   },
   render: function() {
+    this.graph = new GlobalGraph(app.pipeline);
 
     this.node_views = _.union(
       _.map(this.graph.getPrimaryNodes(), function(primary_node){
@@ -50,7 +50,7 @@ var GlobalView = Backbone.View.extend({
   resizeContents: function() {
     var graph_bbox = $(_.pluck(this.node_views, 'el')).bounds();
     var el_bbox = {width: this.$el.width(), height: this.$el.height()};
-    var scale = Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height);
+    var scale = Math.min(Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height), 1);
     var translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
     var translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
     this.$resizer_el.css({"transform": "scale("+scale+","+scale+") translate("+translate_x+"px,"+translate_y+"px)"});

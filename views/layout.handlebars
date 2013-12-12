@@ -77,7 +77,7 @@
       <a href="#" class="btn btn-primary save">Save changes</a>
     </div>
   </div>
-</div><
+</div>
 </script>
 
 
@@ -99,7 +99,15 @@
 </script>
 
 <script type="text/html" id='FocalPotentialDestNodeView-template'>
-  <%= node.label %>
+<div class="dropdown">
+  <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"><%= node.label %></a>
+  <ul class="dropdown-menu items" role="menu">
+  </ul>
+</div>
+</script>
+
+<script type="text/html" id='FocalPotentialDestNodeViewItem-template'>
+<%= tool_input.tool.id %>
 </script>
 
 <script>var server_data = {{{builder_json}}}; var app = {};</script>

@@ -1,10 +1,10 @@
 function GlobalGraph(pipeline) {
   this.pipeline = pipeline;
 
-  this.task_nodes = _.map(this.pipeline.tasks, function(task) {return new GlobalTaskNode(this, task);}, this);
+  this.task_nodes = _.map(this.pipeline.getFinalizedTasks(), function(task) {return new GlobalTaskNode(this, task);}, this);
   this.inputs_dummy_node = new GlobalPipelineInputsNode(this);
 
-  this.task_output_nodes = _.map(_.flatten(_.pluck(this.pipeline.tasks, "outputs"), true), function(task_output){return new GlobalTaskOutputNode(this, task_output);}, this);
+  this.task_output_nodes = _.map(_.flatten(_.pluck(this.pipeline.getFinalizedTasks(), "outputs"), true), function(task_output){return new GlobalTaskOutputNode(this, task_output);}, this);
   this.pipeline_input_nodes = _.map(this.pipeline.inputs, function(pl_input) {return new GlobalPipelineInputNode(this, pl_input);}, this);
 
   this.dummy_to_input_edges = _.map(this.pipeline_input_nodes, function(pl_input_node){

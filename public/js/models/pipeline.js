@@ -77,6 +77,9 @@ _.extend(Pipeline.prototype, Backbone.Events, {
       inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "pipeline"])))
     };
   },
+  hasTool: function(tool_id) {
+    return _.some(this.tools, {id: tool_id});
+  },
   getTool: function(tool_id) {
     return _.find(this.tools, {id: tool_id});
   },
@@ -89,13 +92,23 @@ _.extend(Pipeline.prototype, Backbone.Events, {
   getTaskOutputs: function() {
     return _.flatten(_.pluck(this.tasks, 'outputs'));
   },
+  addTool: function(tool) {
+    if(!_(this.tools).contains(tool)) {
+      this.tools.push(tool);
+    }
+  },
   addInput: function(pl_input_cfg) {
     this.inputs.push(new PipelineInput(this, pl_input_cfg));
     this.trigger("change");
   },
   addTask: function(task_cfg) {
-    this.tasks.push(new Task(this, task_cfg));
+    var task = new Task(this, task_cfg);
+    this.tasks.push(task);
     this.trigger("change");
+    this.trigger("task_added", task);
+  },
+  getFinalizedTasks: function() {
+    return _.methodFilter(this.tasks, 'isFinalized');
   }
 })
 

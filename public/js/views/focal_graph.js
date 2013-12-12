@@ -8,8 +8,9 @@ function AbstractFocalGraph(pipeline, subclass_init) {
     return _.map(dest_tasks, function(task){return new FocalDestNode(this, od_node.outbound_datum, task)}, this);
   }, this), true);
   this.potential_dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, function(od_node){
-    var potential_dest_tools = app.tool_library.getSuggestedToolsByFormat(od_node.outbound_datum.getFormat() );
-    return _.map(potential_dest_tools, function(tool){return new FocalPotentialDestNode(this, od_node.outbound_datum, tool);}, this);
+    var potential_dest_tool_inputs = app.tool_library.getSuggestedToolInputsByFormat(od_node.outbound_datum.getFormat() );
+    var potential_dest_packages = _.groupBy(potential_dest_tool_inputs, function(ti) {return ti.tool.package;});
+    return _.map(potential_dest_packages, function(tool_inputs, package){return new FocalPotentialDestNode(this, od_node.outbound_datum, package, tool_inputs);}, this);
   }, this), true);
   this.potential_dest_group_nodes = _.map(_.filter(this.outbound_datum_nodes_with_format, function(o_data_node) {
     return _.some(this.potential_dest_nodes, {outbound_datum: o_data_node.outbound_datum});
@@ -242,11 +243,11 @@ FocalDestNode.prototype = _.extend(Object.create(abstract_focal_node), {
   constructor: FocalDestNode
 });
 
-function FocalPotentialDestNode(graph, outbound_datum, potential_dest) {
+function FocalPotentialDestNode(graph, outbound_datum, package, tool_inputs) {
   this.graph = graph;
   this.outbound_datum = outbound_datum;
-  this.potential_dest = potential_dest;
-  this.label = this.potential_dest.id;
+  this.potential_dests = tool_inputs;
+  this.label = package;
 }
 FocalPotentialDestNode.prototype = _.extend(Object.create(abstract_focal_node), {
   constructor: FocalPotentialDestNode

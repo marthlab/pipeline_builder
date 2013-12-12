@@ -2,6 +2,10 @@ function Task(pipeline, task_cfg) {
 
   this.pipeline = pipeline;
   this.id = task_cfg.task_id;
+  
+  if(!this.pipeline.hasTool(task_cfg.tool_id)) {
+    this.pipeline.addTool( app.tool_library.getTool(task_cfg.tool_id) );
+  }
   this.tool = this.pipeline.getTool(task_cfg.tool_id);
 
   this.options = _.map(this.tool.options || [], function(tool_option) {
@@ -13,7 +17,7 @@ function Task(pipeline, task_cfg) {
     return new TaskInput(this, tool_input, task_cfg.input_src_assignments && task_cfg.input_src_assignments[tool_input.id]);
   }, this);
   this.outputs = _.map(this.tool.outputs || [], function(tool_output) {
-    return new TaskOutput(this, tool_output, task_cfg.output_format_assignments && task_cfg.output_format_assignments[tool_output.id]);
+    return new TaskOutput(this, tool_output, _.assignWithDefault(task_cfg.output_format_assignments && task_cfg.output_format_assignments[tool_output.id], null) );
   }, this);
 
 }
@@ -52,6 +56,15 @@ _.extend(Task.prototype, {
   hasAsInputSource: function(item) {
     return _.methodSome(this.inputs, 'hasAsSource', item);
   },
+  isFinalized: function() {
+    return this.allRequiredInputsAssigned() && this.allOutputFormatsSpecified();
+  },
+  allRequiredInputsAssigned: function() {
+    return _.methodEvery(_.filter(this.inputs, 'required'), 'isAssignedSource');
+  },
+  allOutputFormatsSpecified: function() {
+    return _.methodEvery(this.outputs, 'isAssignedFormat');
+  }
 });
 
 function TaskOption(task, tool_option, option_cfg) {
@@ -122,16 +135,16 @@ function TaskOutput(task, tool_output, format) {
   this.tool_output = tool_output;
   if(!_.isUndefined(format)) {
     this.format = format;
-  } else if(this.getPotentialFormats().length === 1) {
-    this.format = this.getPotentialFormats()[0];
+  } else if(this.getAvailableFormats().length === 1) {
+    this.format = this.getAvailableFormats()[0];
   }
 
 }
 _.extend(TaskOutput.prototype, {
   isAssignedFormat: function() {
-    return !_.isUndefined(this.format);
+    return !_.isUndefined(this.format); // format set to null counts as defined
   },
-  getPotentialFormats: function() {
+  getAvailableFormats: function() {
     return this.tool_output.available_formats;
   },
   getFormat: function() {

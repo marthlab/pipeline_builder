@@ -17,6 +17,18 @@ _.mixin({
       return value[method_name].apply(value, method_args);
     });
   },
+  methodFind: function(collection, method_name) {
+    var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
+    return _.find(collection, function(value) {
+      return value[method_name].apply(value, method_args);
+    });
+  },
+  methodEvery: function(collection, method_name) {
+    var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
+    return _.every(collection, function(value) {
+      return value[method_name].apply(value, method_args);
+    });
+  },
   methodFilter: function(collection, method_name) {
     var method_args = Array.prototype.slice.call(arguments, 2, arguments.length);
     return _.filter(collection, function(value) {

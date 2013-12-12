@@ -80,6 +80,7 @@ body {
   -ms-transform: translatez(0);
   -o-transform: translatez(0);
   transform: translatez(0);
+  z-index: 2;
 }
 #focal .resizer {
   position: relative;
@@ -99,13 +100,15 @@ body {
   position: absolute;
   z-index: 1;
 }
+#focal .node {
+  font-size: 8px;
+}
 #focal .node.task_input_src {
   min-width: 6em;
   padding: 1em;
   border-radius: 1em;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
-  font-size: 6px;
   color: #000;
   background: transparent;
 }
@@ -115,7 +118,6 @@ body {
   border-radius: 1em;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
-  font-size: 6px;
   color: #000;
   background: transparent;
 }
@@ -134,7 +136,6 @@ body {
   border-radius: 1em;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
-  font-size: 8px;
   color: #fff;
   background: #000;
 }
@@ -170,7 +171,6 @@ body {
   border-radius: 1em;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
-  font-size: 6px;
   color: #000;
   background: transparent;
 }
@@ -184,7 +184,6 @@ body {
   border-radius: 1em;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
-  font-size: 6px;
   color: #000;
   background: transparent;
 }
@@ -194,7 +193,6 @@ body {
   border-radius: 1em;
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
-  font-size: 6px;
   color: #000;
   background: transparent;
 }
@@ -215,6 +213,7 @@ body {
   -ms-transform: translatez(0);
   -o-transform: translatez(0);
   transform: translatez(0);
+  z-index: 3;
 }
 #global .resizer {
   position: relative;

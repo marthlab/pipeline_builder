@@ -2,7 +2,8 @@ var FocalView = Backbone.View.extend({
   template: _.template($('#FocalView-template').html()),
   initialize: function(options) {
 
-    this.listenTo(app.pipeline, 'change', _.bind(this.render, this));
+    this.listenTo(app.pipeline, 'change', this.render);
+    this.listenTo(app.pipeline, 'task_added', this.focusOn);
 
   },
   render: function() {
@@ -107,10 +108,10 @@ var FocalView = Backbone.View.extend({
   resizeContents: function() {
     var graph_bbox = $(_.pluck(this.node_views, 'el')).bounds();
     var el_bbox = {width: this.$el.width(), height: this.$el.height()};
-    var scale = Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height);
-    var translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
-    var translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
-    this.$resizer_el.css({"transform": "scale("+scale+","+scale+") translate("+translate_x+"px,"+translate_y+"px)"});
+    this.scale = Math.min(Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height), 1);
+    this.translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
+    this.translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
+    this.$resizer_el.css({"transform": "scale("+this.scale+","+this.scale+") translate("+this.translate_x+"px,"+this.translate_y+"px)"});
   },
   getNodeElem: function(node) {
     return _.findExact(this.node_views, {'node': node}).el;
@@ -164,7 +165,7 @@ var FocalPotentialPipelineInputNodeView = AbstractFocalNodeView.extend({
     'click': 'doModal'
   },
   doModal: function() {
-    var modal_view = new ModalPipelineInputCreationView(this.node);
+    var modal_view = new ModalPipelineInputCreationView();
   }
 });
 
@@ -176,7 +177,7 @@ var ModalPipelineInputCreationView = Backbone.View.extend({
         this.teardown();
       },
       'click .save': function() {
-        app.pipeline.addInput({data_URL: this.$input_url.val(), id: this.$input_id.val()});
+        app.pipeline.addInput({data_URL: this.$input_url.val(), pipeline_input_id: this.$input_id.val()});
         this.teardown();
       }
     },
@@ -185,7 +186,6 @@ var ModalPipelineInputCreationView = Backbone.View.extend({
       this.render();
       this.$input_url = this.$el.find('input.url');
       this.$input_id = this.$el.find('input.id');
-      this.$el.modal();
     },
 
     teardown: function() {
@@ -196,6 +196,7 @@ var ModalPipelineInputCreationView = Backbone.View.extend({
 
     render: function() {
       this.$el.html(this.template());
+      this.$el.modal();
     }
 
  });
@@ -224,6 +225,63 @@ var FocalPotentialDestGroupNodeView = AbstractFocalNodeView.extend({
 var FocalPotentialDestNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalPotentialDestNodeView-template').html()),
   className: 'node potential_dest',
+  events: {
+
+  },
+
+  teardown: function() {
+    this.remove();
+  },
+
+  render: function() {
+    this.$el.html(this.template(this));
+    this.$dropdown = this.$el.children('.dropdown');
+    this.$dropdown_button = this.$dropdown.children('a.dropdown-toggle');
+    this.item_views = _.map(this.node.potential_dests, function(potential_dest) {return new FocalPotentialDestNodeViewItem({tool_input: potential_dest, parent_view: this});}, this);
+    this.$items_container = this.$dropdown.children('.items');
+    this.$items_container.append(_.pluck(this.item_views, 'el'));
+    
+  }
+});
+
+var FocalPotentialDestNodeViewItem = Backbone.View.extend({
+  template: _.template($('#FocalPotentialDestNodeViewItem-template').html()),
+  tagName: 'li',
+  events: {
+    'click': function() {
+      var task_cfg = {
+        task_id: guid(),
+        tool_id: this.tool_input.tool.id,
+        input_src_assignments: {}
+      };
+      var datum = this.parent_view.focal_view.datum;
+      task_cfg.input_src_assignments[this.tool_input.id] = (
+        datum instanceof Task ?
+        {
+          task_id: datum.id,
+          tool_output_id: this.parent_view.node.outbound_datum.tool_output.id
+        } :
+        {
+          pipeline_input_id: this.parent_view.node.outbound_datum.id
+        }
+      );
+      app.pipeline.addTask(task_cfg);
+    }
+  },
+
+  initialize: function(options) {
+    this.tool_input = options.tool_input;
+    this.parent_view = options.parent_view;
+    this.render();
+  },
+
+  teardown: function() {
+    this.remove();
+  },
+
+  render: function() {
+    this.$el.html(this.template(this));
+  }
 });
 
 var AbstractFocalEdgeView = Backbone.View.extend({
