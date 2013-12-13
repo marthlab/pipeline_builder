@@ -9,15 +9,15 @@ function Task(pipeline, task_cfg) {
   this.tool = this.pipeline.getTool(task_cfg.tool_id);
 
   this.options = _.map(this.tool.options || [], function(tool_option) {
-    return new TaskOption(this, tool_option, task_cfg.options && _.find(task_cfg.options, function(option_cfg){
-      return option_cfg === tool_option.id || _.has(option_cfg, tool_option.id);
+    return new TaskOption(this, tool_option, task_cfg.option_value_assignments && _.find(task_cfg.option_value_assignments, function(value_assignment, tool_option_id){
+      return tool_option_id === tool_option.id;
     }));
   }, this);
   this.inputs = _.map(this.tool.inputs || [], function(tool_input) {
     return new TaskInput(this, tool_input, task_cfg.input_src_assignments && task_cfg.input_src_assignments[tool_input.id]);
   }, this);
   this.outputs = _.map(this.tool.outputs || [], function(tool_output) {
-    return new TaskOutput(this, tool_output, _.assignWithDefault(task_cfg.output_format_assignments && task_cfg.output_format_assignments[tool_output.id], null) );
+    return new TaskOutput(this, tool_output, task_cfg.output_format_assignments && task_cfg.output_format_assignments[tool_output.id]);
   }, this);
 
 }
@@ -64,14 +64,25 @@ _.extend(Task.prototype, {
   },
   allOutputFormatsSpecified: function() {
     return _.methodEvery(this.outputs, 'isAssignedFormat');
+  },
+  getOptionsByCategory: function() {
+    return _.groupBy(this.options, function(task_option){return task_option.tool_option.category; });
+  },
+  getOptionById: function(id) {
+    return _.find(this.options, function(task_option) {return task_option.tool_option.id === id; });
   }
 });
 
-function TaskOption(task, tool_option, option_cfg) {
+function TaskOption(task, tool_option, option_val) {
   this.task = task;
   this.tool_option = tool_option;
-  this.enabled = !_.isUndefined(option_cfg);
-  this.value = (this.enabled && _.isPlainObject(option_cfg) && option_cfg[this.tool_option.id]) || undefined;
+
+  if(this.tool_option.type === 'flag') {
+    this.value = _.assignWithDefault(option_val, false);
+  } else {
+    this.value = _.assignWithDefault(option_val, '');
+  }
+  
 }
 _.extend(TaskOption.prototype, {
   
@@ -137,6 +148,8 @@ function TaskOutput(task, tool_output, format) {
     this.format = format;
   } else if(this.getAvailableFormats().length === 1) {
     this.format = this.getAvailableFormats()[0];
+  } else {
+    this.format = null;
   }
 
 }
@@ -152,5 +165,8 @@ _.extend(TaskOutput.prototype, {
   },
   providesMultiple: function() {
     return this.tool_output.provides_multiple;
+  },
+  getFocalParentObject: function() {
+    return this.task;
   }
 })

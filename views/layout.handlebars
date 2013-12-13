@@ -50,6 +50,45 @@
   <%= node.label %>
 </script>
 
+<script type="text/html" id='ModalTaskOptionsView-template'>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Task Options</h4>
+    </div>
+    <div class="modal-body">
+      <form>
+      <% _(options_by_category).each(function(category_options, category){ %>
+        <fieldset>
+        <legend><%- category %></legend>
+        <% _(category_options).each(function(option){ %>
+          <% if(option.tool_option.type === 'flag') { %>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" data-tool-option-id="<%- option.tool_option.id %>" <%= option.value ? 'checked':'' %> > <%- option.tool_option.id %>
+              </label>
+            </div>
+          <% } else { %>
+          <div class="input-group">
+            <span class="input-group-addon"><%- option.tool_option.id %></span>
+            <input type="text" class="form-control" placeholder="<%- option.tool_option.default ? 'Default: '+option.tool_option.default : '' %>"  data-tool-option-id="<%- option.tool_option.id %>" value="<%- option.value %>">
+          </div>
+          <% } %>
+          <br>
+        <% }); %>
+        </fieldset>
+      <% }); %>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn cancel">Cancel</a>
+      <a href="#" class="btn btn-primary save">Save changes</a>
+    </div>
+  </div>
+</div>
+</script>
+
 <script type="text/html" id='FocalPotentialPipelineInputNodeView-template'>
   <div class="icon glyphicon glyphicon-plus">
 
@@ -86,7 +125,7 @@
 
 </script>
 
-<script type="text/html" id='FocalPotentialFormatNodeView-template'>
+<script type="text/html" id='FocalAvailableFormatNodeView-template'>
   <%= node.label %>
 </script>
 

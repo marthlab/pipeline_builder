@@ -111,6 +111,7 @@ body {
   -webkit-border-radius: 1em;
   color: #000;
   background: transparent;
+  cursor: pointer;
 }
 #focal .node.task_input_potential_src {
   min-width: 6em;
@@ -138,6 +139,7 @@ body {
   -webkit-border-radius: 1em;
   color: #fff;
   background: #000;
+  cursor: pointer;
 }
 #focal .node.potential_pipeline_input {
   width: 12px;
@@ -173,6 +175,7 @@ body {
   -webkit-border-radius: 1em;
   color: #000;
   background: transparent;
+  cursor: pointer;
 }
 #focal .node.potential_dest_group {
   width: 0;
@@ -187,7 +190,10 @@ body {
   color: #000;
   background: transparent;
 }
-#focal .node.potential_format {
+#focal .node.potential_dest .dropdown-menu li {
+  cursor: pointer;
+}
+#focal .node.available_format {
   min-width: 6em;
   padding: 1em;
   border-radius: 1em;

@@ -33,8 +33,8 @@ var FocalView = Backbone.View.extend({
       _.map(_.union(this.graph.outbound_datum_nodes_with_format, this.graph.outbound_datum_nodes_without_format), function(node){
         return new FocalOutboundDatumNodeView({focal_view: this, node: node});
       }, this),
-      _.map(this.graph.potential_format_nodes, function(node){
-        return new FocalPotentialFormatNodeView({focal_view: this, node: node});
+      _.map(this.graph.available_format_nodes, function(node){
+        return new FocalAvailableFormatNodeView({focal_view: this, node: node});
       }, this),
       _.map(this.graph.dest_nodes, function(node){
         return new FocalDestNodeView({focal_view: this, node: node});
@@ -63,8 +63,8 @@ var FocalView = Backbone.View.extend({
       _.map(this.graph.outbound_datum_to_dest_edges, function(edge){
         return new FocalOutboundDatumToDestEdgeView({focal_view: this, edge: edge});
       }, this),
-      _.map(this.graph.outbound_datum_to_potential_format_edges, function(edge){
-        return new FocalOutboundDatumToPotentialFormatEdgeView({focal_view: this, edge: edge});
+      _.map(this.graph.outbound_datum_to_available_format_edges, function(edge){
+        return new FocalOutboundDatumToAvailableFormatEdgeView({focal_view: this, edge: edge});
       }, this),
       _.map(this.graph.outbound_datum_to_potential_dest_group_edges, function(edge){
         return new FocalOutboundDatumToPotentialDestGroupEdgeView({focal_view: this, edge: edge});
@@ -140,6 +140,11 @@ var AbstractFocalNodeView = Backbone.View.extend({
 var FocalTaskInputSrcNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalTaskInputSrcNodeView-template').html()),
   className: 'node task_input_src',
+  events: {
+    'click': function() {
+      this.focal_view.focusOn( this.node.source.getFocalParentObject() );
+    }
+  }
 });
 
 var FocalTaskInputPotentialSrcNodeView = AbstractFocalNodeView.extend({
@@ -156,7 +161,51 @@ var FocalTaskInputNodeView = AbstractFocalNodeView.extend({
 var FocalTaskNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalTaskNodeView-template').html()),
   className: 'node task',
+  events: {
+    'click': 'doOptionsModal'
+  },
+  doOptionsModal: function() {
+    var options_modal_view = new ModalTaskOptionsView({task: this.node.task});
+  }
 });
+
+var ModalTaskOptionsView = Backbone.View.extend({
+    template: _.template($('#ModalTaskOptionsView-template').html()),
+    className: 'modal',
+    events: {
+      'click .cancel': function() {
+        this.teardown();
+      },
+      'click .save': function() {
+        _.each(this.$option_inputs, function(input_el) {
+          var $input = $(input_el);
+          debugger;
+          var task_option = this.task.getOptionById($input.attr('data-tool-option-id'));
+          task_option.value = task_option.tool_option.type === 'flag' ? $input.is(':checked') : $input.val();
+        }, this);
+
+        this.teardown();
+      }
+    },
+
+    initialize: function(options) {
+      this.task = options.task;
+      this.render();
+      this.$option_inputs = this.$el.find('form input');
+      this.$el.modal();
+    },
+
+    teardown: function() {
+      this.$el.modal('hide');
+      this.$el.data('modal', null);
+      this.remove();
+    },
+
+    render: function() {
+      this.$el.html(this.template({options_by_category: this.task.getOptionsByCategory()}));
+    }
+
+ });
 
 var FocalPotentialPipelineInputNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalPotentialPipelineInputNodeView-template').html()),
@@ -207,14 +256,19 @@ var FocalOutboundDatumNodeView = AbstractFocalNodeView.extend({
   attributes: function() { return {'data-hint': this.options.node.label}; }
 });
 
-var FocalPotentialFormatNodeView = AbstractFocalNodeView.extend({
-  template: _.template($('#FocalPotentialFormatNodeView-template').html()),
-  className: 'node potential_format'
+var FocalAvailableFormatNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalAvailableFormatNodeView-template').html()),
+  className: 'node available_format'
 });
 
 var FocalDestNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalDestNodeView-template').html()),
   className: 'node dest',
+  events: {
+    'click': function() {
+      this.focal_view.focusOn( this.node.dest );
+    }
+  }
 });
 
 var FocalPotentialDestGroupNodeView = AbstractFocalNodeView.extend({
@@ -348,8 +402,8 @@ var FocalTaskToTaskOutputEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge task_to_task_output',
 });
 
-var FocalOutboundDatumToPotentialFormatEdgeView = AbstractFocalEdgeView.extend({
-  className: 'edge outbound_datum_to_potential_format',
+var FocalOutboundDatumToAvailableFormatEdgeView = AbstractFocalEdgeView.extend({
+  className: 'edge outbound_datum_to_available_format',
   initialize: function(options) {
     AbstractFocalEdgeView.prototype.initialize.call(this, options);
     _.merge(this.connection_options, {

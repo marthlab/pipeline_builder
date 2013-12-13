@@ -125,5 +125,8 @@ _.extend(PipelineInput.prototype, Backbone.Events, {
   },
   providesMultiple: function() {
     return false;
+  },
+  getFocalParentObject: function() {
+    return this.pipeline.inputs;
   }
 })

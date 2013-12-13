@@ -125,63 +125,51 @@
       "Alignment Flag Filters": {
         "-isDuplicate": {
           "description": "keep only alignments that are marked as duplicate?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isFailedQC": {
           "description": "keep only alignments that failed QC?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isFirstMate": {
           "description": "keep only alignments marked as first mate?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isMapped": {
           "description": "keep only alignments that were mapped?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isMateMapped": {
           "description": "keep only alignments with mates that mapped",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isMateReverseStrand": {
           "description": "keep only alignments with mate on reverse strand?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isPaired": {
           "description": "keep only alignments that were sequenced as paired?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isPrimaryAlignment": {
           "description": "keep only alignments marked as primary?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isProperPair": {
           "description": "keep only alignments that passed PE resolution?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isReverseStrand": {
           "description": "keep only alignments on reverse strand?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isSecondMate": {
           "description": "keep only alignments marked as second mate?",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         },
         "-isSingleton": {
           "description": "keep only singletons",
-          "default": "true",
-          "type": "bool"
+          "type": "flag"
         }
       }
     },
