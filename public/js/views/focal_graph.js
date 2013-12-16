@@ -59,8 +59,11 @@ function FocalTaskGraph(task) {
         return new FocalTaskInputSrcNode(this, task_input, source);
       }, this);
     }, this));
-    this.task_input_potential_src_nodes = _.flatten(_.map(_.methodFilter(this.task.inputs, 'hasPotentialSources'), function(task_input){
-      return new FocalTaskInputPotentialSrcNode(this, task_input);
+    this.task_input_add_existing_src_nodes = _.flatten(_.map(_.methodFilter(this.task.inputs, 'hasPotentialSources'), function(task_input){
+      return new FocalTaskInputAddExistingSrcNode(this, task_input);
+    }, this));
+    this.task_input_add_new_src_nodes = _.flatten(_.map(_.methodReject(this.task.inputs, 'isSaturated'), function(task_input){
+      return new FocalTaskInputAddNewSrcNode(this, task_input);
     }, this));
     
     this.outbound_datum_nodes_with_format = _.map(_.methodFilter(this.task.outputs, 'isAssignedFormat'), function(task_output){return new FocalTaskOutputNode(this, task_output);}, this);
@@ -85,11 +88,18 @@ function FocalTaskGraph(task) {
         target: _.findExact(this.task_input_nodes, {task_input: tis_node.task_input})
       });
     }, this);
-    this.task_input_potential_src_to_task_input_edges = _.map(this.task_input_potential_src_nodes, function(tips_node){
+    this.task_input_add_existing_src_to_task_input_edges = _.map(this.task_input_add_existing_src_nodes, function(tiaes_node){
       return new FocalEdge({
         graph: this,
-        source: tips_node,
-        target: _.findExact(this.task_input_nodes, {task_input: tips_node.task_input})
+        source: tiaes_node,
+        target: _.findExact(this.task_input_nodes, {task_input: tiaes_node.task_input})
+      });
+    }, this);
+    this.task_input_add_new_src_to_task_input_edges = _.map(this.task_input_add_new_src_nodes, function(tians_node){
+      return new FocalEdge({
+        graph: this,
+        source: tians_node,
+        target: _.findExact(this.task_input_nodes, {task_input: tians_node.task_input})
       });
     }, this);
     this.task_to_task_output_edges = _.map(_.union(this.outbound_datum_nodes_with_format, this.outbound_datum_nodes_without_format), function(od_node){
@@ -114,11 +124,11 @@ FocalTaskGraph.prototype = _.extend(Object.create(AbstractFocalGraph.prototype),
   constructor: FocalTaskGraph,
   getNodes: function() {
     var from_super = AbstractFocalGraph.prototype.getNodes.call(this);
-    return _.union(from_super, [this.task_node], this.task_input_nodes, this.task_input_src_nodes, this.task_input_potential_src_nodes, this.available_format_nodes);
+    return _.union(from_super, [this.task_node], this.task_input_nodes, this.task_input_src_nodes, this.task_input_add_existing_src_nodes, this.task_input_add_new_src_nodes, this.available_format_nodes);
   },
   getEdges: function() {
     var from_super = AbstractFocalGraph.prototype.getEdges.call(this);
-    return _.union(from_super, this.task_input_to_task_edges, this.task_input_source_to_task_input_edges, this.task_input_potential_src_to_task_input_edges, this.task_to_task_output_edges, this.outbound_datum_to_available_format_edges);
+    return _.union(from_super, this.task_input_to_task_edges, this.task_input_source_to_task_input_edges, this.task_input_add_existing_src_to_task_input_edges, this.task_input_add_new_src_to_task_input_edges, this.task_to_task_output_edges, this.outbound_datum_to_available_format_edges);
   }
 });
 
@@ -155,13 +165,22 @@ FocalTaskInputSrcNode.prototype = _.extend(Object.create(abstract_focal_node), {
   constructor: FocalTaskInputSrcNode
 });
 
-function FocalTaskInputPotentialSrcNode(graph, task_input) {
+function FocalTaskInputAddNewSrcNode(graph, task_input) {
   this.graph = graph;
   this.task_input = task_input;
-  this.label = "Select Data Source";
+  this.label = "Add Data";
 }
-FocalTaskInputPotentialSrcNode.prototype = _.extend(Object.create(abstract_focal_node), {
-  constructor: FocalTaskInputPotentialSrcNode
+FocalTaskInputAddNewSrcNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalTaskInputAddNewSrcNode
+});
+
+function FocalTaskInputAddExistingSrcNode(graph, task_input) {
+  this.graph = graph;
+  this.task_input = task_input;
+  this.label = "Select Data";
+}
+FocalTaskInputAddExistingSrcNode.prototype = _.extend(Object.create(abstract_focal_node), {
+  constructor: FocalTaskInputAddExistingSrcNode
 });
 
 function FocalTaskInputNode(graph, task_input) {
@@ -216,9 +235,10 @@ FocalTaskOutputNode.prototype = _.extend(Object.create(AbstractFocalOutboundDatu
   constructor: FocalTaskOutputNode
 });
 
-function FocalAvailableFormatNode(graph, outbound_datum, format) {
+function FocalAvailableFormatNode(graph, task_output, format) {
   this.graph = graph;
-  this.outbound_datum = outbound_datum;
+  this.outbound_datum = this.task_output = task_output;
+  this.format = format;
   this.label = format;
 }
 FocalAvailableFormatNode.prototype = _.extend(Object.create(abstract_focal_node), {

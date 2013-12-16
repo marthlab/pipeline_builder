@@ -104,6 +104,10 @@ _.extend(Pipeline.prototype, Backbone.Events, {
   addTask: function(task_cfg) {
     var task = new Task(this, task_cfg);
     this.tasks.push(task);
+    this.listenTo(task, "change", function(){
+      this.trigger("change");
+    });
+
     this.trigger("change");
     this.trigger("task_added", task);
   },
@@ -128,5 +132,8 @@ _.extend(PipelineInput.prototype, Backbone.Events, {
   },
   getFocalParentObject: function() {
     return this.pipeline.inputs;
+  },
+  dependsOnTask: function(task) {
+    return false;
   }
 })

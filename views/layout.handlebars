@@ -38,8 +38,12 @@
   <%= node.label %>
 </script>
 
-<script type="text/html" id='FocalTaskInputPotentialSrcNodeView-template'>
-  <%= node.label %>
+<script type="text/html" id='FocalTaskInputAddExistingSrcNodeView-template'>
+  <a href="#">Select Data</a>
+</script>
+
+<script type="text/html" id='FocalTaskInputAddNewSrcNodeView-template'>
+  <a href="#">Add New Data</a>
 </script>
 
 <script type="text/html" id='FocalTaskInputNodeView-template'>
@@ -74,8 +78,8 @@
             <span class="input-group-addon"><%- option.tool_option.id %></span>
             <input type="text" class="form-control" placeholder="<%- option.tool_option.default ? 'Default: '+option.tool_option.default : '' %>"  data-tool-option-id="<%- option.tool_option.id %>" value="<%- option.value %>">
           </div>
-          <% } %>
           <br>
+          <% } %>
         <% }); %>
         </fieldset>
       <% }); %>

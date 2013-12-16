@@ -185,6 +185,9 @@
     },
     "outputs": {
       "-coverage_stats": {
+      },
+      "-out": {
+        "available_formats": ["bam"]
       }
     }
   },

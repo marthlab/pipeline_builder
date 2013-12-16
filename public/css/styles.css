@@ -17,7 +17,6 @@
 }
 .graph_view .graph_subviews {
   position: relative;
-  display: inline;
 }
 .graph_view .node {
   position: absolute;
@@ -89,7 +88,6 @@ body {
 }
 #focal .graph_subviews {
   position: relative;
-  display: inline;
 }
 #focal .node {
   position: absolute;
@@ -113,7 +111,16 @@ body {
   background: transparent;
   cursor: pointer;
 }
-#focal .node.task_input_potential_src {
+#focal .node.task_input_add_existing_src {
+  min-width: 6em;
+  padding: 1em;
+  border-radius: 1em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  color: #000;
+  background: transparent;
+}
+#focal .node.task_input_add_new_src {
   min-width: 6em;
   padding: 1em;
   border-radius: 1em;
@@ -190,6 +197,10 @@ body {
   color: #000;
   background: transparent;
 }
+#focal .node.potential_dest .dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
 #focal .node.potential_dest .dropdown-menu li {
   cursor: pointer;
 }
@@ -201,6 +212,7 @@ body {
   -webkit-border-radius: 1em;
   color: #000;
   background: transparent;
+  cursor: pointer;
 }
 #global_container {
   flex-grow: 2;
@@ -228,7 +240,6 @@ body {
 }
 #global .graph_subviews {
   position: relative;
-  display: inline;
 }
 #global .node {
   position: absolute;
@@ -238,6 +249,9 @@ body {
 #global .edge {
   position: absolute;
   z-index: 1;
+}
+#global .graph_subviews {
+  display: inline;
 }
 #global .dummy_node {
   position: absolute;
@@ -279,4 +293,13 @@ body {
 }
 .input-group {
   width: 100%;
+}
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }

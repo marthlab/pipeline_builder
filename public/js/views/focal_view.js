@@ -18,8 +18,11 @@ var FocalView = Backbone.View.extend({
       _.map(this.graph.task_input_src_nodes, function(node){
         return new FocalTaskInputSrcNodeView({focal_view: this, node: node});
       }, this),
-      _.map(this.graph.task_input_potential_src_nodes, function(node){
-        return new FocalTaskInputPotentialSrcNodeView({focal_view: this, node: node});
+      _.map(this.graph.task_input_add_existing_src_nodes, function(node){
+        return new FocalTaskInputAddExistingSrcNodeView({focal_view: this, node: node});
+      }, this),
+      _.map(this.graph.task_input_add_new_src_nodes, function(node){
+        return new FocalTaskInputAddNewSrcNodeView({focal_view: this, node: node});
       }, this),
       _.map(this.graph.task_input_nodes, function(node){
         return new FocalTaskInputNodeView({focal_view: this, node: node});
@@ -48,8 +51,11 @@ var FocalView = Backbone.View.extend({
     );
     
     this.edge_views = _.union(
-      _.map(this.graph.task_input_potential_src_to_task_input_edges, function(edge){
-        return new FocalTaskInputPotentialSrcToTaskInputEdgeView({focal_view: this, edge: edge});
+      _.map(this.graph.task_input_add_existing_src_to_task_input_edges, function(edge){
+        return new FocalTaskInputAddExistingSrcToTaskInputEdgeView({focal_view: this, edge: edge});
+      }, this),
+      _.map(this.graph.task_input_add_new_src_to_task_input_edges, function(edge){
+        return new FocalTaskInputAddNewSrcToTaskInputEdgeView({focal_view: this, edge: edge});
       }, this),
       _.map(this.graph.task_input_source_to_task_input_edges, function(edge){
         return new FocalTaskInputSourceToTaskInputEdgeView({focal_view: this, edge: edge});
@@ -84,7 +90,7 @@ var FocalView = Backbone.View.extend({
     _.methodEach(this.node_views, 'cacheNodeDimensions');
 
     dagre.layout()
-      .nodeSep(25)
+      .nodeSep(15)
       .edgeSep(20)
       .rankSep(30)
       .rankDir("LR")
@@ -147,9 +153,14 @@ var FocalTaskInputSrcNodeView = AbstractFocalNodeView.extend({
   }
 });
 
-var FocalTaskInputPotentialSrcNodeView = AbstractFocalNodeView.extend({
-  template: _.template($('#FocalTaskInputSrcNodeView-template').html()),
-  className: 'node task_input_potential_src',
+var FocalTaskInputAddExistingSrcNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalTaskInputAddExistingSrcNodeView-template').html()),
+  className: 'node task_input_add_existing_src',
+});
+
+var FocalTaskInputAddNewSrcNodeView = AbstractFocalNodeView.extend({
+  template: _.template($('#FocalTaskInputAddNewSrcNodeView-template').html()),
+  className: 'node task_input_add_new_src',
 });
 
 var FocalTaskInputNodeView = AbstractFocalNodeView.extend({
@@ -179,7 +190,6 @@ var ModalTaskOptionsView = Backbone.View.extend({
       'click .save': function() {
         _.each(this.$option_inputs, function(input_el) {
           var $input = $(input_el);
-          debugger;
           var task_option = this.task.getOptionById($input.attr('data-tool-option-id'));
           task_option.value = task_option.tool_option.type === 'flag' ? $input.is(':checked') : $input.val();
         }, this);
@@ -258,7 +268,12 @@ var FocalOutboundDatumNodeView = AbstractFocalNodeView.extend({
 
 var FocalAvailableFormatNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalAvailableFormatNodeView-template').html()),
-  className: 'node available_format'
+  className: 'node available_format',
+  events: {
+    'click': function() {
+      this.node.task_output.setFormat(this.node.format);
+    }
+  }
 });
 
 var FocalDestNodeView = AbstractFocalNodeView.extend({
@@ -370,7 +385,19 @@ var AbstractFocalEdgeView = Backbone.View.extend({
   }
 });
 
-var FocalTaskInputPotentialSrcToTaskInputEdgeView = AbstractFocalEdgeView.extend({
+var FocalTaskInputAddExistingSrcToTaskInputEdgeView = AbstractFocalEdgeView.extend({
+  className: 'edge potential_src_to_task_input',
+  initialize: function(options) {
+    AbstractFocalEdgeView.prototype.initialize.call(this, options);
+    _.merge(this.connection_options, {
+      paintStyle: {
+        "stroke-dasharray": "2, 2"
+      }
+    });
+  }
+});
+
+var FocalTaskInputAddNewSrcToTaskInputEdgeView = AbstractFocalEdgeView.extend({
   className: 'edge potential_src_to_task_input',
   initialize: function(options) {
     AbstractFocalEdgeView.prototype.initialize.call(this, options);

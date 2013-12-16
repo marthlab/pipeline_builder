@@ -9,19 +9,31 @@ function Task(pipeline, task_cfg) {
   this.tool = this.pipeline.getTool(task_cfg.tool_id);
 
   this.options = _.map(this.tool.options || [], function(tool_option) {
-    return new TaskOption(this, tool_option, task_cfg.option_value_assignments && _.find(task_cfg.option_value_assignments, function(value_assignment, tool_option_id){
+    var task_option = new TaskOption(this, tool_option, task_cfg.option_value_assignments && _.find(task_cfg.option_value_assignments, function(value_assignment, tool_option_id){
       return tool_option_id === tool_option.id;
     }));
+    this.listenTo(task_option, "change", function(){
+      this.trigger("change");
+    });
+    return task_option;
   }, this);
   this.inputs = _.map(this.tool.inputs || [], function(tool_input) {
-    return new TaskInput(this, tool_input, task_cfg.input_src_assignments && task_cfg.input_src_assignments[tool_input.id]);
+    var task_input = new TaskInput(this, tool_input, task_cfg.input_src_assignments && task_cfg.input_src_assignments[tool_input.id]);
+    this.listenTo(task_input, "change", function(){
+      this.trigger("change");
+    });
+    return task_input;
   }, this);
   this.outputs = _.map(this.tool.outputs || [], function(tool_output) {
-    return new TaskOutput(this, tool_output, task_cfg.output_format_assignments && task_cfg.output_format_assignments[tool_output.id]);
+    var task_output = new TaskOutput(this, tool_output, task_cfg.output_format_assignments && task_cfg.output_format_assignments[tool_output.id]);
+    this.listenTo(task_output, "change", function(){
+      this.trigger("change");
+    });
+    return task_output;
   }, this);
 
 }
-_.extend(Task.prototype, {
+_.extend(Task.prototype, Backbone.Events, {
   toJSON: function() {
     var assigned_options = _.methodFilter(this.options, "isAssignedValue");
     var assigned_inputs = _.methodFilter(this.inputs, "isAssignedSrc");
@@ -84,7 +96,7 @@ function TaskOption(task, tool_option, option_val) {
   }
   
 }
-_.extend(TaskOption.prototype, {
+_.extend(TaskOption.prototype, Backbone.Events, {
   
 })
 
@@ -99,8 +111,10 @@ function TaskInput(task, tool_input, input_src_assignment_cfg) {
     this.sources = [];
   }
 
+  this.enabled = this.tool_input.required || this.isAssignedSource();
+
 }
-_.extend(TaskInput.prototype, {
+_.extend(TaskInput.prototype, Backbone.Events, {
   _getSourceFromCfg: function(cfg) {
     if('task_id' in cfg && 'tool_output_id' in cfg) {
       return this.task.pipeline.getTask(cfg.task_id).getOutput(cfg.tool_output_id);
@@ -133,8 +147,9 @@ _.extend(TaskInput.prototype, {
     if(this.isSaturated()) return [];
 
     return _.union(this.task.pipeline.inputs, this.task.pipeline.getTaskOutputs()).filter(function(datum){
-      return !this.hasAsSource(datum) && this.acceptsFormatOf(datum) && this.compatibleWithMultiplicityOf(datum);
+      return !this.hasAsSource(datum) && this.acceptsFormatOf(datum) && this.compatibleWithMultiplicityOf(datum) && !datum.dependsOnTask(this.task);
     }, this);
+
   },
   hasPotentialSources: function() {
     return this.getPotentialSources().length > 0;
@@ -149,11 +164,11 @@ function TaskOutput(task, tool_output, format) {
   } else if(this.getAvailableFormats().length === 1) {
     this.format = this.getAvailableFormats()[0];
   } else {
-    this.format = null;
+    this.format = undefined;
   }
 
 }
-_.extend(TaskOutput.prototype, {
+_.extend(TaskOutput.prototype, Backbone.Events, {
   isAssignedFormat: function() {
     return !_.isUndefined(this.format); // format set to null counts as defined
   },
@@ -163,10 +178,17 @@ _.extend(TaskOutput.prototype, {
   getFormat: function() {
     return this.format;
   },
+  setFormat: function(format) {
+    this.format = format;
+    this.trigger("change");
+  },
   providesMultiple: function() {
     return this.tool_output.provides_multiple;
   },
   getFocalParentObject: function() {
     return this.task;
+  },
+  dependsOnTask: function(task) {
+    return (task === this.task) || _.methodSome(_.flatten(_.pluck(this.task.inputs, 'sources')), 'dependsOnTask', task);
   }
 })
