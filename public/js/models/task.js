@@ -82,6 +82,9 @@ _.extend(Task.prototype, Backbone.Events, {
   },
   getOptionById: function(id) {
     return _.find(this.options, function(task_option) {return task_option.tool_option.id === id; });
+  },
+  getInputById: function(id) {
+    return _.find(this.inputs, function(task_input) {return task_input.tool_input.id === id; });
   }
 });
 
@@ -134,6 +137,9 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   acceptsFormat: function(format) {
     return this.tool_input.acceptsFormat(format);
   },
+  isRequired: function(format) {
+    return this.tool_input.required;
+  },
   acceptsFormatOf: function(datum) {
     return this.acceptsFormat(datum.getFormat());
   },
@@ -153,6 +159,19 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   },
   hasPotentialSources: function() {
     return this.getPotentialSources().length > 0;
+  },
+  enable: function() {
+    this.enabled = true;
+    this.trigger("change");
+  },
+  disable: function() {
+    this.sources = [];
+    this.enabled = false;
+    this.trigger("change");
+  },
+  addSource: function(item) {
+    this.sources.push(item);
+    this.trigger("change");
   }
 })
 

@@ -161,6 +161,16 @@ var FocalTaskInputAddExistingSrcNodeView = AbstractFocalNodeView.extend({
 var FocalTaskInputAddNewSrcNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalTaskInputAddNewSrcNodeView-template').html()),
   className: 'node task_input_add_new_src',
+  events: {
+    'click': 'doModal'
+  },
+  doModal: function() {
+    var add_as_source = (function(pipeline_input) {
+      this.node.task_input.addSource(pipeline_input);
+    }).bind(this);
+
+    var modal_view = new ModalPipelineInputCreationView({on_after_create: add_as_source});
+  }
 });
 
 var FocalTaskInputNodeView = AbstractFocalNodeView.extend({
@@ -189,9 +199,15 @@ var ModalTaskOptionsView = Backbone.View.extend({
       },
       'click .save': function() {
         _.each(this.$option_inputs, function(input_el) {
-          var $input = $(input_el);
-          var task_option = this.task.getOptionById($input.attr('data-tool-option-id'));
-          task_option.value = task_option.tool_option.type === 'flag' ? $input.is(':checked') : $input.val();
+          var $input_el = $(input_el);
+          var task_option = this.task.getOptionById($input_el.attr('data-tool-option-id'));
+          task_option.value = task_option.tool_option.type === 'flag' ? $input_el.is(':checked') : $input_el.val();
+        }, this);
+
+        _.each(this.$nonrequired_input_inputs, function(input_el) {
+          var $input_el = $(input_el);
+          var task_input = this.task.getInputById($input_el.attr('data-tool-input-id'));
+          $input_el.is(':checked') ? task_input.enable() : task_input.disable();
         }, this);
 
         this.teardown();
@@ -201,7 +217,8 @@ var ModalTaskOptionsView = Backbone.View.extend({
     initialize: function(options) {
       this.task = options.task;
       this.render();
-      this.$option_inputs = this.$el.find('form input');
+      this.$option_inputs = this.$el.find('input.task_option');
+      this.$nonrequired_input_inputs = this.$el.find('input.task_input');
       this.$el.modal();
     },
 
@@ -212,7 +229,7 @@ var ModalTaskOptionsView = Backbone.View.extend({
     },
 
     render: function() {
-      this.$el.html(this.template({options_by_category: this.task.getOptionsByCategory()}));
+      this.$el.html(this.template({options_by_category: this.task.getOptionsByCategory(), nonrequired_inputs: _.methodReject(this.task.inputs, 'isRequired') }));
     }
 
  });
@@ -236,15 +253,17 @@ var ModalPipelineInputCreationView = Backbone.View.extend({
         this.teardown();
       },
       'click .save': function() {
-        app.pipeline.addInput({data_URL: this.$input_url.val(), pipeline_input_id: this.$input_id.val()});
+        var new_input = app.pipeline.addInput({data_URL: this.$input_url.val(), pipeline_input_id: this.$input_id.val()});
+        this.onAfterCreate(new_input);
         this.teardown();
       }
     },
 
-    initialize: function() {
+    initialize: function(options) {
       this.render();
       this.$input_url = this.$el.find('input.url');
       this.$input_id = this.$el.find('input.id');
+      this.onAfterCreate = _.assignWithDefault(options && options.on_after_create, _.noop);
     },
 
     teardown: function() {

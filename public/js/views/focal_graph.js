@@ -52,17 +52,19 @@ function FocalTaskGraph(task) {
   AbstractFocalGraph.call(this, task.pipeline, function(){
     this.task = task;
 
+    var enabled_inputs = _.filter(this.task.inputs, 'enabled');
+
     this.task_node = new FocalTaskNode(this, this.task);
-    this.task_input_nodes = _.map(this.task.inputs, function(task_input){return new FocalTaskInputNode(this, task_input);}, this);
-    this.task_input_src_nodes = _.flatten(_.map(this.task.inputs, function(task_input) {
+    this.task_input_nodes = _.map(enabled_inputs, function(task_input){return new FocalTaskInputNode(this, task_input);}, this);
+    this.task_input_src_nodes = _.flatten(_.map(enabled_inputs, function(task_input) {
       return _.map(task_input.sources, function(source) {
         return new FocalTaskInputSrcNode(this, task_input, source);
       }, this);
     }, this));
-    this.task_input_add_existing_src_nodes = _.flatten(_.map(_.methodFilter(this.task.inputs, 'hasPotentialSources'), function(task_input){
+    this.task_input_add_existing_src_nodes = _.flatten(_.map(_.methodFilter(enabled_inputs, 'hasPotentialSources'), function(task_input){
       return new FocalTaskInputAddExistingSrcNode(this, task_input);
     }, this));
-    this.task_input_add_new_src_nodes = _.flatten(_.map(_.methodReject(this.task.inputs, 'isSaturated'), function(task_input){
+    this.task_input_add_new_src_nodes = _.flatten(_.map(_.methodReject(enabled_inputs, 'isSaturated'), function(task_input){
       return new FocalTaskInputAddNewSrcNode(this, task_input);
     }, this));
     

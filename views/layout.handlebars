@@ -63,6 +63,18 @@
     </div>
     <div class="modal-body">
       <form>
+      <% if(nonrequired_inputs.length > 0){ %>
+        <fieldset>
+        <legend>Enable Optional Data Inputs</legend>
+        <% _(nonrequired_inputs).each(function(input){ %>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" class="task_input" data-tool-input-id="<%- input.tool_input.id %>" <%= input.enabled ? 'checked':'' %> > <%- input.tool_input.id %>
+            </label>
+          </div>
+        <% }); %>
+        </fieldset>
+      <% } %>
       <% _(options_by_category).each(function(category_options, category){ %>
         <fieldset>
         <legend><%- category %></legend>
@@ -70,13 +82,13 @@
           <% if(option.tool_option.type === 'flag') { %>
             <div class="checkbox">
               <label>
-                <input type="checkbox" data-tool-option-id="<%- option.tool_option.id %>" <%= option.value ? 'checked':'' %> > <%- option.tool_option.id %>
+                <input type="checkbox" class="task_option" data-tool-option-id="<%- option.tool_option.id %>" <%= option.value ? 'checked':'' %> > <%- option.tool_option.id %>
               </label>
             </div>
           <% } else { %>
           <div class="input-group">
             <span class="input-group-addon"><%- option.tool_option.id %></span>
-            <input type="text" class="form-control" placeholder="<%- option.tool_option.default ? 'Default: '+option.tool_option.default : '' %>"  data-tool-option-id="<%- option.tool_option.id %>" value="<%- option.value %>">
+            <input type="text" class="form-control task_option" placeholder="<%- option.tool_option.default ? 'Default: '+option.tool_option.default : '' %>"  data-tool-option-id="<%- option.tool_option.id %>" value="<%- option.value %>">
           </div>
           <br>
           <% } %>

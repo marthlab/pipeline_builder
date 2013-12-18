@@ -53,5 +53,7 @@ _.mixin({
   },
   assignWithDefault: function(value, default_val) {
     return _.isUndefined(value) ? default_val : value;
+  },
+  noop: function() {
   }
 });

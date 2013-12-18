@@ -98,8 +98,10 @@ _.extend(Pipeline.prototype, Backbone.Events, {
     }
   },
   addInput: function(pl_input_cfg) {
-    this.inputs.push(new PipelineInput(this, pl_input_cfg));
+    var input = new PipelineInput(this, pl_input_cfg);
+    this.inputs.push(input);
     this.trigger("change");
+    return input;
   },
   addTask: function(task_cfg) {
     var task = new Task(this, task_cfg);
