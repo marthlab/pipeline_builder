@@ -33,4 +33,8 @@ $(function(){
   app.focal_view = new FocalView({el: $("#focal")});
   //var monitor_view = new MonitorView(); 
 
+  // start with focal view on pipeline inputs, then trigger pipeline input creation
+  // start with global view in task selection mode
+  // when adding existing datum as a task input source, global view enters datum selection mode
+
 });

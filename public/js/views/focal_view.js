@@ -121,12 +121,17 @@ var FocalView = Backbone.View.extend({
   },
   getNodeElem: function(node) {
     return _.findExact(this.node_views, {'node': node}).el;
+  },
+  blockUI: function() {
+    this.$el.block({ message: 'Select your input datum from the global graph (below).' });
+  },
+  unblockUI: function() {
+    this.$el.unblock();
   }
 });
 
 var AbstractFocalNodeView = Backbone.View.extend({
   initialize: function(options) {
-    this.focal_view = options.focal_view;
     this.node = options.node;
 
     this.render();
@@ -148,7 +153,7 @@ var FocalTaskInputSrcNodeView = AbstractFocalNodeView.extend({
   className: 'node task_input_src',
   events: {
     'click': function() {
-      this.focal_view.focusOn( this.node.source.getFocalParentObject() );
+      app.focal_view.focusOn( this.node.source.getFocalParentObject() );
     }
   }
 });
@@ -156,6 +161,20 @@ var FocalTaskInputSrcNodeView = AbstractFocalNodeView.extend({
 var FocalTaskInputAddExistingSrcNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalTaskInputAddExistingSrcNodeView-template').html()),
   className: 'node task_input_add_existing_src',
+  events: {
+    'click': 'doAddExisting'
+  },
+  doAddExisting: function() {
+
+    var handle_selected = (function(selected_datum) {
+      this.node.task_input.addSource(selected_datum);
+      app.global_view.setMode("TASK_SELECTION");
+      app.focal_view.unblockUI();;
+    }).bind(this);
+
+    app.focal_view.blockUI();
+    app.global_view.setMode("DATUM_SELECTION", {selectable_data: this.node.task_input.getPotentialSources(), on_datum_selected: handle_selected});
+  }
 });
 
 var FocalTaskInputAddNewSrcNodeView = AbstractFocalNodeView.extend({
@@ -300,7 +319,7 @@ var FocalDestNodeView = AbstractFocalNodeView.extend({
   className: 'node dest',
   events: {
     'click': function() {
-      this.focal_view.focusOn( this.node.dest );
+      app.focal_view.focusOn( this.node.dest );
     }
   }
 });
@@ -342,11 +361,10 @@ var FocalPotentialDestNodeViewItem = Backbone.View.extend({
         tool_id: this.tool_input.tool.id,
         input_src_assignments: {}
       };
-      var datum = this.parent_view.focal_view.datum;
       task_cfg.input_src_assignments[this.tool_input.id] = (
-        datum instanceof Task ?
+        app.focal_view.datum instanceof Task ?
         {
-          task_id: datum.id,
+          task_id: app.focal_view.datum.id,
           tool_output_id: this.parent_view.node.outbound_datum.tool_output.id
         } :
         {
@@ -375,10 +393,9 @@ var FocalPotentialDestNodeViewItem = Backbone.View.extend({
 var AbstractFocalEdgeView = Backbone.View.extend({
   className: 'edge test',
   initialize: function(options) {
-    this.focal_view = options.focal_view;
     this.edge = options.edge;
-    this.source_el = this.focal_view.getNodeElem(this.edge.source);
-    this.target_el = this.focal_view.getNodeElem(this.edge.target);
+    this.source_el = app.focal_view.getNodeElem(this.edge.source);
+    this.target_el = app.focal_view.getNodeElem(this.edge.target);
     this.connection_options = {
       anchors:[["Continuous", { faces:["right"] } ], ["Continuous", { faces:["left"] } ]],
       paintStyle:{ 

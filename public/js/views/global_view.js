@@ -46,6 +46,7 @@ var GlobalView = Backbone.View.extend({
     
     this.resizeContents();
 
+    this.setMode("TASK_SELECTION");
   },
   resizeContents: function() {
     var graph_bbox = $(_.pluck(this.node_views, 'el')).bounds();
@@ -57,8 +58,21 @@ var GlobalView = Backbone.View.extend({
   },
   getNodeElem: function(node) {
     return _.findExact(this.node_views, {'node': node}).el;
+  },
+  setMode: function(mode, options) {
+    this.mode = mode;
+
+    if(this.mode === 'DATUM_SELECTION') {
+      this.selectable_data = options.selectable_data;
+      this.on_datum_selected = options.on_datum_selected;
+    }
+
+    this.$el.alterClass('mode-*', 'mode-'+this.mode); // remove all existing 'mode-...' classes and add for class for current mode
+
+    _.methodEach(this.node_views, 'onChangeMode');
   }
 });
+GlobalView.modes = {DATUM_SELECTION: {}, TASK_SELECTION: {}};
 
 var AbstractGlobalNodeView = Backbone.View.extend({
   initialize: function(options) {
@@ -76,19 +90,41 @@ var AbstractGlobalNodeView = Backbone.View.extend({
   },
   cacheNodeDimensions: function() {
     _.extend(this.node, {width: this.$el.outerWidth(), height: this.$el.outerHeight()});
+  },
+  onChangeMode: function(options) {
+    this.undelegateEvents();
+    this.events = this.constructor.mode_events[this.global_view.mode];
+    this.delegateEvents();
   }
 });
 
 var GlobalPrimaryNodeView = AbstractGlobalNodeView.extend({
-  className: 'node primary',
-  events: {
-    'click': function() { app.focal_view.focusOn(this.node.datum); }
-  }
+  className: 'node primary'
 });
+GlobalPrimaryNodeView.mode_events = {
+  TASK_SELECTION: {
+    'click': function() { app.focal_view.focusOn(this.node.datum); }
+  },
+  DATUM_SELECTION: {}
+};
 
 var GlobalSecondaryNodeView = AbstractGlobalNodeView.extend({
   className: 'node secondary',
+  onChangeMode: function(options) {
+    AbstractGlobalNodeView.prototype.onChangeMode.call(this);
+    this.$el.toggleClass('selectable', _.contains(app.global_view.selectable_data, this.node.datum));
+  }
 });
+GlobalSecondaryNodeView.mode_events = {
+  TASK_SELECTION: {},
+  DATUM_SELECTION: {
+    'click': function() {
+      if(_.contains(app.global_view.selectable_data, this.node.datum)) {
+        app.global_view.on_datum_selected(this.node.datum);
+      }
+    }
+  }
+};
 
 var GlobalEdgeView = Backbone.View.extend({
   className: 'edge',
