@@ -12,23 +12,14 @@ function Task(pipeline, task_cfg) {
     var task_option = new TaskOption(this, tool_option, task_cfg.option_value_assignments && _.find(task_cfg.option_value_assignments, function(value_assignment, tool_option_id){
       return tool_option_id === tool_option.id;
     }));
-    this.listenTo(task_option, "change", function(){
-      this.trigger("change");
-    });
     return task_option;
   }, this);
   this.inputs = _.map(this.tool.inputs || [], function(tool_input) {
     var task_input = new TaskInput(this, tool_input, task_cfg.input_src_assignments && task_cfg.input_src_assignments[tool_input.id]);
-    this.listenTo(task_input, "change", function(){
-      this.trigger("change");
-    });
     return task_input;
   }, this);
   this.outputs = _.map(this.tool.outputs || [], function(tool_output) {
     var task_output = new TaskOutput(this, tool_output, task_cfg.output_format_assignments && task_cfg.output_format_assignments[tool_output.id]);
-    this.listenTo(task_output, "change", function(){
-      this.trigger("change");
-    });
     return task_output;
   }, this);
 
@@ -162,16 +153,16 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   },
   enable: function() {
     this.enabled = true;
-    this.trigger("change");
+    this.trigger("enable");
   },
   disable: function() {
     this.sources = [];
     this.enabled = false;
-    this.trigger("change");
+    this.trigger("disable");
   },
   addSource: function(item) {
     this.sources.push(item);
-    this.trigger("change");
+    this.trigger("add:source", item);
   }
 })
 
@@ -199,7 +190,7 @@ _.extend(TaskOutput.prototype, Backbone.Events, {
   },
   setFormat: function(format) {
     this.format = format;
-    this.trigger("change");
+    this.trigger("set:format");
   },
   providesMultiple: function() {
     return this.tool_output.provides_multiple;

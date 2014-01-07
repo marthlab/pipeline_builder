@@ -100,18 +100,13 @@ _.extend(Pipeline.prototype, Backbone.Events, {
   addInput: function(pl_input_cfg) {
     var input = new PipelineInput(this, pl_input_cfg);
     this.inputs.push(input);
-    this.trigger("change");
+    this.trigger("add:input", input);
     return input;
   },
   addTask: function(task_cfg) {
     var task = new Task(this, task_cfg);
     this.tasks.push(task);
-    this.listenTo(task, "change", function(){
-      this.trigger("change");
-    });
-
-    this.trigger("change");
-    this.trigger("task_added", task);
+    this.trigger("add:task", task);
   },
   getFinalizedTasks: function() {
     return _.methodFilter(this.tasks, 'isFinalized');

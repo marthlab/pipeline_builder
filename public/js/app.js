@@ -29,6 +29,13 @@ $(function(){
     app.pipeline = new Pipeline();
   }
 
+  app.event_bus = _.extend({}, Backbone.Events);
+
+  app.focusOn = function(datum) {
+    var graph = (datum instanceof Task) ? new FocalTaskGraph(this.datum) : FocalPipelineInputsGraph();
+    app.focal_view.showGraph(graph);
+  }
+
   app.global_view = new GlobalView({el: $("#global")});
   app.focal_view = new FocalView({el: $("#focal")});
   //var monitor_view = new MonitorView(); 

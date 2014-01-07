@@ -103,7 +103,7 @@ var GlobalPrimaryNodeView = AbstractGlobalNodeView.extend({
 });
 GlobalPrimaryNodeView.mode_events = {
   TASK_SELECTION: {
-    'click': function() { app.focal_view.focusOn(this.node.datum); }
+    'click': function() { app.focusOn(this.node.datum); }
   },
   DATUM_SELECTION: {}
 };

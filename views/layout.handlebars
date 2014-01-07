@@ -35,7 +35,7 @@
 </script>
 
 <script type="text/html" id='FocalTaskInputSrcNodeView-template'>
-  <%= node.label %>
+  <%= getLabel() %>
 </script>
 
 <script type="text/html" id='FocalTaskInputAddExistingSrcNodeView-template'>
@@ -51,7 +51,7 @@
 </script>
 
 <script type="text/html" id='FocalTaskNodeView-template'>
-  <%= node.label %>
+  <%= getLabel() %>
 </script>
 
 <script type="text/html" id='ModalTaskOptionsView-template'>
@@ -142,20 +142,20 @@
 </script>
 
 <script type="text/html" id='FocalAvailableFormatNodeView-template'>
-  <%= node.label %>
+  <%= getLabel() %>
 </script>
 
 <script type="text/html" id='FocalDestNodeView-template'>
-  <%= node.label %>
+  <%= getLabel() %>
 </script>
 
 <script type="text/html" id='FocalPotentialDestGroupNodeView-template'>
-  <%= node.label %>
+  <%= getLabel() %>
 </script>
 
 <script type="text/html" id='FocalPotentialDestNodeView-template'>
 <div class="dropdown">
-  <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"><%= node.label %></a>
+  <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"><%= getLabel() %></a>
   <ul class="dropdown-menu items" role="menu">
   </ul>
 </div>
