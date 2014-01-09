@@ -152,17 +152,21 @@ _.extend(TaskInput.prototype, Backbone.Events, {
     return this.getPotentialSources().length > 0;
   },
   enable: function() {
-    this.enabled = true;
-    this.trigger("enable");
+    if(!this.enabled) {
+      this.enabled = true;
+      this.trigger("enable", this);
+    }
   },
   disable: function() {
-    this.sources = [];
-    this.enabled = false;
-    this.trigger("disable");
+    if(this.enabled) {
+      this.sources = [];
+      this.enabled = false;
+      this.trigger("disable", this);
+    }
   },
   addSource: function(item) {
     this.sources.push(item);
-    this.trigger("add:source", item);
+    this.trigger("add:source", this, item);
   }
 })
 
@@ -190,7 +194,7 @@ _.extend(TaskOutput.prototype, Backbone.Events, {
   },
   setFormat: function(format) {
     this.format = format;
-    this.trigger("set:format");
+    this.trigger("set:format", this);
   },
   providesMultiple: function() {
     return this.tool_output.provides_multiple;

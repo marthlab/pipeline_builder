@@ -6,15 +6,18 @@ var FocalView = Backbone.View.extend({
     this.$resizer_el = this.$el.children('.resizer');
     this.$graph_subviews_el = this.$resizer_el.children('.graph_subviews');
 
-    
-    this.listenTo(app.pipeline, 'task_added', (function(task){
-      this.showGraph(new FocalTaskGraph(task));
-    }).bind(this));
-
   },
-  render: function() {
+  draw: function() {
 
-    _.methodEach(this.graph.getNodes(), 'cacheNodeDimensions');
+    _.each(this.graph.node_insertion_queue, function(node) { this.$graph_subviews_el.append(node.el); }, this);
+    this.graph.node_insertion_queue = [];
+    _.each(this.graph.edge_insertion_queue, function(edge) { this.$graph_subviews_el.append(edge.el); }, this);
+    this.graph.edge_insertion_queue = [];
+
+    var nodes = this.graph.getNodes();
+    var edges = this.graph.getEdges();
+
+    _.methodEach(nodes, 'cacheNodeDimensions');
 
     dagre.layout()
       .nodeSep(15)
@@ -26,29 +29,26 @@ var FocalView = Backbone.View.extend({
       .debugLevel(0)
       .run();
 
-    _.methodEach(this.graph.getNodes(), 'applyLayout');
-    _.methodEach(this.graph.getEdges(), 'draw');
+    _.methodEach(nodes, 'applyLayout');
+    _.methodEach(edges, 'draw');
     
     this.resizeContents();
 
   },
   showGraph: function(graph) {
-
+    console.log("show graph");
     this.removeSubviews();
-
     this.graph = graph;
-
-    this.$graph_subviews_el.append(_.pluck(this.graph.getNodes(), 'el'));
-    this.$graph_subviews_el.append(_.pluck(this.graph.getEdges(), 'el'));
-
-    this.listenTo(this.graph, 'change', this.render);
-
-    this.render();
+    this.listenTo(this.graph, 'change', this.draw);
+    this.draw();
+  },
+  appendSubview: function(subview) {
+    this.$graph_subviews_el.append(subview.el);
   },
   removeSubviews: function() {
     if(this.graph) {
-      _.methodEach(this.graph.getNodes(), 'remove');
       _.methodEach(this.graph.getEdges(), 'remove');
+      _.methodEach(this.graph.getNodes(), 'remove');
     }
   },
   resizeContents: function() {

@@ -42,7 +42,7 @@ _.mixin({
     });
   },
   pushArray: function(array, items_to_push) {
-    array.push.apply(array, items_to_push);
+    Array.prototype.push.apply(array, items_to_push);
   },
   findExact: function(collection, properties) {
     return _.find(collection, function(collection_item){

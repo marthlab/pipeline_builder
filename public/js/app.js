@@ -15,6 +15,8 @@ function guid() {
 
 $(function(){
 
+  _.extend(app, Backbone.Events);
+
   app.pipeline_handler_URL = "/pipeline_handler?pipeline_json="; // the service that runs a pipeline from a provided JSON config
 
   //var components = _.cloneDeep(_.union(server_data.pipeline_configs, server_data.tool_configs))
@@ -29,15 +31,15 @@ $(function(){
     app.pipeline = new Pipeline();
   }
 
-  app.event_bus = _.extend({}, Backbone.Events);
-
   app.focusOn = function(datum) {
-    var graph = (datum instanceof Task) ? new FocalTaskGraph(this.datum) : FocalPipelineInputsGraph();
+    var graph = (datum instanceof Task) ? new FocalTaskGraph(datum) : new FocalPipelineInputsGraph();
     app.focal_view.showGraph(graph);
   }
 
   app.global_view = new GlobalView({el: $("#global")});
   app.focal_view = new FocalView({el: $("#focal")});
+
+  app.listenTo(app.pipeline, 'add:task', app.focusOn);
   //var monitor_view = new MonitorView(); 
 
   // start with focal view on pipeline inputs, then trigger pipeline input creation
