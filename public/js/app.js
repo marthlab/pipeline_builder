@@ -32,12 +32,14 @@ $(function(){
   }
 
   app.focusOn = function(datum) {
-    var graph = (datum instanceof Task) ? new FocalTaskGraph(datum) : new FocalPipelineInputsGraph();
+    var graph = (datum instanceof Task) ? new FocalTaskGraph(datum) : new FocalPipelineInputsGraph(app.pipeline);
     app.focal_view.showGraph(graph);
   }
 
   app.global_view = new GlobalView({el: $("#global")});
   app.focal_view = new FocalView({el: $("#focal")});
+
+  app.global_view.showGraph(new GlobalGraph(app.pipeline)); 
 
   app.listenTo(app.pipeline, 'add:task', app.focusOn);
   //var monitor_view = new MonitorView(); 

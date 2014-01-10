@@ -165,8 +165,12 @@ _.extend(TaskInput.prototype, Backbone.Events, {
     }
   },
   addSource: function(item) {
+    var task_started_finalized = this.task.isFinalized();
     this.sources.push(item);
     this.trigger("add:source", this, item);
+    if(!task_started_finalized && this.task.isFinalized()) {
+      this.task.trigger("finalized", this.task);
+    }
   }
 })
 
@@ -193,8 +197,12 @@ _.extend(TaskOutput.prototype, Backbone.Events, {
     return this.format;
   },
   setFormat: function(format) {
+    var task_started_finalized = this.task.isFinalized();
     this.format = format;
     this.trigger("set:format", this);
+    if(!task_started_finalized && this.task.isFinalized()) {
+      this.task.trigger("finalized", this.task);
+    }
   },
   providesMultiple: function() {
     return this.tool_output.provides_multiple;

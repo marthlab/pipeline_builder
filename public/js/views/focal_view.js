@@ -1,14 +1,11 @@
 var FocalView = Backbone.View.extend({
   template: _.template($('#FocalView-template').html()),
   initialize: function(options) {
-
     this.$el.html(this.template());
     this.$resizer_el = this.$el.children('.resizer');
     this.$graph_subviews_el = this.$resizer_el.children('.graph_subviews');
-
   },
   draw: function() {
-
     _.each(this.graph.node_insertion_queue, function(node) { this.$graph_subviews_el.append(node.el); }, this);
     this.graph.node_insertion_queue = [];
     _.each(this.graph.edge_insertion_queue, function(edge) { this.$graph_subviews_el.append(edge.el); }, this);

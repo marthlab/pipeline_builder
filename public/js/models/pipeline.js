@@ -110,6 +110,9 @@ _.extend(Pipeline.prototype, Backbone.Events, {
   },
   getFinalizedTasks: function() {
     return _.methodFilter(this.tasks, 'isFinalized');
+  },
+  getNonfinalizedTasks: function() {
+    return _.methodReject(this.tasks, 'isFinalized');
   }
 })
 

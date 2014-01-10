@@ -302,8 +302,8 @@ FocalTaskGraph.prototype = _.extend(Object.create(AbstractFocalGraph.prototype),
 
 });
 
-function FocalPipelineInputsGraph() {
-  AbstractFocalGraph.call(this, app.pipeline, function(){
+function FocalPipelineInputsGraph(pipeline) {
+  AbstractFocalGraph.call(this, pipeline, function(){
     this.outbound_datum_nodes_with_format = _.map(this.pipeline.inputs, this.createPipelineInputNode, this);
     this.outbound_datum_nodes_without_format = [];
     this.potential_pipeline_input_node = this.createPotentialPipelineInputNode();
@@ -367,9 +367,6 @@ var AbstractFocalNodeView = Backbone.View.extend({
   },
   cacheNodeDimensions: function() {
     _.extend(this, {width: this.$el.outerWidth(), height: this.$el.outerHeight()});
-  },
-  getLabel: function() {
-    return 'placeholder';
   }
 });
 
