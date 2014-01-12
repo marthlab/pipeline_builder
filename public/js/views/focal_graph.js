@@ -379,7 +379,6 @@ var FocalTaskInputSrcNodeView = AbstractFocalNodeView.extend({
     }
   },
   getLabel: function() {
-    console.log(this);
     if(this.source instanceof PipelineInput) {
       return this.source.id;
     } else if(this.source instanceof TaskOutput) {

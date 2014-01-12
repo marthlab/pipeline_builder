@@ -33,7 +33,6 @@ var FocalView = Backbone.View.extend({
 
   },
   showGraph: function(graph) {
-    console.log("show graph");
     this.removeSubviews();
     this.graph = graph;
     this.listenTo(this.graph, 'change', this.draw);

@@ -33,7 +33,6 @@ var GlobalView = Backbone.View.extend({
 
   },
   showGraph: function(graph) {
-    console.log("show graph");
     this.removeSubviews();
     this.graph = graph;
     this.listenTo(this.graph, 'change', this.draw);
@@ -67,7 +66,7 @@ var GlobalView = Backbone.View.extend({
 
     this.$el.alterClass('mode-*', 'mode-'+this.mode); // remove all existing 'mode-...' classes and add for class for current mode
 
-    _.methodEach(this.graph.getNodes(), 'onChangeMode');
+    _.methodEach(this.graph.getNodes(), 'setEventsForMode');
   }
 });
 GlobalView.modes = {DATUM_SELECTION: {}, TASK_SELECTION: {}};

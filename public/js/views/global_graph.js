@@ -82,7 +82,7 @@ _.extend(GlobalGraph.prototype, Backbone.Events, {
           var secondary_node = _.findExact(this.getSecondaryNodes(), {datum: source});
           var task_node = _.findExact(this.task_nodes, {datum: task_input.task});
 
-          if(_.findExact(this.secondary_to_task_edges, {source: secondary_node, target: task_node})) {
+          if(!_.findExact(this.secondary_to_task_edges, {source: secondary_node, target: task_node})) {
             this.secondary_to_task_edges.push(this.createSecondaryToTaskEdge(secondary_node, task_node));
           }
           this.trigger("change");
@@ -137,6 +137,7 @@ var AbstractGlobalNodeView = Backbone.View.extend({
   },
   initialize: function(options) {
     this.render();
+    this.setEventsForMode();
     this.graph.node_insertion_queue.push(this);
   },
   render: function() {
@@ -149,7 +150,7 @@ var AbstractGlobalNodeView = Backbone.View.extend({
   cacheNodeDimensions: function() {
     _.extend(this, {width: this.$el.outerWidth(), height: this.$el.outerHeight()});
   },
-  onChangeMode: function(options) {
+  setEventsForMode: function(options) {
     this.undelegateEvents();
     this.events = this.constructor.mode_events[app.global_view.mode];
     this.delegateEvents();
@@ -188,8 +189,8 @@ var GlobalTaskNodeView = GlobalPrimaryNodeView.extend({
 
 var GlobalSecondaryNodeView = AbstractGlobalNodeView.extend({
   className: 'node secondary',
-  onChangeMode: function(options) {
-    AbstractGlobalNodeView.prototype.onChangeMode.call(this);
+  setEventsForMode: function(options) {
+    AbstractGlobalNodeView.prototype.setEventsForMode.call(this);
     this.$el.toggleClass('selectable', _.contains(app.global_view.selectable_data, this.datum));
   }
 });
