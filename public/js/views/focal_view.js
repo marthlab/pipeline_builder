@@ -21,8 +21,8 @@ var FocalView = Backbone.View.extend({
       .edgeSep(20)
       .rankSep(30)
       .rankDir("LR")
-      .nodes(this.graph.getNodes() )
-      .edges(this.graph.getEdges() )
+      .nodes(nodes)
+      .edges(edges)
       .debugLevel(0)
       .run();
 

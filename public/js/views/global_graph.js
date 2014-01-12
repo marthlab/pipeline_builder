@@ -3,8 +3,8 @@ function GlobalGraph(pipeline) {
   this.node_insertion_queue = [];
   this.edge_insertion_queue = [];
 
-  this.task_nodes = _.map(this.pipeline.getTasks(), createTaskNode, this);
-  this.inputs_dummy_node = createPipelineInputsNode();
+  this.task_nodes = _.map(this.pipeline.tasks, this.createTaskNode, this);
+  this.inputs_dummy_node = this.createPipelineInputsNode();
   this.task_output_nodes = _.map(_.flatten(_.pluck(this.pipeline.getFinalizedTasks(), "outputs"), true), this.createTaskOutputNode, this);
   this.pipeline_input_nodes = _.map(this.pipeline.inputs, this.createPipelineInputNode, this);
 
@@ -31,9 +31,9 @@ function GlobalGraph(pipeline) {
       this.task_nodes.push(new_task_node);
 
       if(task.isFinalized()) {
-        this.handleFinalizedTask();
+        this.handleFinalizedTask(task);
       } else {
-        this.handleNonfinalizedTask();
+        this.handleNonfinalizedTask(task);
       }
 
       var new_secondary_to_task_edges = this.createSecondaryToTaskEdges(new_task_node);
@@ -59,7 +59,7 @@ _.extend(GlobalGraph.prototype, Backbone.Events, {
   },
   handleFinalizedTask: function(task) {
     this.setupFinalizedTaskListeners(task);
-    var new_task_output_nodes = _.map(task.outputs, this.createTaskOutputNode);
+    var new_task_output_nodes = _.map(task.outputs, this.createTaskOutputNode, this);
     _.pushArray(this.task_output_nodes, new_task_output_nodes);
     var new_task_to_task_output_edges = _.map(new_task_output_nodes, this.createTaskToTaskOutputEdge, this);
     _.pushArray(this.task_to_task_output_edges, new_task_to_task_output_edges);
@@ -91,33 +91,33 @@ _.extend(GlobalGraph.prototype, Backbone.Events, {
     }, this);
   },
   createTaskNode: function(task) {
-    return new GlobalTaskNode({graph: this, datum: task});
+    return new GlobalTaskNodeView({graph: this, datum: task});
   },
   createPipelineInputsNode: function() {
-    return new GlobalPipelineInputsNode({graph: this, datum: this.pipeline.inputs});
+    return new GlobalPipelineInputsNodeView({graph: this, datum: this.pipeline.inputs});
   },
   createTaskOutputNode: function(task_output){
-    return new GlobalTaskOutputNode({graph: this, datum: task_output});
+    return new GlobalTaskOutputNodeView({graph: this, datum: task_output});
   },
   createPipelineInputNode: function(pl_input) {
-    return new GlobalPipelineInputNode({graph: this, datum: pl_input});
+    return new GlobalPipelineInputNodeView({graph: this, datum: pl_input});
   },
   createDummyToInputEdge: function(pl_input_node){
-    return new GlobalEdge({
+    return new GlobalEdgeView({
       graph: this,
       source: this.inputs_dummy_node,
       target: pl_input_node
     });
   },
   createTaskToTaskOutputEdge: function(task_output_node){
-    return new GlobalEdge({
+    return new GlobalEdgeView({
       graph: this, 
-      source: _.findExact(this.finalized_task_nodes, {task: task_output_node.task_output.task}), 
+      source: _.findExact(this.task_nodes, {task: task_output_node.task_output.task}), 
       target: task_output_node
     });
   },
-  createSecondaryToTaskEdge: function(task_node, secondary_node) {
-    return new GlobalEdge({
+  createSecondaryToTaskEdge: function(secondary_node, task_node) {
+    return new GlobalEdgeView({
       graph: this, 
       source: secondary_node,
       target: task_node
@@ -126,32 +126,32 @@ _.extend(GlobalGraph.prototype, Backbone.Events, {
   createSecondaryToTaskEdges: function(task_node){
     return this.getSecondaryNodes()
             .filter(function(secondary_node){return task_node.task.hasAsInputSource(secondary_node.datum);})
-            .map(_.partialRight(this.createSecondaryToTaskEdge, task_node), this);
+            .map(function(secondary_node){ return this.createSecondaryToTaskEdge(secondary_node, task_node);}, this);
   }
 });
 
 var AbstractGlobalNodeView = Backbone.View.extend({
   constructor: function(options) {
     _.extend(this, options);
-    Backbone.View.prototype.constructor.call(this);
+    Backbone.View.apply(this, arguments);
   },
   initialize: function(options) {
     this.render();
     this.graph.node_insertion_queue.push(this);
   },
   render: function() {
-    this.$el.html(this.node.getLabel());
+    this.$el.html(this.getLabel());
   },
   applyLayout: function() {
-    var d = this.node.dagre;
+    var d = this.dagre;
     this.$el.css("transform", 'translate('+ (d.x-d.width/2) +'px,'+ (d.y-d.height/2) +'px)');
   },
   cacheNodeDimensions: function() {
-    _.extend(this.node, {width: this.$el.outerWidth(), height: this.$el.outerHeight()});
+    _.extend(this, {width: this.$el.outerWidth(), height: this.$el.outerHeight()});
   },
   onChangeMode: function(options) {
     this.undelegateEvents();
-    this.events = this.constructor.mode_events[this.global_view.mode];
+    this.events = this.constructor.mode_events[app.global_view.mode];
     this.delegateEvents();
   }
 });
@@ -161,15 +161,15 @@ var GlobalPrimaryNodeView = AbstractGlobalNodeView.extend({
 });
 GlobalPrimaryNodeView.mode_events = {
   TASK_SELECTION: {
-    'click': function() { app.focusOn(this.node.datum); }
+    'click': function() { app.focusOn(this.datum); }
   },
   DATUM_SELECTION: {}
 };
 
 var GlobalPipelineInputsNodeView = GlobalPrimaryNodeView.extend({
   constructor: function(options) {
-    GlobalPrimaryNodeView.prototype.constructor.call(this);
-    this.pipeline_inputs = this.datum;
+    this.pipeline_inputs = options.datum;
+    GlobalPrimaryNodeView.apply(this, arguments);
   },
   getLabel: function() {
     return "Pipeline Inputs";
@@ -178,8 +178,8 @@ var GlobalPipelineInputsNodeView = GlobalPrimaryNodeView.extend({
 
 var GlobalTaskNodeView = GlobalPrimaryNodeView.extend({
   constructor: function(options) {
-    GlobalPrimaryNodeView.prototype.constructor.call(this);
-    this.task_node = this.datum;
+    this.task = options.datum;
+    GlobalPrimaryNodeView.apply(this, arguments);
   },
   getLabel: function() {
     return this.task.tool.id;
@@ -190,15 +190,15 @@ var GlobalSecondaryNodeView = AbstractGlobalNodeView.extend({
   className: 'node secondary',
   onChangeMode: function(options) {
     AbstractGlobalNodeView.prototype.onChangeMode.call(this);
-    this.$el.toggleClass('selectable', _.contains(app.global_view.selectable_data, this.node.datum));
+    this.$el.toggleClass('selectable', _.contains(app.global_view.selectable_data, this.datum));
   }
 });
 GlobalSecondaryNodeView.mode_events = {
   TASK_SELECTION: {},
   DATUM_SELECTION: {
     'click': function() {
-      if(_.contains(app.global_view.selectable_data, this.node.datum)) {
-        app.global_view.on_datum_selected(this.node.datum);
+      if(_.contains(app.global_view.selectable_data, this.datum)) {
+        app.global_view.on_datum_selected(this.datum);
       }
     }
   }
@@ -206,18 +206,18 @@ GlobalSecondaryNodeView.mode_events = {
 
 var GlobalTaskOutputNodeView = GlobalSecondaryNodeView.extend({
   constructor: function(options) {
-    GlobalSecondaryNodeView.prototype.constructor.call(this);
-    this.task_output = this.datum;
+    this.task_output = options.datum;
+    GlobalSecondaryNodeView.apply(this, arguments);
   },
   getLabel: function() {
     return this.task_output.tool_output.id;
   }
 });
 
-var GlobalPipelineInputView = GlobalSecondaryNodeView.extend({
+var GlobalPipelineInputNodeView = GlobalSecondaryNodeView.extend({
   constructor: function(options) {
-    GlobalSecondaryNodeView.prototype.constructor.call(this);
-    this.pipeline_input = this.datum;
+    this.pipeline_input = options.datum;
+    GlobalSecondaryNodeView.apply(this, arguments);
   },
   getLabel: function() {
     return this.pipeline_input.id;
@@ -227,22 +227,22 @@ var GlobalPipelineInputView = GlobalSecondaryNodeView.extend({
 var GlobalEdgeView = Backbone.View.extend({
   className: 'edge',
   initialize: function(options) {
-    this.graph = graph;
+    this.graph = options.graph;
     this.source = options.source;
     this.target = options.target;
     this.connections = [];
     this.graph.edge_insertion_queue.push(this);
   },
   remove: function() {
-    _.each(this.connections, function(connection{
+    _.each(this.connections, function(connection) {
       jsPlumb.detach(connection);
-    }));
+    });
     return Backbone.View.prototype.remove.call(this);
   },
   draw: function() {
-    _.each(this.connections, function(connection{
+    _.each(this.connections, function(connection) {
       jsPlumb.detach(connection);
-    }));
+    });
     if(this.dagre.points.length === 2) {
       var dummy_nodes = _.map(this.dagre.points, function(point) {
         return $('<div class="dummy_node"></div>')

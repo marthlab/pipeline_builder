@@ -21,8 +21,8 @@ var GlobalView = Backbone.View.extend({
       .edgeSep(20)
       .rankSep(30)
       .rankDir("LR")
-      .nodes(this.graph.getNodes() )
-      .edges(this.graph.getEdges() )
+      .nodes(nodes)
+      .edges(edges)
       .debugLevel(0)
       .run();
 
@@ -38,6 +38,7 @@ var GlobalView = Backbone.View.extend({
     this.graph = graph;
     this.listenTo(this.graph, 'change', this.draw);
     this.draw();
+    this.setMode("TASK_SELECTION");
   },
   appendSubview: function(subview) {
     this.$graph_subviews_el.append(subview.el);
@@ -66,7 +67,7 @@ var GlobalView = Backbone.View.extend({
 
     this.$el.alterClass('mode-*', 'mode-'+this.mode); // remove all existing 'mode-...' classes and add for class for current mode
 
-    _.methodEach(this.nodes, 'onChangeMode');
+    _.methodEach(this.graph.getNodes(), 'onChangeMode');
   }
 });
 GlobalView.modes = {DATUM_SELECTION: {}, TASK_SELECTION: {}};
