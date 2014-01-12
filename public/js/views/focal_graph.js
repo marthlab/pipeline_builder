@@ -676,18 +676,19 @@ var AbstractFocalEdgeView = Backbone.View.extend({
   },
   remove: function() {
     if(this.connection) {
-      jsPlumb.detach(this.connection);
+      app.focal_view.jsPlumb.detach(this.connection);
     }
     return Backbone.View.prototype.remove.call(this);
   },
   draw: function() {
     if(this.connection) {
-      jsPlumb.detach(this.connection);
+      app.focal_view.jsPlumb.detach(this.connection);
     }
+    if(!this.source.el || ! this.target.el) { console.log("catch on fire");}
     this.connection = this._bezierConnection(this.source.el, this.target.el);
   },
   _bezierConnection: function(source_el, target_el) {
-    return jsPlumb.connect({
+    return app.focal_view.jsPlumb.connect({
       source: source_el, 
       target: target_el,           
       connector: ["RightBezier", {curviness: 15, stub: 60}],

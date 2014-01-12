@@ -236,13 +236,13 @@ var GlobalEdgeView = Backbone.View.extend({
   },
   remove: function() {
     _.each(this.connections, function(connection) {
-      jsPlumb.detach(connection);
+      app.global_view.jsPlumb.detach(connection);
     });
     return Backbone.View.prototype.remove.call(this);
   },
   draw: function() {
     _.each(this.connections, function(connection) {
-      jsPlumb.detach(connection);
+      app.global_view.jsPlumb.detach(connection);
     });
     if(this.dagre.points.length === 2) {
       var dummy_nodes = _.map(this.dagre.points, function(point) {
@@ -271,7 +271,7 @@ var GlobalEdgeView = Backbone.View.extend({
     endpoint:"Blank"
   },
   _bezierConnection: function(source_el, target_el) {
-    return jsPlumb.connect({
+    return app.global_view.jsPlumb.connect({
       source: source_el, 
       target: target_el,           
       connector: ["RightBezier", {curviness: 12 }],
@@ -279,7 +279,7 @@ var GlobalEdgeView = Backbone.View.extend({
     }, this._connectionOptions);
   },
   _straightConnection: function(source_el, target_el) {
-    return jsPlumb.connect({
+    return app.global_view.jsPlumb.connect({
       source: source_el, 
       target: target_el,           
       connector: ["Straight"],

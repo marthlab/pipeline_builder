@@ -4,6 +4,7 @@ var GlobalView = Backbone.View.extend({
     this.$el.html(this.template());
     this.$resizer_el = this.$el.children('.resizer');
     this.$graph_subviews_el = this.$resizer_el.children('.graph_subviews');
+    this.jsPlumb = jsPlumb.getInstance();
   },
   draw: function() {
     _.each(this.graph.node_insertion_queue, function(node) { this.$graph_subviews_el.append(node.el); }, this);
@@ -27,9 +28,8 @@ var GlobalView = Backbone.View.extend({
       .run();
 
     _.methodEach(nodes, 'applyLayout');
-    _.methodEach(edges, 'draw');
-    
     this.resizeContents();
+    _.methodEach(edges, 'draw');
 
   },
   showGraph: function(graph) {
@@ -49,12 +49,15 @@ var GlobalView = Backbone.View.extend({
     }
   },
   resizeContents: function() {
+    this.$resizer_el.css({"transform": "scale(1) translate(0px, 0px)"});
     var graph_bbox = $(_.pluck(this.graph.getNodes(), 'el')).bounds();
     var el_bbox = {width: this.$el.width(), height: this.$el.height()};
     this.scale = Math.min(Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height), 1);
+        console.log(el_bbox);
     this.translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
     this.translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
     this.$resizer_el.css({"transform": "scale("+this.scale+","+this.scale+") translate("+this.translate_x+"px,"+this.translate_y+"px)"});
+    this.jsPlumb.setZoom(this.scale);
   },
   setMode: function(mode, options) {
     this.mode = mode;
