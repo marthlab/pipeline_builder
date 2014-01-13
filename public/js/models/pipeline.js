@@ -113,6 +113,10 @@ _.extend(Pipeline.prototype, Backbone.Events, {
   },
   getNonfinalizedTasks: function() {
     return _.methodReject(this.tasks, 'isFinalized');
+  },
+  getDefaultTaskId: function(tool) {
+    var num_tasks_using_tool = _.filter(this.tasks, function(task) {return task.tool === tool;}).length;
+    return tool.id + (num_tasks_using_tool > 0 ? ' ('+num_tasks_using_tool+')' : '');
   }
 })
 
@@ -135,5 +139,8 @@ _.extend(PipelineInput.prototype, Backbone.Events, {
   },
   dependsOnTask: function(task) {
     return false;
+  },
+  getSuggestableToolInputsAccepting: function() {
+    return app.tool_library.getSuggestableToolInputsByFormat(this.getFormat());
   }
 })

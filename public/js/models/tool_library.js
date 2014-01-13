@@ -20,7 +20,7 @@ _.extend(ToolLibrary.prototype, {
            .map(function(key){return key.splice(0, type.length+1);})
            .sortBy('id');
   },
-  getSuggestedToolInputsByFormat: function(format) {
+  getSuggestableToolInputsByFormat: function(format) {
     return _.compact(_.methodMap(this._tools, 'findSuggestableInputAcceptingFormat', format));
   },
   getTool: function(id) {

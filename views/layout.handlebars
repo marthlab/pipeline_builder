@@ -19,7 +19,7 @@
       <div id="global"></div>
     </div>
   </div>
-  <div id="monitor">test3</div>
+  <div id="monitor"></div>
 </body>
 
 <script type="text/html" id='GlobalView-template'>
@@ -63,6 +63,10 @@
     </div>
     <div class="modal-body">
       <form>
+      <fieldset>
+        <legend>Task ID</legend>
+        <input type="text" class="form-control task_id" value="<%- id %>">
+      </fieldset>
       <% if(nonrequired_inputs.length > 0){ %>
         <fieldset>
         <legend>Enable Optional Data Inputs</legend>

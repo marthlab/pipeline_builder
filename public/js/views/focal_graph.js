@@ -6,13 +6,9 @@ function AbstractFocalGraph(pipeline, subclass_init) {
   subclass_init.call(this);
 
   this.dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, this.createDestNodes, this), true);
-  this.potential_dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, this.createPotentialDestNodes, this), true);
-  this.potential_dest_group_nodes = _.map(_.filter(this.outbound_datum_nodes_with_format, this.hasPotentialDestNode, this), this.createPotentialDestGroupNode, this);
-
   this.outbound_datum_to_dest_edges = _.map(this.dest_nodes, this.createOutboundDatumToDestEdge, this);
-  this.outbound_datum_to_potential_dest_group_edges = _.map(this.potential_dest_group_nodes, this.createOutboundDatumToPotentialDestGroupEdge, this);
-  this.potential_dest_group_to_potential_dest_edges = _.map(this.potential_dest_nodes, this.createPotentialDestGroupToPotentialDestEdge, this);
 
+  this.handlePotentialDestinations();
 }
 _.extend(AbstractFocalGraph.prototype, Backbone.Events, {
   getNodes: function() {
@@ -26,7 +22,7 @@ _.extend(AbstractFocalGraph.prototype, Backbone.Events, {
     return _.map(dest_tasks, function(task){return new FocalDestNodeView({graph: this, outbound_datum: od_node.outbound_datum, dest: task})}, this);
   },
   createPotentialDestNodes: function(od_node){
-    var potential_dest_tool_inputs = app.tool_library.getSuggestedToolInputsByFormat(od_node.outbound_datum.getFormat() );
+    var potential_dest_tool_inputs = od_node.outbound_datum.getSuggestableToolInputsAccepting();
     var potential_dest_packages = _.groupBy(potential_dest_tool_inputs, function(ti) {return ti.tool.package;});
     return _.map(potential_dest_packages, function(tool_inputs, package){return new FocalPotentialDestNodeView({graph: this, outbound_datum: od_node.outbound_datum, package: package, potential_dests: tool_inputs});}, this);
   },
@@ -56,6 +52,13 @@ _.extend(AbstractFocalGraph.prototype, Backbone.Events, {
       source: _.findExact(this.potential_dest_group_nodes, {outbound_datum: pot_dest_node.outbound_datum}),
       target: pot_dest_node
     });
+  },
+  handlePotentialDestinations: function() {
+    this.potential_dest_nodes = _.flatten(_.map(this.outbound_datum_nodes_with_format, this.createPotentialDestNodes, this), true);
+    this.potential_dest_group_nodes = _.map(_.filter(this.outbound_datum_nodes_with_format, this.hasPotentialDestNode, this), this.createPotentialDestGroupNode, this);
+
+    this.outbound_datum_to_potential_dest_group_edges = _.map(this.potential_dest_group_nodes, this.createOutboundDatumToPotentialDestGroupEdge, this);
+    this.potential_dest_group_to_potential_dest_edges = _.map(this.potential_dest_nodes, this.createPotentialDestGroupToPotentialDestEdge, this);
   }
 });
 
@@ -92,6 +95,13 @@ function FocalTaskGraph(task) {
             this.task_input_add_existing_src_to_task_input_edges.push(this.createTaskInputAddExistingSrcToTaskInputEdge(new_add_existing_src_node));
           }
         }, this);
+
+        this.trigger("change");
+      }
+    });
+    this.listenTo(this.task, {
+      "finalize": function() {
+        this.handlePotentialDestinations();
 
         this.trigger("change");
       }
@@ -191,7 +201,7 @@ function FocalTaskGraph(task) {
     }, this);
     _.each(this.task.outputs, function(task_output) {
       this.listenTo(task_output, {
-        "set:format": function(to) {
+        "change:format": function(to) {
           var to_node = _.find(this.outbound_datum_nodes_without_format, function(to_node) {return to_node.task_output === to;});
 
           var old_available_format_nodes =  _.filter(this.available_format_nodes, function(node) {return node.task_output === to;});
@@ -460,6 +470,8 @@ var ModalTaskOptionsView = Backbone.View.extend({
       this.teardown();
     },
     'click .save': function() {
+      this.task.setId(this.$id_input.val());
+
       _.each(this.$option_inputs, function(input_el) {
         var $input_el = $(input_el);
         var task_option = this.task.getOptionById($input_el.attr('data-tool-option-id'));
@@ -479,6 +491,7 @@ var ModalTaskOptionsView = Backbone.View.extend({
   initialize: function(options) {
     this.task = options.task;
     this.render();
+    this.$id_input = this.$el.find('input.task_id');
     this.$option_inputs = this.$el.find('input.task_option');
     this.$nonrequired_input_inputs = this.$el.find('input.task_input');
     this.$el.modal();
@@ -491,7 +504,7 @@ var ModalTaskOptionsView = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template({options_by_category: this.task.getOptionsByCategory(), nonrequired_inputs: _.methodReject(this.task.inputs, 'isRequired') }));
+    this.$el.html(this.template({id: this.task.id, options_by_category: this.task.getOptionsByCategory(), nonrequired_inputs: _.methodReject(this.task.inputs, 'isRequired') }));
   }
 
  });
@@ -584,7 +597,7 @@ var FocalDestNodeView = AbstractFocalNodeView.extend({
     }
   },
   getLabel: function() {
-    return this.dest.tool.id;
+    return this.dest.id;
   },
 });
 
@@ -623,7 +636,7 @@ var FocalPotentialDestNodeViewItem = Backbone.View.extend({
   events: {
     'click': function() {
       var task_cfg = {
-        task_id: guid(),
+        task_id: app.pipeline.getDefaultTaskId(this.tool_input.tool),
         tool_id: this.tool_input.tool.id,
         input_src_assignments: {}
       };
@@ -637,7 +650,6 @@ var FocalPotentialDestNodeViewItem = Backbone.View.extend({
           pipeline_input_id: this.parent_view.outbound_datum.id
         }
       );
-      //debugger;
       app.pipeline.addTask(task_cfg);
     }
   },

@@ -23,17 +23,22 @@ function GlobalGraph(pipeline) {
       this.trigger("change");
     }
   });
+  _.each(this.pipeline.tasks, this.setupTaskListeners, this);
   _.each(this.pipeline.getFinalizedTasks(), this.setupFinalizedTaskListeners, this);
   _.each(this.pipeline.getNonfinalizedTasks(), this.setupNonfinalizedTaskListeners, this);
+
+
   this.listenTo(this.pipeline, {
     "add:task": function(task) {
       var new_task_node = this.createTaskNode(task);
       this.task_nodes.push(new_task_node);
 
+      this.setupTaskListeners(task);
+
       if(task.isFinalized()) {
         this.handleFinalizedTask(task);
       } else {
-        this.handleNonfinalizedTask(task);
+        this.setupNonfinalizedTaskListeners(task);
       }
 
       var new_secondary_to_task_edges = this.createSecondaryToTaskEdges(new_task_node);
@@ -64,13 +69,19 @@ _.extend(GlobalGraph.prototype, Backbone.Events, {
     var new_task_to_task_output_edges = _.map(new_task_output_nodes, this.createTaskToTaskOutputEdge, this);
     _.pushArray(this.task_to_task_output_edges, new_task_to_task_output_edges);
   },
-  handleNonfinalizedTask: function(task) {
-    this.setupNonfinalizedTaskListeners(task);
+  setupTaskListeners: function(task) {
+    this.listenTo(task, {
+      "change:id": function(task) {
+        var task_node = _.findExact(this.task_nodes, {task: task});
+        task_node.render();
+        this.trigger("change");
+      }
+    });
   },
   setupNonfinalizedTaskListeners: function(task) {
     this.listenTo(task, {
       "finalize": function(task) {
-        this.handleFinalizedTask();
+        this.handleFinalizedTask(task);
         this.trigger("change");
       }
     });
@@ -183,7 +194,7 @@ var GlobalTaskNodeView = GlobalPrimaryNodeView.extend({
     GlobalPrimaryNodeView.apply(this, arguments);
   },
   getLabel: function() {
-    return this.task.tool.id;
+    return this.task.id;
   }
 });
 

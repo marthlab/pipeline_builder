@@ -63,7 +63,7 @@ _.extend(Task.prototype, Backbone.Events, {
     return this.allRequiredInputsAssigned() && this.allOutputFormatsSpecified();
   },
   allRequiredInputsAssigned: function() {
-    return _.methodEvery(_.filter(this.inputs, 'required'), 'isAssignedSource');
+    return _.methodEvery(_.methodFilter(this.inputs, 'isRequired'), 'isAssignedSource');
   },
   allOutputFormatsSpecified: function() {
     return _.methodEvery(this.outputs, 'isAssignedFormat');
@@ -76,6 +76,12 @@ _.extend(Task.prototype, Backbone.Events, {
   },
   getInputById: function(id) {
     return _.find(this.inputs, function(task_input) {return task_input.tool_input.id === id; });
+  },
+  setId: function(id) {
+    if(this.id !== id) {
+      this.id = id;
+      this.trigger("change:id", this);
+    }
   }
 });
 
@@ -128,7 +134,7 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   acceptsFormat: function(format) {
     return this.tool_input.acceptsFormat(format);
   },
-  isRequired: function(format) {
+  isRequired: function() {
     return this.tool_input.required;
   },
   acceptsFormatOf: function(datum) {
@@ -169,7 +175,7 @@ _.extend(TaskInput.prototype, Backbone.Events, {
     this.sources.push(item);
     this.trigger("add:source", this, item);
     if(!task_started_finalized && this.task.isFinalized()) {
-      this.task.trigger("finalized", this.task);
+      this.task.trigger("finalize", this.task);
     }
   }
 })
@@ -197,11 +203,15 @@ _.extend(TaskOutput.prototype, Backbone.Events, {
     return this.format;
   },
   setFormat: function(format) {
-    var task_started_finalized = this.task.isFinalized();
-    this.format = format;
-    this.trigger("set:format", this);
-    if(!task_started_finalized && this.task.isFinalized()) {
-      this.task.trigger("finalized", this.task);
+    if(this.format !== format) {
+      var task_started_finalized = this.task.isFinalized();
+
+      this.format = format;
+      this.trigger("change:format", this);
+
+      if(!task_started_finalized && this.task.isFinalized()) {
+        this.task.trigger("finalize", this.task);
+      }
     }
   },
   providesMultiple: function() {
@@ -212,5 +222,11 @@ _.extend(TaskOutput.prototype, Backbone.Events, {
   },
   dependsOnTask: function(task) {
     return (task === this.task) || _.methodSome(_.flatten(_.pluck(this.task.inputs, 'sources')), 'dependsOnTask', task);
+  },
+  getSuggestableToolInputsAccepting: function() {
+    if(!this.task.isFinalized()) {
+      return [];
+    }
+    return app.tool_library.getSuggestableToolInputsByFormat(this.getFormat());
   }
 })

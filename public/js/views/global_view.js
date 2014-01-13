@@ -53,7 +53,6 @@ var GlobalView = Backbone.View.extend({
     var graph_bbox = $(_.pluck(this.graph.getNodes(), 'el')).bounds();
     var el_bbox = {width: this.$el.width(), height: this.$el.height()};
     this.scale = Math.min(Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height), 1);
-        console.log(el_bbox);
     this.translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
     this.translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
     this.$resizer_el.css({"transform": "scale("+this.scale+","+this.scale+") translate("+this.translate_x+"px,"+this.translate_y+"px)"});
