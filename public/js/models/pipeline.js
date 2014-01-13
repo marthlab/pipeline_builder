@@ -89,8 +89,8 @@ _.extend(Pipeline.prototype, Backbone.Events, {
   getInput: function(input_id) {
     return _.find(this.inputs, {id: input_id});
   },
-  getTaskOutputs: function() {
-    return _.flatten(_.pluck(this.tasks, 'outputs'));
+  getFinalizedTaskOutputs: function() {
+    return _.flatten(_.pluck(this.getFinalizedTasks(), 'outputs'));
   },
   addTool: function(tool) {
     if(!_(this.tools).contains(tool)) {

@@ -149,7 +149,7 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   getPotentialSources: function() {
     if(this.isSaturated()) return [];
 
-    return _.union(this.task.pipeline.inputs, this.task.pipeline.getTaskOutputs()).filter(function(datum){
+    return _.union(this.task.pipeline.inputs, this.task.pipeline.getFinalizedTaskOutputs()).filter(function(datum){
       return !this.hasAsSource(datum) && this.acceptsFormatOf(datum) && this.compatibleWithMultiplicityOf(datum) && !datum.dependsOnTask(this.task);
     }, this);
 
