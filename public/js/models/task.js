@@ -26,25 +26,33 @@ function Task(pipeline, task_cfg) {
 }
 _.extend(Task.prototype, Backbone.Events, {
   toJSON: function() {
-    var assigned_options = _.methodFilter(this.options, "isAssignedValue");
-    var assigned_inputs = _.methodFilter(this.inputs, "isAssignedSrc");
+    var outputs_with_assigned_format = _.methodFilter(this.outputs, 'isAssignedFormat');
     return {
       tool_id: this.tool.id,
       option_value_assignments: _.object(
-        _.pluck(_.pluck(assigned_options, "tool_option"), "id"),
-        _.pluck(assigned_options, 'value')
+        _.pluck(_.pluck(this.options, "tool_option"), "id"),
+        _.pluck(this.options, 'value')
       ),
       input_src_assignments: _.object(
-        _.pluck(_.pluck(assigned_inputs, "tool_input"), "id"),
-        _.map(assigned_inputs, function(output){
-          var src = output.src;
-          if(src instanceof TaskOutput) {
-            return {task_id: src.task.id, tool_output_id: src.tool_output.id};
-          } else if(src instanceof PipelineInput) {
-            return {pipeline_input_id: src.id};
-          }
+        _.pluck(_.pluck(this.inputs, "tool_input"), "id"),
+        _.map(_.pluck(this.inputs, 'sources'), function(sources) {
+          return _.map(sources, function(src) {
+            if(src instanceof TaskOutput) {
+              return {task_id: src.task.id, tool_output_id: src.tool_output.id};
+            } else if(src instanceof PipelineInput) {
+              return {pipeline_input_id: src.id};
+            }
+          });
         })
+      ),
+      output_format_assignments: _.object(
+        _.pluck(_.pluck(outputs_with_assigned_format, "tool_output"), "id"),
+        _.pluck(outputs_with_assigned_format, 'format')
       )
+    };
+
+    return {
+      id: this.id
     };
   },
   getOutput: function(tool_output_id) {
@@ -89,12 +97,7 @@ function TaskOption(task, tool_option, option_val) {
   this.task = task;
   this.tool_option = tool_option;
 
-  if(this.tool_option.type === 'flag') {
-    this.value = _.assignWithDefault(option_val, false);
-  } else {
-    this.value = _.assignWithDefault(option_val, '');
-  }
-  
+  this.value = _.assignWithDefault(option_val, this.tool_option.type === 'flag' ? false : '');
 }
 _.extend(TaskOption.prototype, Backbone.Events, {
   
@@ -106,7 +109,7 @@ function TaskInput(task, tool_input, input_src_assignment_cfg) {
 
   if(!_.isUndefined(input_src_assignment_cfg)) {
     this.sources = _.isArray(input_src_assignment_cfg) ?
-      _.map(input_src_assignment_cfg, _.bind(this._getSourceFromCfg, this)) : [this._getSourceFromCfg(input_src_assignment_cfg)];
+      _.map(input_src_assignment_cfg, this._getSourceFromCfg, this) : [this._getSourceFromCfg(input_src_assignment_cfg)];
   } else {
     this.sources = [];
   }
@@ -173,6 +176,7 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   addSource: function(item) {
     var task_started_finalized = this.task.isFinalized();
     this.sources.push(item);
+    this.sources.sort(_.sortById);
     this.trigger("add:source", this, item);
     if(!task_started_finalized && this.task.isFinalized()) {
       this.task.trigger("finalize", this.task);

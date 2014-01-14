@@ -55,5 +55,10 @@ _.mixin({
     return _.isUndefined(value) ? default_val : value;
   },
   noop: function() {
+  },
+  sortById: function(o1, o2){
+    if(o1.id < o2.id) return -1;
+    if(o1.id > o2.id) return 1;
+    return 0;
   }
 });

@@ -24,9 +24,11 @@ _.extend(Tool.prototype, {
     return {
       id: this.id,
       service_URL: this.service_URL,
-      options: _.object(_.pluck(this.options, "id"), _.map(this.options, _.partialRight(_.omit, ["id", "tool"]))),
-      inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "tool"]))),
-      outputs: _.object(_.pluck(this.outputs, "id"), _.map(this.outputs, _.partialRight(_.omit, ["id", "tool"])))
+      options: _.transform(_.groupBy(this.options, 'category'), function(result, options, category){
+        result[category] = _.methodMap(options, "toJSON");
+      }),
+      inputs: _.object(_.pluck(this.inputs, "id"), _.methodMap(this.inputs, "toJSON")),
+      outputs: _.object(_.pluck(this.outputs, "id"), _.methodMap(this.outputs, "toJSON"))
     };
   },
   getInput: function(input_id) {
@@ -38,18 +40,9 @@ _.extend(Tool.prototype, {
   getOption: function(option_id) {
     return _.find(this.options, {id: option_id});
   },
-  // getCategoryOptions: function(category) {
-  //   return _.find(this.options, {category: category});
-  // },
-  // getOptionsByCategory: function(category) {
-  //   return _.groupBy(this.options, 'category');
-  // },
   findSuggestableInputAcceptingFormat: function(format) {
     return _.methodFind(_.filter(this.inputs, 'suggestable'), 'acceptsFormat', format);
-  },
-  // acceptsFormat: function(format) {
-  //   return _.methodSome(this.inputs, 'acceptsFormat', format);
-  // }
+  }
 })
 
 function ToolOption(tool, tool_option_cfg) {
@@ -61,18 +54,40 @@ function ToolOption(tool, tool_option_cfg) {
   this.category = tool_option_cfg.category;
 }
 _.extend(ToolOption.prototype, {
-  
+  toJSON: function() {
+    var obj = _.pick(this, 'description', 'type');
+    if(!_.isUndefined(this.default)) {
+      obj.default = this.default;
+    }
+    return obj;
+  }
 })
 
 function ToolInput(tool, tool_input_cfg) {
   this.tool = tool;
   this.id = tool_input_cfg.id;
   this.formats_whitelist = _.assignWithDefault(tool_input_cfg.formats_whitelist, undefined);
-  this.required = _.assignWithDefault(tool_input_cfg.required, false)
-  this.accepts_multiple = _.assignWithDefault(tool_input_cfg.accepts_multiple, false)
-  this.suggestable = _.assignWithDefault(tool_input_cfg.suggestable, true)
+  this.required = _.assignWithDefault(tool_input_cfg.required, false);
+  this.accepts_multiple = _.assignWithDefault(tool_input_cfg.accepts_multiple, false);
+  this.suggestable = _.assignWithDefault(tool_input_cfg.suggestable, true);
 }
 _.extend(ToolInput.prototype, {
+  toJSON: function() {
+    var obj = {};
+    if(!_.isUndefined(this.formats_whitelist)) {
+      obj.formats_whitelist = this.formats_whitelist;
+    }
+    if(this.required) {
+      obj.required = true;
+    }
+    if(this.accepts_multiple) {
+      obj.accepts_multiple = true;
+    }
+    if(!this.suggestable) {
+      obj.suggestable = false;
+    }
+    return obj;
+  },
   acceptsFormat: function(format) {
     return _.isUndefined(this.formats_whitelist) || _.contains(this.formats_whitelist, format);
   }
@@ -85,5 +100,14 @@ function ToolOutput(tool, tool_output_cfg) {
   this.provides_multiple = _.assignWithDefault(tool_output_cfg.provides_multiple, false);
 }
 _.extend(ToolOutput.prototype, {
-  
+  toJSON: function() {
+    var obj = {};
+    if(!_.isEqual(this.formats_whitelist, [null])) {
+      obj.formats_whitelist = this.formats_whitelist;
+    }
+    if(this.provides_multiple) {
+      obj.provides_multiple = true;
+    }
+    return obj;
+  }
 })

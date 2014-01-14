@@ -8,7 +8,7 @@ function Pipeline(pl_cfg) {
 
   this.tools = _.map(pl_cfg.tools, function(cmpt_cfg) {
     return new Tool(cmpt_cfg);
-  });
+  }).sort(_.sortById);
 
   this._constructNodes(pl_cfg.inputs, pl_cfg.tasks);
 
@@ -74,7 +74,7 @@ _.extend(Pipeline.prototype, Backbone.Events, {
       id: this.id,
       tools: _.methodMap(this.tools, "toJSON"),
       tasks: _.object(_.pluck(this.tasks, "id"), _.methodMap(this.tasks, "toJSON")),
-      inputs: _.object(_.pluck(this.inputs, "id"), _.map(this.inputs, _.partialRight(_.omit, ["id", "pipeline"])))
+      inputs: _.object(_.pluck(this.inputs, "id"), _.methodMap(this.inputs, "toJSON"))
     };
   },
   hasTool: function(tool_id) {
@@ -95,17 +95,20 @@ _.extend(Pipeline.prototype, Backbone.Events, {
   addTool: function(tool) {
     if(!_(this.tools).contains(tool)) {
       this.tools.push(tool);
+      this.tools.sort(_.sortById);
     }
   },
   addInput: function(pl_input_cfg) {
     var input = new PipelineInput(this, pl_input_cfg);
     this.inputs.push(input);
+    this.inputs.sort(_.sortById);
     this.trigger("add:input", input);
     return input;
   },
   addTask: function(task_cfg) {
     var task = new Task(this, task_cfg);
     this.tasks.push(task);
+    this.tasks.sort(_.sortById);
     this.trigger("add:task", task);
   },
   getFinalizedTasks: function() {
@@ -127,6 +130,9 @@ function PipelineInput(pipeline, pl_input_cfg) {
   this.data_URL = pl_input_cfg.data_URL;
 }
 _.extend(PipelineInput.prototype, Backbone.Events, {
+  toJSON: function() {
+    return _.pick(this, ['description', 'data_URL']);
+  },
   getFormat: function() {
     var re = /(?:\.([^.]+))?$/;
     return re.exec(this.data_URL)[1];

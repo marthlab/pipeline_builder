@@ -17,18 +17,12 @@ $(function(){
 
   _.extend(app, Backbone.Events);
 
-  app.pipeline_handler_URL = "/pipeline_handler?pipeline_json="; // the service that runs a pipeline from a provided JSON config
-
-  //var components = _.cloneDeep(_.union(server_data.pipeline_configs, server_data.tool_configs))
-
-  app.tool_library = new ToolLibrary(_.cloneDeep(server_data.tool_configs));
-
-  var pipeline_JSON = $.url().param("pipeline");
-  if(!_.isUndefined(pipeline_JSON)) {
-    app.pipeline = new Pipeline(JSON.parse(pipeline_JSON));
-  } else {
-    //app.pipeline = new Pipeline(server_data.pipeline_configs[2]);
-    app.pipeline = new Pipeline();
+  app.loadPipeline = function(pipeline) {
+    app.stopListening(app.pipeline);
+    app.pipeline = pipeline;
+    app.global_view.showGraph(new GlobalGraph(app.pipeline));
+    app.focusOn(app.pipeline.inputs);
+    app.listenTo(app.pipeline, 'add:task', app.focusOn);
   }
 
   app.focusOn = function(datum) {
@@ -36,14 +30,14 @@ $(function(){
     app.focal_view.showGraph(graph);
   }
 
+  app.pipeline_handler_URL = "/pipeline_handler?pipeline_json="; // the service that runs a pipeline from a provided JSON config
+
+  app.tool_library = new ToolLibrary(_.cloneDeep(server_data.tool_configs));
+
   app.global_view = new GlobalView({el: $("#global")});
   app.focal_view = new FocalView({el: $("#focal")});
 
-  app.global_view.showGraph(new GlobalGraph(app.pipeline));
-
-  app.focusOn(app.pipeline.inputs);
-
-  app.listenTo(app.pipeline, 'add:task', app.focusOn);
-
+  var pipeline_JSON = $.url().param("pipeline");
+  app.loadPipeline(_.isUndefined(pipeline_JSON) ? new Pipeline() : new Pipeline(JSON.parse(pipeline_JSON)));
 
 });
