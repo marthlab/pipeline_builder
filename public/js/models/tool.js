@@ -25,7 +25,7 @@ _.extend(Tool.prototype, {
       id: this.id,
       service_URL: this.service_URL,
       options: _.transform(_.groupBy(this.options, 'category'), function(result, options, category){
-        result[category] = _.methodMap(options, "toJSON");
+        result[category] = _.object(_.pluck(options, "id"), _.methodMap(options, "toJSON"))
       }),
       inputs: _.object(_.pluck(this.inputs, "id"), _.methodMap(this.inputs, "toJSON")),
       outputs: _.object(_.pluck(this.outputs, "id"), _.methodMap(this.outputs, "toJSON"))
