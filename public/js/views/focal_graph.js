@@ -475,7 +475,7 @@ var ModalTaskOptionsView = Backbone.View.extend({
       _.each(this.$option_inputs, function(input_el) {
         var $input_el = $(input_el);
         var task_option = this.task.getOptionById($input_el.attr('data-tool-option-id'));
-        task_option.value = task_option.tool_option.type === 'flag' ? $input_el.is(':checked') : $input_el.val();
+        task_option.setValue(task_option.tool_option.type === 'flag' ? $input_el.is(':checked') : $input_el.val());
       }, this);
 
       _.each(this.$nonrequired_input_inputs, function(input_el) {
