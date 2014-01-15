@@ -23,6 +23,10 @@ function Task(pipeline, task_cfg) {
     return task_output;
   }, this);
 
+  this.on("change:id, enable, disable, add:source, change:format", function(){
+    this.pipeline.trigger("change:task", this);
+  }, this);
+
 }
 _.extend(Task.prototype, Backbone.Events, {
   toJSON: function() {

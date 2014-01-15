@@ -12,6 +12,10 @@ function Pipeline(pl_cfg) {
 
   this._constructNodes(pl_cfg.inputs, pl_cfg.tasks);
 
+  this.on('add:tool add:input add:task change:task', function(task) {
+    this.trigger('change');
+  }, this);
+
 }
 _.extend(Pipeline.prototype, Backbone.Events, {
   constructor: Pipeline,
@@ -96,6 +100,7 @@ _.extend(Pipeline.prototype, Backbone.Events, {
     if(!_(this.tools).contains(tool)) {
       this.tools.push(tool);
       this.tools.sort(_.sortById);
+      this.trigger("add:tool", tool);
     }
   },
   addInput: function(pl_input_cfg) {
