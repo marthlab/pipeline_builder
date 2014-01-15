@@ -24,7 +24,7 @@ $(function(){
     app.focusOn(app.pipeline.inputs);
     app.listenTo(app.pipeline, 'add:task', app.focusOn);
     app.listenTo(app.pipeline, 'change', function() {
-      app.router.navigate("edit_pipeline/"+encodeURIComponent(JSON.stringify(app.pipeline)));
+      app.router.navigate("edit_pipeline/"+encodeURIComponent(LZString.compressToBase64(JSON.stringify(app.pipeline))));
     });
   }
 
@@ -43,7 +43,7 @@ $(function(){
       app.loadPipeline(new Pipeline());
     },
     edit_pipeline: function(pipeline_json) {
-      app.loadPipeline(new Pipeline(JSON.parse(pipeline_json)));
+      app.loadPipeline(new Pipeline(JSON.parse(LZString.decompressFromBase64(pipeline_json))));
     },
   }));
   
