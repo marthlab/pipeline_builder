@@ -58,7 +58,6 @@ app.configure(function() {
 
 //---- INTERNAL MODULES
 app.use(require('./lib/pipeline_builder_server'));
-app.use(require('./lib/routes'));
 
 //--- End of Internal modules
 
