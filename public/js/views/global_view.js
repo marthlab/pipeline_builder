@@ -69,6 +69,11 @@ var GlobalView = Backbone.View.extend({
     this.$el.alterClass('mode-*', 'mode-'+this.mode); // remove all existing 'mode-...' classes and add for class for current mode
 
     _.methodEach(this.graph.getNodes(), 'setEventsForMode');
+  },
+  focusDatum: function(datum) {
+    _.each(this.graph.getPrimaryNodes(), function(node) {
+      node.$el.toggleClass('focused', (node.datum === datum));
+    });
   }
 });
 GlobalView.modes = {DATUM_SELECTION: {}, TASK_SELECTION: {}};

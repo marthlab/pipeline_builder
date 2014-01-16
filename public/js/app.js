@@ -1,18 +1,3 @@
-window.onerror = function(msg, url, line){
-  console.log({ msg: msg, url: url, line: line });
-};
-
-function s4() {
-  return Math.floor((1 + Math.random()) * 0x10000)
-             .toString(16)
-             .substring(1);
-};
-
-function guid() {
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-         s4() + '-' + s4() + s4() + s4();
-}
-
 $(function(){
 
   _.extend(app, Backbone.Events);
@@ -31,6 +16,7 @@ $(function(){
   app.focusOn = function(datum) {
     var graph = (datum instanceof Task) ? new FocalTaskGraph(datum) : new FocalPipelineInputsGraph(app.pipeline);
     app.focal_view.showGraph(graph);
+    app.global_view.focusDatum(datum);
   }
 
   app.router = new (Backbone.Router.extend({
@@ -46,9 +32,6 @@ $(function(){
       app.loadPipeline(new Pipeline(JSON.parse(LZString.decompressFromBase64(pipeline_json))));
     },
   }));
-  
-
-  app.pipeline_handler_URL = "/pipeline_handler?pipeline_json="; // the service that runs a pipeline from a provided JSON config
 
   app.tool_library = new ToolLibrary(_.cloneDeep(server_data.tool_configs));
 
@@ -57,7 +40,5 @@ $(function(){
 
   Backbone.history.start({pushState: true});
 
-  // var pipeline_JSON = $.url().param("pipeline");
-  // app.loadPipeline(_.isUndefined(pipeline_JSON) ? new Pipeline() : new Pipeline(JSON.parse(pipeline_JSON)));
 
 });

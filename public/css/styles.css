@@ -41,7 +41,12 @@
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
 }
-.glow {
+.focused_glow {
+  -webkit-box-shadow: 0px 0px 28px #ff0000;
+  -moz-box-shadow: 0px 0px 28px #ff0000;
+  box-shadow: 0px 0px 28px #ff0000;
+}
+.selectable_glow {
   -webkit-box-shadow: 0px 0px 28px #00ff00;
   -moz-box-shadow: 0px 0px 28px #00ff00;
   box-shadow: 0px 0px 28px #00ff00;
@@ -278,6 +283,11 @@ body {
   padding: 12px;
   border-radius: 12px;
 }
+#global .node.primary.focused {
+  -webkit-box-shadow: 0px 0px 28px #ff0000;
+  -moz-box-shadow: 0px 0px 28px #ff0000;
+  box-shadow: 0px 0px 28px #ff0000;
+}
 #global .node.secondary {
   font-size: 8px;
   color: #fff;
@@ -288,7 +298,7 @@ body {
 #global.mode-TASK_SELECTION .node.primary {
   cursor: pointer;
 }
-#global.mode-DATUM_SELECTION .node.selectable {
+#global.mode-DATUM_SELECTION .node.secondary.selectable {
   -webkit-box-shadow: 0px 0px 28px #00ff00;
   -moz-box-shadow: 0px 0px 28px #00ff00;
   box-shadow: 0px 0px 28px #00ff00;
