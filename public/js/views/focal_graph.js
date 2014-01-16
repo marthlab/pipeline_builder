@@ -609,9 +609,6 @@ var FocalPotentialDestGroupNodeView = AbstractFocalNodeView.extend({
 var FocalPotentialDestNodeView = AbstractFocalNodeView.extend({
   template: _.template($('#FocalPotentialDestNodeView-template').html()),
   className: 'node potential_dest',
-  events: {
-
-  },
   getLabel: function() {
     return this.package;
   },
@@ -621,12 +618,24 @@ var FocalPotentialDestNodeView = AbstractFocalNodeView.extend({
 
   render: function() {
     this.$el.html(this.template(this));
-    this.$dropdown = this.$el.children('.dropdown');
-    this.$dropdown_button = this.$dropdown.children('a.dropdown-toggle');
-    this.item_views = _.map(this.potential_dests, function(potential_dest) {return new FocalPotentialDestNodeViewItem({tool_input: potential_dest, parent_view: this});}, this);
-    this.$items_container = this.$dropdown.children('.items');
-    this.$items_container.append(_.pluck(this.item_views, 'el'));
-    
+
+    if(this.potential_dests.length === 1) {
+      this.task_cfg = Task.createConfig({tool_input: this.potential_dests[0], source: this.outbound_datum});
+      this.events = {
+        'click': function() {
+          app.pipeline.addTask(this.task_cfg);
+        }
+      }
+      this.delegateEvents();
+    } else {
+      this.$dropdown = this.$el.children('.dropdown');
+      this.$dropdown_button = this.$dropdown.children('a.dropdown-toggle');
+      this.item_views = _.map(this.potential_dests, function(potential_dest) {
+        return new FocalPotentialDestNodeViewItem({tool_input: potential_dest, source: this.outbound_datum});
+      }, this);
+      this.$items_container = this.$dropdown.children('.items');
+      this.$items_container.append(_.pluck(this.item_views, 'el'));
+    }
   }
 });
 
@@ -635,28 +644,14 @@ var FocalPotentialDestNodeViewItem = Backbone.View.extend({
   tagName: 'li',
   events: {
     'click': function() {
-      var task_cfg = {
-        task_id: app.pipeline.getDefaultTaskId(this.tool_input.tool),
-        tool_id: this.tool_input.tool.id,
-        input_src_assignments: {}
-      };
-      task_cfg.input_src_assignments[this.tool_input.id] = (
-        this.parent_view.outbound_datum instanceof TaskOutput ?
-        {
-          task_id: this.parent_view.outbound_datum.task.id,
-          tool_output_id: this.parent_view.outbound_datum.tool_output.id
-        } :
-        {
-          pipeline_input_id: this.parent_view.outbound_datum.id
-        }
-      );
-      app.pipeline.addTask(task_cfg);
+      app.pipeline.addTask(this.task_cfg);
     }
   },
 
   initialize: function(options) {
     this.tool_input = options.tool_input;
-    this.parent_view = options.parent_view;
+    this.source = options.source;
+    this.task_cfg = Task.createConfig({tool_input: this.tool_input, source: this.source});
     this.render();
   },
 

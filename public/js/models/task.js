@@ -100,6 +100,24 @@ _.extend(Task.prototype, Backbone.Events, {
     }
   }
 });
+Task.createConfig = function(options) {
+  var task_cfg = {
+    task_id: app.pipeline.getDefaultTaskId(options.tool_input.tool),
+    tool_id: options.tool_input.tool.id,
+    input_src_assignments: {}
+  };
+  task_cfg.input_src_assignments[options.tool_input.id] = (
+    options.source instanceof TaskOutput ?
+    {
+      task_id: options.source.task.id,
+      tool_output_id: options.source.tool_output.id
+    } :
+    {
+      pipeline_input_id: options.source.id
+    }
+  );
+  return task_cfg;
+}
 
 function TaskOption(task, tool_option, option_val) {
   this.task = task;
