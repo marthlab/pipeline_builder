@@ -1,6 +1,12 @@
 [
   {
     "id": "bamtools-convert",
+
+    "service_URL": "http://bamtools.iobio.io/?cmd=convert",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Input & Output": {
         "-region": {
@@ -38,8 +44,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-count",
+
+    "service_URL": "http://bamtools.iobio.io/?cmd=count",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Input & Output": {
         "-region": {
@@ -64,8 +78,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-coverage",
+
+    "service_URL": "http://bamtools.iobio.io/?cmd=coverage",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
     },
     "inputs": {
@@ -79,8 +101,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-filter",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=filter",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Input & Output": {
         "-region": {
@@ -191,8 +221,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-header",
+
+    "service_URL": "http://bamtools.iobio.io/?cmd=header",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
     },
     "inputs": {
@@ -207,8 +245,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-index",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=index",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
     },
     "inputs": {
@@ -223,13 +269,21 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-merge",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=merge",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Input & Output": {
         "-region": {
           "description": "genomic region. Index file is recommended for better performance.",
-          "type": "integer"
+          "type": "string"
         },
         "-forceCompression": {
           "description": "if results are sent to stdout (like when piping to another tool), default behavior is to leave output uncompressed. Use this flag to override and force compression",
@@ -250,8 +304,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-random",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=random",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Input & Output": {
         "-region": {
@@ -289,8 +351,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-resolve-makeStats",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=resolve -makeStats",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Settings": {
         "-minMQ": {
@@ -322,8 +392,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-resolve-markPairs",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=resolve -markPairs",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Settings": {
         "-minMQ": {
@@ -353,8 +431,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-revert",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=revert",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Input & Output": {
         "-forceCompression": {
@@ -386,8 +472,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-sort",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=sort",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Sorting Methods": {
         "-byname": {
@@ -420,8 +514,16 @@
       }
     }
   },
+
+
   {
     "id": "bamtools-split",
+
+    "service_URL": "http://bamtools.iobio.io/?binary=true&cmd=split",
+
+    "inputs_named": true,
+    "flags_have_value": true,
+
     "options": {
       "Input & Output": {
         "-refPrefix": {

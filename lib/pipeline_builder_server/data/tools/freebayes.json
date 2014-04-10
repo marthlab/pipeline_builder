@@ -1,7 +1,13 @@
 [
   {
     "id": "freebayes",
+
+    "service_URL": "http://freebayes.iobio.io/?cmd=",
+
+    "flags_have_value": false,
+
     "category": "variant detection",
+
     "options": {
       "Input and Output": {
         "--region": {

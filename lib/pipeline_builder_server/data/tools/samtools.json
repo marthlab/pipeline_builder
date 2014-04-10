@@ -1,0 +1,35 @@
+[
+  {
+    "id": "samtools-view",
+
+    "service_URL": "http://samtools.iobio.io/?cmd=view",
+
+    "flags_have_value": false,
+    "inputs_named": false,
+
+    "options": {
+      "Input & Output": {
+        "-H": {
+          "description": "View header only",
+          "type": "flag"
+        }
+      }
+    },
+
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+
+    "outputs": {
+      "-out": {
+        "available_formats": 
+	["bed", "fasta", "fastq", "json", "pileup", "sam", "yaml"]
+      }
+    }
+  }
+
+]

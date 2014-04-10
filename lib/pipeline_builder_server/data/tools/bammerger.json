@@ -1,0 +1,35 @@
+[
+  {
+    "id": "bammerger",
+
+    "service_URL": "http://bammerger.iobio.io/?binary=true&cmd=",
+
+    "flags_have_value": false,
+    "inputs_named": false,
+
+
+    "options": {
+      "Input & Output": {
+        "region": {
+          "description": "genomic region. Index file is recommended for better performance.",
+          "type": "string"
+        }
+      }
+    },
+
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["bam"],
+        "required": true,
+        "accepts_multiple": true
+      }
+    },
+
+    "outputs": {
+      "-out": {
+        "available_formats": ["bam"]
+      }
+    }
+  }
+
+]
