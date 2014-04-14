@@ -18,7 +18,12 @@ function taskOptions(task, tool) {
                                       function(k) {return !opts[k];})));
     options = _.flatten(tool.inputs_named ?
 			options :
-			_.map(options, function (pair) {return pair[1];}));
+			_.map(options, function (pair) {
+			    return (typeof pair[1] == "boolean") ?
+				pair[0] :
+				pair[1];
+			}));
+
     options = tool.flags_have_value ? 
 	options :
 	_.filter(options, function(x) {return !(typeof x == "boolean");});
@@ -44,13 +49,23 @@ function taskInputs(task, pl_graph) {
 function constructTaskURL (task, pl_graph, pipeline) {
     var tool = _.find(pipeline.tools, {id: task.tool_id});
     var service_URL = tool.service_URL;
+    var param_loc = tool.param_loc;
     var input_sep = tool.inputs_named ? " -in " : " ";
 
     var options = taskOptions(task,tool);
     var inputs = taskInputs(task, pl_graph);
-    var prefix = strJoin(" ", _.flatten([service_URL, options]));
+    var prefix = service_URL;
+    var suffix = "";
 
-    url =  encodeURI(prefix + strJoin(input_sep, [""].concat(inputs)));
+    if (param_loc == "after-input") {
+	suffix = " " + options;;
+    } else {
+	prefix = strJoin(" ", _.flatten([service_URL, options]));
+    };
+
+    url =  encodeURI(prefix + 
+		     strJoin(input_sep, [""].concat(inputs)) +
+		     suffix);
     task.task_URL = url;
     return url;
 }

@@ -7,6 +7,8 @@ function Tool(tool_cfg) {
     this.service_URL = tool_cfg.service_URL || undefined;
     this.inputs_named = tool_cfg.inputs_named || undefined;
     this.flags_have_value = tool_cfg.flags_have_value || undefined;
+    this.param_loc = tool_cfg.param_loc || undefined;
+
 
     this.options =
         _.flatten(_.map(tool_cfg.options,
@@ -46,6 +48,7 @@ _.extend(Tool.prototype, {
             service_URL: this.service_URL,
 	    inputs_named: this.inputs_named,
 	    flags_have_value: this.flags_have_value,
+	    param_loc: this.param_loc,
 
             options: _.transform(
                 _.groupBy(this.options, 'category'),
