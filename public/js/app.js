@@ -1,6 +1,6 @@
 
-var RUNPL = false;
-var parts = [];
+var RUNPL = true;
+var dbg_parts = [];
 
 function strJoin (sep, str_coll) {
     if (str_coll.length == 0) {
@@ -125,7 +125,7 @@ function ajaxRunPipeline (url) {
 
 
 function wsRunPipeline (ws_service) {
-    parts = [];
+    var parts = [];
     $("#monitor").empty();
     var client = BinaryClient(ws_service);
     client.on('open', function() {
@@ -135,6 +135,7 @@ function wsRunPipeline (ws_service) {
         stream.on('data', function(data) {
             parts.push(data);});
         stream.on('end', function() {
+	    dbg_parts = parts;
             console.log(parts);
             $("#monitor").append("<p>" + strJoin("\n", parts) + "</p>");
         });
