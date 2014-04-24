@@ -210,13 +210,15 @@ $(function(){
         }; // else, this call from edit_pipeline and already set
 
         var urls = constructPipelineURL(pipeline);
-        pipeline.url = urls["http_url"];
-        pipeline.wsurl = urls["ws_url"];
-        pipeline.ws_service = urls["ws_service"];
-        console.log(pipeline.url);
-        if (RUNPL) {
-            wsRunPipeline(pipeline.ws_service);
-        };
+	if (urls) {
+            pipeline.url = urls["http_url"];
+            pipeline.wsurl = urls["ws_url"];
+            pipeline.ws_service = urls["ws_service"];
+            console.log(pipeline.url);
+            if (RUNPL) {
+		wsRunPipeline(pipeline.ws_service);
+            };
+	};
     }
 
 
