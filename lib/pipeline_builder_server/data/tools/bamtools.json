@@ -1,4 +1,38 @@
 [
+
+  {
+      "id": "bamtools-stats",
+      "service_URL": "http://bamtools.iobio.io/?cmd=stats",
+
+      "inputs_named": true,
+      "flags_have_value": true,
+      "param_loc": "after-input",
+
+      "options": {
+          "statsOptions": {
+              "-insert": {
+                  "description": "Summarize insert size data",
+                  "type": "flag"
+              }
+          }
+      },
+
+      "inputs": {
+	  "-in": {
+              "formats_whitelist": ["bam"],
+              "required": true,
+              "accepts_multiple": true
+	  }
+      },
+
+      "outputs": {
+          "-out": {
+              "available_formats": ["txt"]
+          }
+      }
+  },
+
+
   {
     "id": "bamtools-convert",
 
