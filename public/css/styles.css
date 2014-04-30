@@ -306,6 +306,7 @@ body {
 }
 #monitor {
   flex-grow: 1;
+  max-width: 600px;
   border-left: 1px black solid;
 }
 .hint:after,
