@@ -135,7 +135,7 @@ function wsRunPipeline (ws_service) {
         stream.on('data', function(data) {
             parts.push(data);});
         stream.on('end', function() {
-	    dbg_parts = parts;
+	          dbg_parts = parts;
             console.log(parts);
             $("#monitor").append("<p>" + strJoin("\n", parts) + "</p>");
         });
