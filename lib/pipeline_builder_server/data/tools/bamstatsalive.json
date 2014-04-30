@@ -1,0 +1,48 @@
+[
+  {"id": "bamstatsalive",
+   "service_URL": "http://bamstatsalive.iobio.io/?binary=true&cmd=",
+   
+   "inputs_named": true,
+   "flags_have_value": false,
+   "param_loc": "after-input",
+   
+   "options": {
+       "Output Options": {
+           "-u": {
+               "description": "update rate in reads, defaults to every 1000",
+               "type": "integer"
+           },
+           "-r": {
+               "description": "list of regions that will be analyzed. Improves performance",
+               "type": "string"
+           },
+	   "-s": {
+	       "description": "region start",
+	       "type": "integer"
+	   },
+	   "-l": {
+	       "description": "region length",
+	       "type": "integer"
+	   },
+	   "-f": {
+	       "description": "first update rate",
+	       "type": "integer"
+	   }
+       }
+   },
+
+   "inputs": {
+       "-in": {
+           "formats_whitelist": ["bam"],
+           "required": true,
+           "accepts_multiple": false
+       }
+   },
+
+   "outputs": {
+       "-out": {
+           "available_formats": ["json"]
+       }
+   }
+  }
+]
