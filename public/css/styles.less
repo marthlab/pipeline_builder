@@ -45,7 +45,7 @@
 
 * {box-sizing:border-box;}
 html {width:100%; height: 100%; overflow:hidden;}
-  body {width:100%; height: 100%; overflow:hidden; display:flex; justify-content:space-between;}
+  body {width:100%; height: 100%; overflow:hidden; display:flex; justify-content:space-between; font-family: Quicksand; font-weight: 300}
     #left_container {display:flex; flex-direction: column; justify-content:space-between; flex-grow:3;}
       #focal_container {flex-grow:3; border-right:1px black solid; border-bottom:1px black solid; position:relative;}
         #focal {
@@ -90,7 +90,11 @@ html {width:100%; height: 100%; overflow:hidden;}
             cursor: pointer;
           }
         }
-    #monitor {flex-grow:1; max-width:600px; border-left:1px black solid;}
+    #monitor {flex-grow:1; max-width:600px; border-left:1px black solid; display: flex; flex-direction:column;}
+      .panel_subview:not(:last-child) {border-bottom: 1px solid rgb(80,80,80);}
+      .panel_subview { flex:1; text-align:center;}
+        .title {font-size: 1.5em; margin-top: 10px; color: rgb(100,100,100);}
+        .dragInstruction {margin-top: 20%; font-size: 1.2em; color: rgb(190,190,190);}
 
   .hint:after, [data-hint]:after {
     padding: 4px 10px;

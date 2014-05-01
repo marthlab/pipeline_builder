@@ -6,6 +6,7 @@
   <title>{{site_title}}</title>
 
   <link href="/bootstrap/css/bootstrap.min.css" media="all" rel="stylesheet" />
+  <link href='/css/quicksand.css' rel='stylesheet' type='text/css'>
   <link href="/css/hint.css" media="all" rel="stylesheet" />
   <link href="/css/styles.css" media="all" rel="stylesheet" />
 </head>
@@ -26,6 +27,12 @@
   <div class="resizer">
     <div class="graph_subviews"></div>
   </div>
+</script>
+
+<script type="text/html" id='MonitorView-template'>
+  <div class="panel_subview"><div class="title">Current<div id="pie"></div></div></div>
+  <div class="panel_subview"><div class="dragInstruction">Drag Circle NodeTo Visualize</div></div>
+  <div class="panel_subview"><div class="dragInstruction">Drag Circle NodeTo Visualize</div></div>
 </script>
 
 <script type="text/html" id='FocalView-template'>
@@ -193,6 +200,9 @@
 <script src="/js/views/global_view.js"></script>
 <script src="/js/views/focal_graph.js"></script>
 <script src="/js/views/focal_view.js"></script>
+<script src="/js/views/monitor_view.js"></script>
+<script src="/js/lib/d3.v3.min.js"></script>
+<script src="/js/lib/charts/donut.d3.js"></script>
 <script src="/js/app.js"></script>
 <!-- <script src="/js/routers/router.js"></script> -->
 

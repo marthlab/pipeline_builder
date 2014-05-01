@@ -126,20 +126,49 @@ function ajaxRunPipeline (url) {
 
 function wsRunPipeline (ws_service) {
     var parts = [];
-    $("#monitor").empty();
     var client = BinaryClient(ws_service);
     client.on('open', function() {
         console.log('hi');
         var stream = client.createStream(
             {event: 'run', params: {'url': app.pipeline.wsurl}});
         stream.on('data', function(data) {
-            parts.push(data);});
+            parts.push(data);            
+        });
         stream.on('end', function() {
 	          dbg_parts = parts;
+            // visualize data
+            visualizeData(parts);
             console.log(parts);
-            $("#monitor").append("<p>" + strJoin("\n", parts) + "</p>");
+            // $("#monitor").append("<p>" + strJoin("\n", parts) + "</p>");
         });
     });
+}
+
+function visualizeData(parts) {
+  // check type of data
+  // assume stats for now and convert to usable array
+  var metrics = ['Mapped reads', "Proper pairs", "Forward strand", "Singletons", "Both pairs mapped", "Duplicates"]
+  var data = [];
+  dbg_parts[0].split("\n").slice(5,-2).forEach(function(d) { 
+    var fields = d.split(":"); 
+    var nums = fields[1].split("(");
+    var percent;
+    if (nums[1] != undefined) percent = parseFloat(nums[1].slice(0,-2)) / 100;
+    var metric = fields[0].replace(/'/g,"").replace("-"," ");
+    if (metrics.indexOf(metric) != -1)
+      data.push( [metric, [parseInt(nums[0]), percent]] );
+  });
+  
+
+  // visualize in default way for data type
+  var pie = d3.layout.pie().sort(null);
+  var value = undefined;
+  
+  data.forEach( function(d) {
+    var arc = d3.select("#pie").selectAll(".arc")
+        .data(pie(d));
+    app.donut_chart(arc);                  
+  });
 }
 
 
@@ -216,7 +245,7 @@ $(function(){
             pipeline.ws_service = urls["ws_service"];
             console.log(pipeline.url);
             if (RUNPL) {
-		wsRunPipeline(pipeline.ws_service);
+		          wsRunPipeline(pipeline.ws_service);
             };
 	};
     }
@@ -226,6 +255,8 @@ $(function(){
 
     app.global_view = new GlobalView({el: $("#global")});
     app.focal_view = new FocalView({el: $("#focal")});
+    app.monitor_view = new MonitorView({el: $("#monitor")});
+    app.donut_chart = donutD3().radius(61);
 
     Backbone.history.start({pushState: true});
 });
