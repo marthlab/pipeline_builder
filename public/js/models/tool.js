@@ -1,6 +1,21 @@
-// here we assume the cfg is valid; this should be checked prior to instantiating business objects
+// here we assume the cfg is valid; this should be checked prior to
+// instantiating business objects
 
 function Tool(tool_cfg) {
+
+    if (tool_cfg.id == "bammerger" || tool_cfg.id == "bamtools-filter") {
+	console.log(tool_cfg);
+    }
+
+    // Are we operating where all the tools are already fully
+    // configured??
+    if (app.tool_library && app.tool_library._tools) {
+	var ot = _.find(app.tool_library._tools, {id: tool_cfg.id});
+	if (ot) { return ot; };
+    }
+
+    // No, so do full tool construction
+
     this.id = tool_cfg.id;
     this.package = tool_cfg.package || undefined;
     this.description = tool_cfg.description || '';
