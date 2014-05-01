@@ -1,3 +1,4 @@
+
 function Task(pipeline, task_cfg) {
 
     this.pipeline = pipeline;
@@ -198,25 +199,26 @@ _.extend(TaskOption.prototype, Backbone.Events, {
 
 
 function TaskInput(task, tool_input, input_src_assignment_cfg) {
-  this.task = task;
-  this.tool_input = tool_input;
+    this.task = task;
+    this.tool_input = tool_input;
 
-  if(!_.isUndefined(input_src_assignment_cfg)) {
-    this.sources = _.isArray(input_src_assignment_cfg) ?
-      _.map(input_src_assignment_cfg, this._getSourceFromCfg, this) : [this._getSourceFromCfg(input_src_assignment_cfg)];
-  } else {
-    this.sources = [];
-  }
+    if(!_.isUndefined(input_src_assignment_cfg)) {
+        this.sources = _.isArray(input_src_assignment_cfg) ?
+            _.map(input_src_assignment_cfg, this._getSourceFromCfg, this) :
+            [this._getSourceFromCfg(input_src_assignment_cfg)];
+    } else {
+        this.sources = [];
+    }
 
-  this.enabled = this.tool_input.required || this.isAssignedSource();
+    this.enabled = this.tool_input.required || this.isAssignedSource();
 
-  this.on("enable disable add:source", function(){
-    this.trigger("change", this);
-  }, this);
+    this.on("enable disable add:source", function(){
+        this.trigger("change", this);
+    }, this);
 
-  this.on("change", function(){
-    this.task.trigger("change:task_input", this);
-  }, this);
+    this.on("change", function(){
+        this.task.trigger("change:task_input", this);
+    }, this);
 
 }
 
@@ -255,8 +257,13 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   getPotentialSources: function() {
     if(this.isSaturated()) return [];
 
-    return _.union(this.task.pipeline.inputs, this.task.pipeline.getFinalizedTaskOutputs()).filter(function(datum){
-      return !this.hasAsSource(datum) && this.acceptsFormatOf(datum) && this.compatibleWithMultiplicityOf(datum) && !datum.dependsOnTask(this.task);
+    return _.union(
+        this.task.pipeline.inputs,
+        this.task.pipeline.getFinalizedTaskOutputs()).filter(function(datum){
+            return (!this.hasAsSource(datum) &&
+                    this.acceptsFormatOf(datum) &&
+                    this.compatibleWithMultiplicityOf(datum) &&
+                    !datum.dependsOnTask(this.task));
     }, this);
 
   },
@@ -338,7 +345,9 @@ _.extend(TaskOutput.prototype, Backbone.Events, {
     return this.task;
   },
   dependsOnTask: function(task) {
-    return (task === this.task) || _.methodSome(_.flatten(_.pluck(this.task.inputs, 'sources')), 'dependsOnTask', task);
+    return (task === this.task) ||
+           _.methodSome(_.flatten(_.pluck(this.task.inputs, 'sources')),
+                        'dependsOnTask', task);
   },
   getSuggestableToolInputsAccepting: function() {
     if(!this.task.isFinalized()) {
