@@ -1,3 +1,6 @@
+@import "pie_chart";
+@import "histogram_chart";
+
 .graph_view {position:absolute; top:5%; bottom:5%; left:5%; right:5%;
   .hw_accel;
   .resizer {position:relative; width:100%; height:100%;}
@@ -90,11 +93,28 @@ html {width:100%; height: 100%; overflow:hidden;}
             cursor: pointer;
           }
         }
-    #monitor {flex-grow:1; max-width:600px; border-left:1px black solid; display: flex; flex-direction:column;}
+    #monitor {flex-grow:1; max-width:600px; border-left:1px black solid; margin:0 auto; height:100%;}
       .panel_subview:not(:last-child) {border-bottom: 1px solid rgb(80,80,80);}
-      .panel_subview { flex:1; text-align:center;}
-        .title {font-size: 1.5em; margin-top: 10px; color: rgb(100,100,100);}
-        .dragInstruction {margin-top: 20%; font-size: 1.2em; color: rgb(190,190,190);}
+      .panel_subview { height: 33.3%; text-align:center;}
+        .title {font-size: 1.5em; color: rgb(100,100,100);}
+        .dragInstruction {padding-top: 18%; font-size: 1.2em; color: rgb(190,190,190);}
+        .charts {
+          position:absolute;
+          top: 1.8em;
+          bottom: 0px;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          display: -webkit-box;
+          display: -moz-box;
+          display: -ms-flexbox;
+          display: -webkit-flex;
+          display: flex;
+          -webkit-flex-flow: row wrap;
+          justify-content: space-around;          
+        }
+          .chart {flex: 1 1 100px;position:relative;}
+          .chart svg {position:absolute; height:100%; width:100%; left:0px; }          
 
   .hint:after, [data-hint]:after {
     padding: 4px 10px;

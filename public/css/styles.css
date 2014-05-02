@@ -1,3 +1,21 @@
+.arc .fill {
+  fill: #2d8fc1;
+}
+.arc .alpha {
+  fill: rgba(45, 143, 193, 0.2);
+}
+.bar {
+  fill: #2d8fc1;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.axis {
+  font-size: 19px;
+}
 .graph_view {
   position: absolute;
   top: 5%;
@@ -310,25 +328,49 @@ body {
   flex-grow: 1;
   max-width: 600px;
   border-left: 1px black solid;
-  display: flex;
-  flex-direction: column;
+  margin: 0 auto;
+  height: 100%;
 }
 .panel_subview:not(:last-child) {
   border-bottom: 1px solid #505050;
 }
 .panel_subview {
-  flex: 1;
+  height: 33.3%;
   text-align: center;
 }
 .title {
   font-size: 1.5em;
-  margin-top: 10px;
   color: #646464;
 }
 .dragInstruction {
-  margin-top: 20%;
+  padding-top: 18%;
   font-size: 1.2em;
   color: #bebebe;
+}
+.charts {
+  position: absolute;
+  top: 1.8em;
+  bottom: 0px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  justify-content: space-around;
+}
+.chart {
+  flex: 1 1 100px;
+  position: relative;
+}
+.chart svg {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0px;
 }
 .hint:after,
 [data-hint]:after {
