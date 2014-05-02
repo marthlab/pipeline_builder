@@ -14,8 +14,8 @@ if ('log' in CONF) {
     for (var key in CONF.log.customlevels) {
       process.env['NODE_LOGGER_LEVEL_' + key] = CONF.log.customlevels[key];
     }
-  }     
-}  
+  }
+}
 
 var pub_dir = CONF.app.pub_dir;
 if (pub_dir[0] != '/') { pub_dir = '/' + pub_dir; } // humans are forgetful
@@ -24,37 +24,36 @@ pub_dir = __dirname + pub_dir;
 /**
  * All environments
  */
-app.configure(function() {
+//app.configure(function() { <-- This is no longer needed! DEPRECATED!
 
-  app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/lib/pipeline_builder_server/views');
 
-  app.set('view engine', 'handlebars');
-  app.engine('handlebars', hbs.__express);
+app.set('view engine', 'handlebars');
+app.engine('handlebars', hbs.__express);
 
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.query());
-  app.use(express.cookieParser(CONF.app.cookie_secret));
-  app.use(express.session());
-  app.use(app.router);
-  //app.use(express.responseTime());
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.query());
+app.use(express.cookieParser(CONF.app.cookie_secret));
+app.use(express.session());
+app.use(app.router);
+//app.use(express.responseTime());
 
-  // This is not needed if you handle static files with, say, Nginx (recommended in production!)
-  // Additionally you should probably precompile your LESS stylesheets in production
-  // Last, but not least: Express' default error handler is very useful in dev, but probably not in prod.
-  if ((typeof process.env['NODE_SERVE_STATIC'] !== 'undefined') && process.env['NODE_SERVE_STATIC'] == 1) {
-      app.use(require('less-middleware')({ src: pub_dir }));
-      app.use(express.static(pub_dir));
-      app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  }
+// This is not needed if you handle static files with, say, Nginx (recommended in production!)
+// Additionally you should probably precompile your LESS stylesheets in production
+// Last, but not least: Express' default error handler is very useful in dev, but probably not in prod.
+if ((typeof process.env['NODE_SERVE_STATIC'] !== 'undefined') && process.env['NODE_SERVE_STATIC'] == 1) {
+    app.use(require('less-middleware')({ src: pub_dir }));
+    app.use(express.static(pub_dir));
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+}
 
-  // Catch-all error handler. Override as you see fit
-  app.use(function(err, req, res, next){
+// Catch-all error handler. Override as you see fit
+app.use(function(err, req, res, next){
     log.error(err.stack);
     res.send(500, 'An unexpected error occurred! Please check logs.');
-  });
-    
 });
+
 
 //---- INTERNAL MODULES
 app.use(require('./lib/pipeline_builder_server'));
@@ -66,7 +65,7 @@ if (cluster.isMaster
     && (process.env.NODE_CLUSTERED == 1)) {
 
   log.notice("Starting app in clustered mode");
-  
+
   var timeouts = [];
   for (var i = 0; i < numCPUs; i++) {
     cluster.fork();

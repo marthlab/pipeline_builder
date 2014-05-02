@@ -65,6 +65,8 @@ body {
   overflow: hidden;
   display: flex;
   justify-content: space-between;
+  font-family: Quicksand;
+  font-weight: 300;
 }
 #left_container {
   display: flex;
@@ -308,6 +310,25 @@ body {
   flex-grow: 1;
   max-width: 600px;
   border-left: 1px black solid;
+  display: flex;
+  flex-direction: column;
+}
+.panel_subview:not(:last-child) {
+  border-bottom: 1px solid #505050;
+}
+.panel_subview {
+  flex: 1;
+  text-align: center;
+}
+.title {
+  font-size: 1.5em;
+  margin-top: 10px;
+  color: #646464;
+}
+.dragInstruction {
+  margin-top: 20%;
+  font-size: 1.2em;
+  color: #bebebe;
 }
 .hint:after,
 [data-hint]:after {
