@@ -172,6 +172,7 @@ _.extend(Pipeline.prototype, Backbone.Events, {
     },
 
     addTask: function(task_cfg) {
+	console.log("addTask: ", task_cfg);
         var task = new Task(this, task_cfg);
         this.tasks.push(task);
         this.tasks.sort(_.sortById);

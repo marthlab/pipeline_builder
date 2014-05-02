@@ -22,6 +22,13 @@ function Task(pipeline, task_cfg) {
             return task_option;
         }, this);
 
+    // If task is input to another task, this is set false when
+    // building runable url.  It can be turned back to true if user
+    // drags this task to a monitor area (=> run this and display
+    // output), even if it is input to another task.
+    this.runit = true;
+    this.in_display = false;
+
     this.inputs = _.map(
         this.tool.inputs || [],
         function(tool_input) {
