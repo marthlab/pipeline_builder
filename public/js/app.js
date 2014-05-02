@@ -152,7 +152,7 @@ function wsRunPipeline (task_run_info) {
         stream.on('end', function() {
             dbg_parts = parts;
             //console.log(parts);
-            //$("#monitor").append(strJoin("\n", parts));
+            $("#monitor").append(strJoin("\n", parts));
             // visualize data
             //visualizeData(parts);
         });
