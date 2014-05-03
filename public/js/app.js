@@ -124,7 +124,7 @@ function ajaxRunPipeline (url) {
 }
 
 
-function wsRunPipeline (ws_service) {
+function wsRunPipeline (ws_service, task_id) {
     var parts = [];
     var client = BinaryClient(ws_service);
     client.on('open', function() {
@@ -137,38 +137,16 @@ function wsRunPipeline (ws_service) {
         stream.on('end', function() {
 	          dbg_parts = parts;
             // visualize data
-            visualizeData(parts);
+            visualizeData(parts, task_id);
             console.log(parts);
             // $("#monitor").append("<p>" + strJoin("\n", parts) + "</p>");
         });
     });
 }
 
-function visualizeData(parts) {
-  // check type of data
-  // assume stats for now and convert to usable array
-  var metrics = ['Mapped reads', "Proper pairs", "Forward strand", "Singletons", "Both pairs mapped", "Duplicates"]
-  var data = [];
-  dbg_parts[0].split("\n").slice(5,-2).forEach(function(d) { 
-    var fields = d.split(":"); 
-    var nums = fields[1].split("(");
-    var percent;
-    if (nums[1] != undefined) percent = parseFloat(nums[1].slice(0,-2)) / 100;
-    var metric = fields[0].replace(/'/g,"").replace("-"," ");
-    if (metrics.indexOf(metric) != -1)
-      data.push( [metric, [parseInt(nums[0]), percent]] );
-  });
-  
-
-  // visualize in default way for data type
-  var pie = d3.layout.pie().sort(null);
-  var value = undefined;
-  
-  data.forEach( function(d) {
-    var arc = d3.select("#pie").selectAll(".arc")
-        .data(pie(d));
-    app.donut_chart(arc);                  
-  });
+function visualizeData(parts, task_id) {
+  var data = JSON.parse(parts[0]);
+  app.current_visualization_view.addCharts(data, task_id);
 }
 
 
@@ -245,7 +223,7 @@ $(function(){
             pipeline.ws_service = urls["ws_service"];
             console.log(pipeline.url);
             if (RUNPL) {
-		          wsRunPipeline(pipeline.ws_service);
+		          wsRunPipeline(pipeline.ws_service, pipeline.getFinalizedTaskOutputs().pop().task.id);
             };
 	};
     }
@@ -255,8 +233,11 @@ $(function(){
 
     app.global_view = new GlobalView({el: $("#global")});
     app.focal_view = new FocalView({el: $("#focal")});
-    app.monitor_view = new MonitorView({el: $("#monitor")});
-    app.donut_chart = donutD3().radius(61);
+    app.current_visualization_view = new VisualizationView({el: $("#current-visualization")});
+    app.current_visualization_view = new VisualizationView({el: $("#current-visualization")});
+    app.first_visualization_view = new VisualizationView({el: $("#first-visualization")});
+    app.second_visualization_view = new VisualizationView({el: $("#second-visualization")});    
+
 
     Backbone.history.start({pushState: true});
 });

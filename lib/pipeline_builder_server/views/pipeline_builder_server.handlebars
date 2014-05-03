@@ -14,13 +14,22 @@
 <body lang="en">
   <div id="left_container">
     <div id="focal_container">
+
       <div id="focal"></div>
     </div>
     <div id="global_container">
       <div id="global"></div>
     </div>
   </div>
-  <div id="monitor"></div>
+  <div id="monitor">
+    <div style="height:100%">
+      <div class="panel_subview" style="position:relative"><div class="title">Current</div>
+        <div id="current-visualization" class="charts"></div>
+      </div>
+      <div class="panel_subview"><div class="dragInstruction">Drag Circle Node Here To Visualize</div></div>
+      <div class="panel_subview"><div class="dragInstruction">Drag Circle Node Here To Visualize</div></div>          
+    </div>
+  </div>
 </body>
 
 <script type="text/html" id='GlobalView-template'>
@@ -30,9 +39,7 @@
 </script>
 
 <script type="text/html" id='MonitorView-template'>
-  <div class="panel_subview"><div class="title">Current<div id="pie"></div></div></div>
-  <div class="panel_subview"><div class="dragInstruction">Drag Circle NodeTo Visualize</div></div>
-  <div class="panel_subview"><div class="dragInstruction">Drag Circle NodeTo Visualize</div></div>
+  
 </script>
 
 <script type="text/html" id='FocalView-template'>
@@ -201,8 +208,10 @@
 <script src="/js/views/focal_graph.js"></script>
 <script src="/js/views/focal_view.js"></script>
 <script src="/js/views/monitor_view.js"></script>
+<script src="/js/views/visualization_view.js"></script>
 <script src="/js/lib/d3.v3.min.js"></script>
 <script src="/js/lib/charts/donut.d3.js"></script>
+<script src="/js/lib/charts/histogram.d3.js"></script>
 <script src="/js/app.js"></script>
 <!-- <script src="/js/routers/router.js"></script> -->
 
