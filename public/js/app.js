@@ -252,7 +252,6 @@ $(function(){
     app.global_view = new GlobalView({el: $("#global")});
     app.focal_view = new FocalView({el: $("#focal")});
     app.current_visualization_view = new VisualizationView({el: $("#current-visualization")});
-    app.current_visualization_view = new VisualizationView({el: $("#current-visualization")});
     app.first_visualization_view = new VisualizationView({el: $("#first-visualization")});
     app.second_visualization_view = new VisualizationView({el: $("#second-visualization")});    
 
