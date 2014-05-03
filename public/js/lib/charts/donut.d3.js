@@ -8,7 +8,7 @@ function donutD3() {
    var formatter = d3.format(",.1f"); 
    var commaFormatter = d3.format(",0f"); 
 
-   function my(selection) {
+   function my(selection, options) {
       // c = c || "rgb(45,143,193)";
       // var calpha = c.replace(")", ",0.2)").replace("rgb", "rgba");
       var g = selection.enter().append("g")
@@ -23,6 +23,13 @@ function donutD3() {
       g.append("path")
          .attr("d", arc)
          .attr("class", function(d,i) { if(i==1) return "alpha"; return "fill" });
+
+      if (options.title != undefined) {
+        g.append("text")
+        .attr("class", "title").text(options.title)
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + 0 + "," + parseInt(radius) + ")");  
+      } 
          
       selection.exit().remove();
       // g.append("text")

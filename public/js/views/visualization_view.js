@@ -2,7 +2,7 @@ var VisualizationView = Backbone.View.extend({
   template: _.template($('#VisualizationView-template').html()),
   initialize: function(options) {
     this.$el.html(this.template());
-    this.pie_chart = donutD3().radius(61).innerRadius(0);
+    this.pie_chart = donutD3().radius(61).outerRadius(45).innerRadius(0);
     // setup length histrogram chart
     this.histogram_chart = histogramD3();
     this.histogram_chart.margin({top:10, right:30, bottom:20, left:40})
