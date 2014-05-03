@@ -189,7 +189,8 @@ $(function(){
                          //console.log("NewURL = " + xurl);
                          //console.log(app.pipeline);
                          app.router.navigate(xurl);
-                         app.runPipeline(app.pipeline, pl_json);
+                         if (app.pipeline.tasks.length > 0)
+                           app.runPipeline(app.pipeline, pl_json);
                      });
     }
 
