@@ -10,7 +10,7 @@ function Tool(tool_cfg) {
     // Are we operating where all the tools are already fully
     // configured??
     if (app.tool_library && app.tool_library._tools) {
-	var ot = _.find(app.tool_library._tools, {id: tool_cfg.id});
+	var ot = app.tool_library.getTool(tool_cfg.id);
 	if (ot) { return ot; };
     }
 

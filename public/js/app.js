@@ -35,23 +35,32 @@ function taskOptions(task, tool) {
     return strJoin(" ", options);
 }
 
-function inputURL(input, pl_graph) {
+function inputURL(input, pl_graph, pipeline) {
     if ('pipeline_input_id' in input) {
         var pi_obj = {pipeline_input_id: input.pipeline_input_id};
         return _.find(pl_graph, pi_obj).data_URL;
     } else {
-        var tsk_obj = {task_id: input.task_id};
-        return encodeURIComponent(_.find(pl_graph, tsk_obj).task_URL);
+        // A task is input (i.e., its output is input)
+        // Set run flag to false as task as input => no explicit run.
+	var pltask = pipeline.getTask(input.task_id);
+	if (!pltask.in_display) {
+            pltask.runit = false;
+	};
+        var pl_graph_tsk_obj = _.find(pl_graph, {task_id: input.task_id});
+        return encodeURIComponent(pl_graph_tsk_obj.task_URL);
     }
 }
 
-function taskInputs(task, pl_graph) {
+function taskInputs(task, pl_graph, pipeline) {
     var inputs = task.input_src_assignments["-in"];
-    return _.map(inputs, function(input){return inputURL(input, pl_graph);});
+    return _.map(inputs,
+                 function(input) {
+                     return inputURL(input, pl_graph, pipeline);
+                 });
 }
 
 
-function constructTaskURL (task, pl_graph, pipeline) {
+function constructTaskRunMap (task, pl_graph, pipeline) {
     var tool = _.find(pipeline.tools, {id: task.tool_id});
 
     var service_URL = tool.service_URL;
@@ -73,7 +82,7 @@ function constructTaskURL (task, pl_graph, pipeline) {
     var input_sep = tool.inputs_named ? " -in " : " ";
 
     var options = taskOptions(task,tool);
-    var inputs = taskInputs(task, pl_graph);
+    var inputs = taskInputs(task, pl_graph, pipeline);
     var prefix = service_URL;
     var ws_prefix = ws_URL;
     var suffix = "";
@@ -95,19 +104,23 @@ function constructTaskURL (task, pl_graph, pipeline) {
     task.task_URL = url;
     task.task_ws_URL = wsurl;
 
-    return {http_service: service_URL, http_url: url,
+    return {id: task.task_id,
+            http_service: service_URL, http_url: url,
             ws_service: ws_service, ws_url: wsurl};
 }
 
 
-function constructPipelineURL (pipeline) {
+function constructPipelineRunMaps (pipeline) {
     var pl_graph = pipeline.linearized_cfg_graph;
     var tasks = _.filter(pl_graph, function(cfg) {return ('task_id' in cfg);});
-    var task_urls =
+    var task_run_maps =
         _.map(tasks,
               function(task){
-                  return constructTaskURL(task, pl_graph, pipeline);});
-    return _.last(task_urls);
+                  return constructTaskRunMap(task, pl_graph, pipeline);});
+    return _.filter(task_run_maps,
+                    function (tm) {
+                        return pipeline.getTask(tm.id).runit;
+                    });
 }
 
 
@@ -119,27 +132,29 @@ function ajaxRunPipeline (url) {
             samData = xhr.responseText;
             $("#monitor").append("<p>"+xhr.responseText+"</p>");
         },
-
          dataType: "text"});
 }
 
-
-function wsRunPipeline (ws_service, task_id) {
+function wsRunPipeline (task_run_info) {
+    var ws_service = task_run_info["ws_service"];
+    var wsurl = task_run_info["ws_url"];
+    var task_id = task_run_info["id"];
     var parts = [];
     var client = BinaryClient(ws_service);
+
     client.on('open', function() {
-        console.log('hi');
         var stream = client.createStream(
-            {event: 'run', params: {'url': app.pipeline.wsurl}});
+            {event: 'run', params: {'url': wsurl}});
         stream.on('data', function(data) {
             parts.push(data);            
         });
         stream.on('end', function() {
-	          dbg_parts = parts;
+            dbg_parts = parts;
+            //console.log(parts);
+            $("#monitor").append(strJoin("\n", parts));
             // visualize data
             visualizeData(parts, task_id);
-            console.log(parts);
-            // $("#monitor").append("<p>" + strJoin("\n", parts) + "</p>");
+            // console.log(parts);            
         });
     });
 }
@@ -216,16 +231,18 @@ $(function(){
                     pl_cfg.inputs, pl_cfg.tasks);
         }; // else, this call from edit_pipeline and already set
 
-        var urls = constructPipelineURL(pipeline);
-	if (urls) {
-            pipeline.url = urls["http_url"];
-            pipeline.wsurl = urls["ws_url"];
-            pipeline.ws_service = urls["ws_service"];
+        var task_maps = constructPipelineRunMaps(pipeline);
+        console.log(task_maps);
+        if (task_maps) {
+            plmap = _.last(task_maps);
+            pipeline.url = plmap["http_url"];
+            pipeline.wsurl = plmap["ws_url"];
+            pipeline.ws_service = plmap["ws_service"];
             console.log(pipeline.url);
             if (RUNPL) {
-		          wsRunPipeline(pipeline.ws_service, pipeline.getFinalizedTaskOutputs().pop().task.id);
+              _.each(task_maps, function(tm){wsRunPipeline(tm);})
             };
-	};
+        };
     }
 
 
