@@ -39,7 +39,10 @@ var VisualizationView = Backbone.View.extend({
   addCharts: function(data, task_id) {
     var me = this;
     // parse data into visualization format if parser exists
-    if ( this.parsers[task_id] != undefined )
+    if ( this.parsers[task_id] == undefined ) {
+      this.$el.html(data);
+      return;
+    } else
       var data = this.parsers[task_id](data)
 
     // iterate through charts
