@@ -53,8 +53,14 @@ function histogramD3() {
       var gEnter = g.enter().append("g");
       gEnter.append("g").attr("class", "x axis").attr("transform", "translate(0," + y.range()[0] + ")");
       gEnter.append("g").attr("class", "y axis");
-      gEnter.append("g").attr("class", "x brush")      
-      gEnter.append("text").attr("class", "title").text("hello").attr("transform", "translate(0," + y.range()[0] + ")");
+      gEnter.append("g").attr("class", "x brush") 
+      if (options.title != undefined) {
+        gEnter.append("text")
+        .attr("class", "title").text(options.title)
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + parseInt((width-margin.left-margin.right)/2) + "," + parseInt(height+margin.bottom) + ")");  
+      }     
+      
 
       // Update the outer dimensions.
       svg .attr("width", width)

@@ -5,7 +5,7 @@ var VisualizationView = Backbone.View.extend({
     this.pie_chart = donutD3().radius(61).innerRadius(0);
     // setup length histrogram chart
     this.histogram_chart = histogramD3();
-    this.histogram_chart.margin({top:10, right:30, bottom:10, left:40})
+    this.histogram_chart.margin({top:10, right:30, bottom:20, left:40})
     this.histogram_chart.yAxis().ticks(2);
     this.histogram_chart.xAxis().ticks(3);
     this.histogram_chart.xAxis().tickFormat(this.tickFormatter);
@@ -14,26 +14,26 @@ var VisualizationView = Backbone.View.extend({
   // add pie
   addPieChart: function(chart) {
     // create chart element
-    var $div = $('<div class="chart"><svg viewBox="0 0 150 150" ></svg></div>');
+    var $div = $('<div class="chart pie"><svg viewBox="0 0 150 150" ></svg></div>');
     
     this.$el.append($div)
     var svg = $div.children('svg')[0];
     var pie = d3.layout.pie().sort(null);      
     var arc = d3.select(svg).selectAll(".arc")
         .data( pie(chart.data) );
-    this.pie_chart(arc);    
+    this.pie_chart(arc, chart.options);    
   },
   // add a histogram chart
   addHistogramChart: function(chart) {
     // create chart element
-    var $div = $('<div class="chart" style="flex-grow:2"><svg viewBox="0 0 300 150" ></svg></div>');
+    var $div = $('<div class="chart histogram" style="flex-grow:2"><svg viewBox="0 0 300 150" ></svg></div>');
     
     this.$el.append($div)
     var svg = $div.children('svg')[0];
 
     var selection = d3.select(svg).datum(chart.data);
     this.histogram_chart.width(300).height(150);
-    this.histogram_chart( selection );
+    this.histogram_chart( selection, chart.options );
   },
   // add multiple charts
   addCharts: function(data, task_id) {
@@ -67,14 +67,14 @@ var VisualizationView = Backbone.View.extend({
       viz_data.defaults = ['mapped_reads', 'singletons', 'proper_pairs', 'frag_hist', 'coverage_hist'];
       
       // reorganize data for metric pie charts
-      metrics.forEach( function(metric) {
-        viz_data.charts[metric] = { 'chartType' : 'pie', 'data' : [ data[metric], total_reads-data[metric] ] }
+      metrics.forEach( function(chartId) {
+        viz_data.charts[chartId] = { 'chartType' : 'pie', 'data' : [ data[chartId], total_reads-data[chartId] ], options : {'title':chartId} }
       })
       
       // reorganize data for distribution histogram charts
-      distributions.forEach( function(distribution) {
-        var d = Object.keys(data[distribution]).map(function(k) { return  [+k, +data[distribution][k]] });
-        viz_data.charts[distribution] = { 'chartType' : 'histogram', 'data' : d }
+      distributions.forEach( function(chartId) {
+        var d = Object.keys(data[chartId]).map(function(k) { return  [+k, +data[chartId][k]] });
+        viz_data.charts[chartId] = { 'chartType' : 'histogram', 'data' : d, options : {'title':chartId} }
       })
 
       return viz_data;

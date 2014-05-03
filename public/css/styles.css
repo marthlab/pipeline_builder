@@ -1,20 +1,23 @@
-.arc .fill {
+.pie .arc .fill {
   fill: #2d8fc1;
 }
-.arc .alpha {
+.pie .arc .alpha {
   fill: rgba(45, 143, 193, 0.2);
 }
-.bar {
+.histogram .bar {
   fill: #2d8fc1;
 }
-.axis path,
+.histogram .axis path,
 .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
-.axis {
+.histogram .axis {
   font-size: 19px;
+}
+.histogram .title {
+  font-size: 24px;
 }
 .graph_view {
   position: absolute;
