@@ -15,19 +15,19 @@ var VisualizationView = Backbone.View.extend({
   addPieChart: function(chart) {
     // create chart element
     var $div = $('<div class="chart pie"><svg viewBox="0 0 150 150" ></svg></div>');
-    
+
     this.$el.append($div)
     var svg = $div.children('svg')[0];
-    var pie = d3.layout.pie().sort(null);      
+    var pie = d3.layout.pie().sort(null);
     var arc = d3.select(svg).selectAll(".arc")
         .data( pie(chart.data) );
-    this.pie_chart(arc, chart.options);    
+    this.pie_chart(arc, chart.options);
   },
   // add a histogram chart
   addHistogramChart: function(chart) {
     // create chart element
     var $div = $('<div class="chart histogram" style="flex-grow:2"><svg viewBox="0 0 300 150" ></svg></div>');
-    
+
     this.$el.append($div)
     var svg = $div.children('svg')[0];
 
@@ -35,46 +35,81 @@ var VisualizationView = Backbone.View.extend({
     this.histogram_chart.width(300).height(150);
     this.histogram_chart( selection, chart.options );
   },
+
   // add multiple charts
   addCharts: function(data, task_id) {
-    var me = this;
-    // parse data into visualization format if parser exists
-    if ( this.parsers[task_id] == undefined ) {
-      this.$el.html(data);
-      return;
-    } else
-      var data = this.parsers[task_id](data)
+    var focal_node =
+          _.find(app.focal_view.graph.getNodes(),
+                 function(x) {
+                     return _.some(_.keys(x),
+                                   function(y) {
+                                       return y == "task";
+                                   });
+                 });
 
-    // iterate through charts
-    data.defaults.forEach(function (chartId) {
-      if ( data.charts[chartId].chartType == 'pie' )
-        me.addPieChart( data.charts[chartId] );
-      else if ( data.charts[chartId].chartType == 'histogram' )
-        me.addHistogramChart( data.charts[chartId] );
-    })
+    if (focal_node && focal_node.task.id == task_id) {
+	this.$el.empty();
+        var me = this;
+        // parse data into visualization format if parser exists
+        var parser = this.findParser(focal_node.task);
+        if (!parser) {
+            this.$el.html(data);
+            return;
+        } else {
+            var data = parser(data);
+            // iterate through charts
+            data.defaults.forEach(function (chartId) {
+                if ( data.charts[chartId].chartType == 'pie' )
+                    me.addPieChart( data.charts[chartId] );
+                else if ( data.charts[chartId].chartType == 'histogram' )
+                    me.addHistogramChart( data.charts[chartId] );
+            });
+        };
+    };
   },
+
+
   // parsers for converting task output to standard chart input
-  parsers: { 
+  findParser: function (task) {
+      var toolid = task.tool.id;
+      return this.parsers[toolid];
+  },
+  parsers: {
     // bamstatsalive parser
     'bamstatsalive' :  function(data) {
       var total_reads = data['total_reads'];
       // list all metrics
-      var metrics = ['mapped_reads', 'duplicates', 'singletons', 'proper_pairs', 'both_pairs_mapped', 'forward_strand', 
-        'failed_qc', 'first_mates', 'last_read_position', 'paired_end_reads', 'reverse_strand', 'second_mates'];
-      var distributions = ['baseq_hist', 'coverage_hist', 'mapq_hist', 'length_hist', 'frag_hist', 'refAln_hist'];
+      var metrics = ['mapped_reads', 'duplicates', 'singletons',
+                     'proper_pairs', 'both_pairs_mapped', 'forward_strand',
+                     'failed_qc', 'first_mates', 'last_read_position',
+                     'paired_end_reads', 'reverse_strand', 'second_mates'];
+
+      var distributions = ['baseq_hist',  'coverage_hist', 'mapq_hist',
+                           'length_hist', 'frag_hist',     'refAln_hist'];
       var viz_data = { 'charts' : [] };
+
       // defaults
-      viz_data.defaults = ['mapped_reads', 'singletons', 'proper_pairs', 'frag_hist', 'coverage_hist'];
-      
+      viz_data.defaults = ['mapped_reads', 'singletons',
+                           'proper_pairs', 'frag_hist',
+                           'coverage_hist'];
+
       // reorganize data for metric pie charts
       metrics.forEach( function(chartId) {
-        viz_data.charts[chartId] = { 'chartType' : 'pie', 'data' : [ data[chartId], total_reads-data[chartId] ], options : {'title':chartId} }
+        viz_data.charts[chartId] = {
+            'chartType' : 'pie',
+            'data'      : [ data[chartId], total_reads-data[chartId] ],
+            options     : {'title':chartId} }
       })
-      
+
       // reorganize data for distribution histogram charts
       distributions.forEach( function(chartId) {
-        var d = Object.keys(data[chartId]).map(function(k) { return  [+k, +data[chartId][k]] });
-        viz_data.charts[chartId] = { 'chartType' : 'histogram', 'data' : d, options : {'title':chartId} }
+        var d = Object.keys(data[chartId])
+                .map(function(k) { return  [+k, +data[chartId][k]] });
+
+        viz_data.charts[chartId] = {
+            'chartType' : 'histogram',
+            'data'      : d,
+            options     : {'title':chartId} }
       })
 
       return viz_data;
@@ -85,7 +120,7 @@ var VisualizationView = Backbone.View.extend({
                 d = d / 1000000 + "M";
               else if ((d / 1000) >= 1)
                 d = d / 1000 + "K";
-              return d;            
+              return d;
            }
 });
 

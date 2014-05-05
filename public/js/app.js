@@ -42,10 +42,10 @@ function inputURL(input, pl_graph, pipeline) {
     } else {
         // A task is input (i.e., its output is input)
         // Set run flag to false as task as input => no explicit run.
-	var pltask = pipeline.getTask(input.task_id);
-	if (!pltask.in_display) {
+        var pltask = pipeline.getTask(input.task_id);
+        if (!pltask.in_display) {
             pltask.runit = false;
-	};
+        };
         var pl_graph_tsk_obj = _.find(pl_graph, {task_id: input.task_id});
         return encodeURIComponent(pl_graph_tsk_obj.task_URL);
     }
@@ -135,6 +135,7 @@ function ajaxRunPipeline (url) {
          dataType: "text"});
 }
 
+
 function wsRunPipeline (task_run_info) {
     var ws_service = task_run_info["ws_service"];
     var wsurl = task_run_info["ws_url"];
@@ -146,22 +147,25 @@ function wsRunPipeline (task_run_info) {
         var stream = client.createStream(
             {event: 'run', params: {'url': wsurl}});
         stream.on('data', function(data) {
-            parts.push(data);            
+            parts.push(data);
         });
         stream.on('end', function() {
             dbg_parts = parts;
             //console.log(parts);
-            $("#monitor").append(strJoin("\n", parts));
+            //$("#mon-panel-2").append(strJoin("\n", parts));
             // visualize data
             visualizeData(parts, task_id);
-            // console.log(parts);            
         });
     });
 }
 
 function visualizeData(parts, task_id) {
-  var data = JSON.parse(parts[0]);
-  app.current_visualization_view.addCharts(data, task_id);
+    var fmts = _.find(app.pipeline.linearized_cfg_graph,
+                      {task_id: task_id}).output_format_assignments;
+    if (_.some(fmts, function (x) {return x == "json";})) {
+        var data = JSON.parse(parts[0]);
+        app.current_visualization_view.addCharts(data, task_id);
+    }
 }
 
 
@@ -189,8 +193,7 @@ $(function(){
                          //console.log("NewURL = " + xurl);
                          //console.log(app.pipeline);
                          app.router.navigate(xurl);
-                         if (app.pipeline.tasks.length > 0)
-                           app.runPipeline(app.pipeline, pl_json);
+                         app.runPipeline(app.pipeline, pl_json);
                      });
     }
 
@@ -200,6 +203,8 @@ $(function(){
             new FocalPipelineInputsGraph(app.pipeline);
         app.focal_view.showGraph(graph);
         app.global_view.focusDatum(datum);
+        // Run 'current' chart update
+        app.runPipeline(app.pipeline, undefined);
     }
 
     app.router = new (Backbone.Router.extend(
@@ -233,13 +238,10 @@ $(function(){
         }; // else, this call from edit_pipeline and already set
 
         var task_maps = constructPipelineRunMaps(pipeline);
-        console.log(task_maps);
+        pipeline.task_maps = task_maps;
         if (task_maps) {
-            plmap = _.last(task_maps);
-            pipeline.url = plmap["http_url"];
-            pipeline.wsurl = plmap["ws_url"];
-            pipeline.ws_service = plmap["ws_service"];
-            console.log(pipeline.url);
+            $("#mon-panel-2").empty();
+            $("#mon-panel-3").empty()
             if (RUNPL) {
               _.each(task_maps, function(tm){wsRunPipeline(tm);})
             };
@@ -251,10 +253,13 @@ $(function(){
 
     app.global_view = new GlobalView({el: $("#global")});
     app.focal_view = new FocalView({el: $("#focal")});
-    app.current_visualization_view = new VisualizationView({el: $("#current-visualization")});
-    app.first_visualization_view = new VisualizationView({el: $("#first-visualization")});
-    app.second_visualization_view = new VisualizationView({el: $("#second-visualization")});    
 
+    app.current_visualization_view =
+        new VisualizationView({el: $("#current-visualization")});
+    app.first_visualization_view =
+        new VisualizationView({el: $("#first-visualization")});
+    app.second_visualization_view =
+        new VisualizationView({el: $("#second-visualization")});
 
     Backbone.history.start({pushState: true});
 });
