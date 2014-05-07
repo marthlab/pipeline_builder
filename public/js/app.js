@@ -59,10 +59,7 @@ function taskInputs(task, pl_graph, pipeline) {
                  });
 }
 
-
-function constructTaskRunMap (task, pl_graph, pipeline) {
-    var tool = _.find(pipeline.tools, {id: task.tool_id});
-
+function wsServiceURLs (tool) {
     var service_URL = tool.service_URL;
     var ws_service;
     var ws_URL;
@@ -77,6 +74,28 @@ function constructTaskRunMap (task, pl_graph, pipeline) {
         ws_URL = tool.ws_URL;
         ws_service = tool.ws_service;
     };
+    return {ws_URL: ws_URL, ws_service: ws_service};
+}
+
+
+function bamStatsURLs (task, pipeline) {
+    var bamstats_tool = pipeline.getTool("bamstatsalive");
+    var input_url = encodeURIComponent(task.task_ws_URL);
+    var ws_urls = wsServiceURLs(bamstats_tool);
+    var ws_service = ws_urls["ws_service"];
+    var ws_URL = ws_urls["ws_URL"];
+    return {bs_service: ws_service,
+            bs_url: encodeURI(ws_service + " -in " + input_url)};
+}
+
+
+function constructTaskRunMap (task, pl_graph, pipeline) {
+    var tool = _.find(pipeline.tools, {id: task.tool_id});
+
+    var service_URL = tool.service_URL;
+    var ws_urls = wsServiceURLs(tool);
+    var ws_service = ws_urls["ws_service"];
+    var ws_URL = ws_urls["ws_URL"];
 
     var param_loc = tool.param_loc;
     var input_sep = tool.inputs_named ? " -in " : " ";
@@ -103,6 +122,10 @@ function constructTaskRunMap (task, pl_graph, pipeline) {
 
     task.task_URL = url;
     task.task_ws_URL = wsurl;
+
+    if (task.output_format_assignments["-out"] == "bam") {
+        task.bamstats_urls = bamStatsURLs(task, pipeline);
+    }
 
     return {id: task.task_id,
             http_service: service_URL, http_url: url,
@@ -160,14 +183,23 @@ function wsRunPipeline (task_run_info) {
 }
 
 function visualizeData(parts, task_id) {
-    var fmts = _.find(app.pipeline.linearized_cfg_graph,
-                      {task_id: task_id}).output_format_assignments;
-    if (_.some(fmts, function (x) {return x == "json";})) {
+    var out_fmt = _.find(app.pipeline.linearized_cfg_graph,
+                         {task_id: task_id}).output_format_assignments["-out"];
+    if (out_fmt == "json") {
         var data = JSON.parse(parts[0]);
         app.current_visualization_view.addCharts(data, task_id);
-    }
+    } else {
+        alert("Visulizing " + out_fmt + " not yet available");
+    };
 }
 
+
+
+function handleTaskDrop (event, task_div) {
+    var task_node = task_div.draggable;
+    console.log(task_node.data('task'));
+    console.log($(this).data('panel'));
+}
 
 
 $(function(){
@@ -257,9 +289,16 @@ $(function(){
     app.current_visualization_view =
         new VisualizationView({el: $("#current-visualization")});
     app.first_visualization_view =
-        new VisualizationView({el: $("#first-visualization")});
+        new VisualizationView({el: $("#mon-panel-2")});
     app.second_visualization_view =
-        new VisualizationView({el: $("#second-visualization")});
+        new VisualizationView({el: $("#mon-panel-3")});
+
+    $("#mon-panel-2").data('panel', '#mon-panel-2').droppable({
+	drop: handleTaskDrop
+    });
+    $("#mon-panel-3").data('panel', '#mon-panel-3').droppable({
+	drop: handleTaskDrop
+    });
 
     Backbone.history.start({pushState: true});
 });
