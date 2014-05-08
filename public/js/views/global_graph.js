@@ -141,7 +141,7 @@ _.extend(GlobalGraph.prototype, Backbone.Events, {
 
     createTaskNode: function(task) {
         var node = new GlobalTaskNodeView({graph: this, datum: task});
-        console.log(node);
+        //console.log(node);
         $(node.el).data('task', task).draggable({
             //containment: '#global_container',
             stack: '#global',

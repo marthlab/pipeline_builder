@@ -127,7 +127,7 @@ function constructTaskRunMap (task, pl_graph, pipeline) {
         task.bamstats_urls = bamStatsURLs(task, pipeline);
     }
 
-    return {id: task.task_id,
+    return {task_id: task.task_id, tool_id: task.tool_id,
             http_service: service_URL, http_url: url,
             ws_service: ws_service, ws_url: wsurl};
 }
@@ -142,7 +142,7 @@ function constructPipelineRunMaps (pipeline) {
                   return constructTaskRunMap(task, pl_graph, pipeline);});
     return _.filter(task_run_maps,
                     function (tm) {
-                        return pipeline.getTask(tm.id).runit;
+                        return pipeline.getTask(tm.task_id).runit;
                     });
 }
 
@@ -162,7 +162,6 @@ function ajaxRunPipeline (url) {
 function wsRunPipeline (task_run_info) {
     var ws_service = task_run_info["ws_service"];
     var wsurl = task_run_info["ws_url"];
-    var task_id = task_run_info["id"];
     var parts = [];
     var client = BinaryClient(ws_service);
 
@@ -177,17 +176,22 @@ function wsRunPipeline (task_run_info) {
             //console.log(parts);
             //$("#mon-panel-2").append(strJoin("\n", parts));
             // visualize data
-            visualizeData(parts, task_id);
+            visualizeData(parts, task_run_info);
         });
     });
 }
 
-function visualizeData(parts, task_id) {
+
+function visualizeData(parts, task_run_info) {
+    var task_id = task_run_info["task_id"];
+    var tool_id = task_run_info["tool_id"];
+
     var out_fmt = _.find(app.pipeline.linearized_cfg_graph,
                          {task_id: task_id}).output_format_assignments["-out"];
+
     if (out_fmt == "json") {
         var data = JSON.parse(parts[0]);
-        app.current_visualization_view.addCharts(data, task_id);
+        app.current_visualization_view.addCharts(data, task_id, tool_id);
     } else {
         alert("Visulizing " + out_fmt + " not yet available");
     };
@@ -197,6 +201,7 @@ function visualizeData(parts, task_id) {
 
 function handleTaskDrop (event, task_div) {
     var task_node = task_div.draggable;
+    console.log(task_div);
     console.log(task_node.data('task'));
     console.log($(this).data('panel'));
 }
@@ -272,8 +277,8 @@ $(function(){
         var task_maps = constructPipelineRunMaps(pipeline);
         pipeline.task_maps = task_maps;
         if (task_maps) {
-            $("#mon-panel-2").empty();
-            $("#mon-panel-3").empty()
+            //$("#mon-panel-2").empty();
+            //$("#mon-panel-3").empty()
             if (RUNPL) {
               _.each(task_maps, function(tm){wsRunPipeline(tm);})
             };
@@ -286,6 +291,9 @@ $(function(){
     app.global_view = new GlobalView({el: $("#global")});
     app.focal_view = new FocalView({el: $("#focal")});
 
+    // Create our three panel visualization views
+    // The first (current) always holds whatever is in 'focus'
+    //
     app.current_visualization_view =
         new VisualizationView({el: $("#current-visualization")});
     app.first_visualization_view =
@@ -293,6 +301,10 @@ $(function(){
     app.second_visualization_view =
         new VisualizationView({el: $("#mon-panel-3")});
 
+    // The other two panels are 'droppables'.  User can drag a _task_
+    // node from the global view and drop on one of these and its
+    // results will be visualized.
+    //
     $("#mon-panel-2").data('panel', '#mon-panel-2').droppable({
 	drop: handleTaskDrop
     });

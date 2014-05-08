@@ -37,7 +37,7 @@ var VisualizationView = Backbone.View.extend({
   },
 
   // add multiple charts
-  addCharts: function(data, task_id) {
+  addCharts: function(data, task_id, tool_id) {
     var focal_node =
           _.find(app.focal_view.graph.getNodes(),
                  function(x) {
@@ -48,10 +48,10 @@ var VisualizationView = Backbone.View.extend({
                  });
 
     if (focal_node && focal_node.task.id == task_id) {
-	this.$el.empty();
+        this.$el.empty();
         var me = this;
         // parse data into visualization format if parser exists
-        var parser = this.findParser(focal_node.task);
+        var parser = this.findParser(tool_id);
         if (!parser) {
             this.$el.html(data);
             return;
@@ -70,10 +70,10 @@ var VisualizationView = Backbone.View.extend({
 
 
   // parsers for converting task output to standard chart input
-  findParser: function (task) {
-      var toolid = task.tool.id;
-      return this.parsers[toolid];
+  findParser: function (tool_id) {
+      return this.parsers[tool_id];
   },
+
   parsers: {
     // bamstatsalive parser
     'bamstatsalive' :  function(data) {
