@@ -38,34 +38,24 @@ var VisualizationView = Backbone.View.extend({
 
   // add multiple charts
   addCharts: function(data, task_id, tool_id) {
-    var focal_node =
-          _.find(app.focal_view.graph.getNodes(),
-                 function(x) {
-                     return _.some(_.keys(x),
-                                   function(y) {
-                                       return y == "task";
-                                   });
-                 });
-
-    if (focal_node && focal_node.task.id == task_id) {
-        this.$el.empty();
-        var me = this;
-        // parse data into visualization format if parser exists
-        var parser = this.findParser(tool_id);
-        if (!parser) {
-            this.$el.html(data);
-            return;
-        } else {
-            var data = parser(data);
-            // iterate through charts
-            data.defaults.forEach(function (chartId) {
-                if ( data.charts[chartId].chartType == 'pie' )
-                    me.addPieChart( data.charts[chartId] );
-                else if ( data.charts[chartId].chartType == 'histogram' )
-                    me.addHistogramChart( data.charts[chartId] );
-            });
-        };
-    };
+      //console.log(this.el, task_id, tool_id);
+      this.$el.empty();
+      var me = this;
+      // parse data into visualization format if parser exists
+      var parser = this.findParser(tool_id);
+      if (!parser) {
+          this.$el.html(data);
+          return;
+      } else {
+          var data = parser(data);
+          // iterate through charts
+          data.defaults.forEach(function (chartId) {
+              if ( data.charts[chartId].chartType == 'pie' )
+                  me.addPieChart( data.charts[chartId] );
+              else if ( data.charts[chartId].chartType == 'histogram' )
+                  me.addHistogramChart( data.charts[chartId] );
+          });
+      };
   },
 
 

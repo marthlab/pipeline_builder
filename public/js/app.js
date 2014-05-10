@@ -42,10 +42,10 @@ function inputURL(input, pl_graph, pipeline) {
     } else {
         // A task is input (i.e., its output is input)
         // Set run flag to false as task as input => no explicit run.
+        // UNLESS - it is also in a viz panel
         var pltask = pipeline.getTask(input.task_id);
-        if (!pltask.in_display) {
-            pltask.runit = false;
-        };
+        pltask.runit = (pltask.viz_panel) ? true : false;
+
         var pl_graph_tsk_obj = _.find(pl_graph, {task_id: input.task_id});
         return encodeURIComponent(pl_graph_tsk_obj.task_URL);
     }
@@ -85,7 +85,7 @@ function bamStatsURLs (task, pipeline) {
     var ws_service = ws_urls["ws_service"];
     var ws_URL = ws_urls["ws_URL"];
     return {bs_service: ws_service,
-            bs_url: encodeURI(ws_service + " -in " + input_url)};
+            bs_url: encodeURI(ws_URL + " -in " + input_url)};
 }
 
 
@@ -124,10 +124,13 @@ function constructTaskRunMap (task, pl_graph, pipeline) {
     task.task_ws_URL = wsurl;
 
     if (task.output_format_assignments["-out"] == "bam") {
-        task.bamstats_urls = bamStatsURLs(task, pipeline);
+        pipeline.getTask(task.task_id).bamstats_urls =
+            bamStatsURLs(task, pipeline);
     }
 
-    return {task_id: task.task_id, tool_id: task.tool_id,
+    return {task_id: task.task_id,
+            tool_id: task.tool_id,
+            viz_panel: task.viz_panel,
             http_service: service_URL, http_url: url,
             ws_service: ws_service, ws_url: wsurl};
 }
@@ -162,7 +165,16 @@ function ajaxRunPipeline (url) {
 function wsRunPipeline (task_run_info) {
     var ws_service = task_run_info["ws_service"];
     var wsurl = task_run_info["ws_url"];
+    var task_obj = app.pipeline.getTask(task_run_info["task_id"]);
     var parts = [];
+
+    if (task_obj.bamstats_urls && task_obj.viz_panel) {
+        // Trying to visualize a bam => visualize its stats
+        var bsurls = task_obj.bamstats_urls;
+        ws_service = bsurls["bs_service"];
+        wsurl = bsurls["bs_url"];
+    };
+
     var client = BinaryClient(ws_service);
 
     client.on('open', function() {
@@ -185,25 +197,49 @@ function wsRunPipeline (task_run_info) {
 function visualizeData(parts, task_run_info) {
     var task_id = task_run_info["task_id"];
     var tool_id = task_run_info["tool_id"];
+    var task_obj = app.pipeline.getTask(task_id);
+    var panel = task_obj.viz_panel;
 
-    var out_fmt = _.find(app.pipeline.linearized_cfg_graph,
-                         {task_id: task_id}).output_format_assignments["-out"];
+    if (panel) {
+        console.log(task_id, tool_id, task_obj, panel);
+        var out_fmt =
+            _.find(app.pipeline.linearized_cfg_graph,
+                   {task_id: task_id}).output_format_assignments["-out"];
 
-    if (out_fmt == "json") {
-        var data = JSON.parse(parts[0]);
-        app.current_visualization_view.addCharts(data, task_id, tool_id);
-    } else {
-        alert("Visulizing " + out_fmt + " not yet available");
+        if (task_obj.bamstats_urls && task_obj.viz_panel) {
+            // Format is actually the bamstatsalive json
+            out_fmt = "json";
+            tool_id = "bamstatsalive";
+        };
+
+        if (out_fmt == "json") {
+            //console.log("**", parts);
+            var data = JSON.parse(parts[0]);
+            app.viz_panels[panel].addCharts(data, task_id, tool_id);
+        } else {
+            alert("Visulizing " + out_fmt + " not yet available");
+        };
     };
 }
 
 
+function handleTaskDrop (event, uiobj) {
+    var pl = app.pipeline;
+    var task_div = uiobj.draggable;
+    var pltask = task_div.data('task');
+    var panel = $(this).data('panel');
+    var title = "#title-" + strJoin("-",_.drop(panel.split("-"), 1))
 
-function handleTaskDrop (event, task_div) {
-    var task_node = task_div.draggable;
-    console.log(task_div);
-    console.log(task_node.data('task'));
-    console.log($(this).data('panel'));
+    if ($(this).data('task_id')) {
+        var cur_task = pl.getTask($(this).data('task_id'));
+        cur_task.viz_panel = undefined;
+    };
+
+    $(title).empty().append(pltask.id);
+    $(title).attr("class", "title");
+    $(panel).data('task_id', pltask.id);
+    pltask.viz_panel = panel;
+    app.runPipeline(pl, undefined, pltask);;
 }
 
 
@@ -238,10 +274,20 @@ $(function(){
         var graph = (datum instanceof Task) ?
             new FocalTaskGraph(datum) :
             new FocalPipelineInputsGraph(app.pipeline);
+
         app.focal_view.showGraph(graph);
         app.global_view.focusDatum(datum);
-        // Run 'current' chart update
-        app.runPipeline(app.pipeline, undefined);
+
+        if (datum instanceof Task) {
+            var cur_view = app.viz_panels["#current-visualization"];
+            if (cur_view.cur_task) {
+                cur_view.cur_task.viz_panel = undefined;
+            };
+            cur_view.cur_task = datum;
+            datum.viz_panel = "#current-visualization";
+            // Run 'current' chart update
+            app.runPipeline(app.pipeline, undefined, datum);
+        };
     }
 
     app.router = new (Backbone.Router.extend(
@@ -264,7 +310,7 @@ $(function(){
          }
         }));
 
-    app.runPipeline = function (pipeline, pl_json) {
+    app.runPipeline = function (pipeline, pl_json, run_task) {
         //console.log("RunPL: " + pl_json);
 
         if (pl_json) {
@@ -277,10 +323,13 @@ $(function(){
         var task_maps = constructPipelineRunMaps(pipeline);
         pipeline.task_maps = task_maps;
         if (task_maps) {
-            //$("#mon-panel-2").empty();
-            //$("#mon-panel-3").empty()
             if (RUNPL) {
-              _.each(task_maps, function(tm){wsRunPipeline(tm);})
+                if (run_task) {
+                    // Focus or drag - only run the task selected
+                    wsRunPipeline(_.find(task_maps, {task_id: run_task.id}));
+                } else {
+                    _.each(task_maps, function(tm){wsRunPipeline(tm);});
+                };
             };
         };
     }
@@ -294,22 +343,25 @@ $(function(){
     // Create our three panel visualization views
     // The first (current) always holds whatever is in 'focus'
     //
-    app.current_visualization_view =
+    app.viz_panels = {};
+    app.viz_panels["#current-visualization"] =
         new VisualizationView({el: $("#current-visualization")});
-    app.first_visualization_view =
+    app.viz_panels["#mon-panel-2"] =
         new VisualizationView({el: $("#mon-panel-2")});
-    app.second_visualization_view =
+    app.viz_panels["#mon-panel-3"] =
         new VisualizationView({el: $("#mon-panel-3")});
+    _.each(app.viz_panels, function(v) {$(v.el).data('view', v);});
+
 
     // The other two panels are 'droppables'.  User can drag a _task_
     // node from the global view and drop on one of these and its
     // results will be visualized.
     //
     $("#mon-panel-2").data('panel', '#mon-panel-2').droppable({
-	drop: handleTaskDrop
+        drop: handleTaskDrop
     });
     $("#mon-panel-3").data('panel', '#mon-panel-3').droppable({
-	drop: handleTaskDrop
+        drop: handleTaskDrop
     });
 
     Backbone.history.start({pushState: true});

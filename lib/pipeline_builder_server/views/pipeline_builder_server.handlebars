@@ -23,11 +23,24 @@
   </div>
   <div id="monitor">
     <div style="height:100%">
-      <div class="panel_subview" style="position:relative"><div class="title">Current</div>
+      <div class="panel_subview" style="position:relative">
+        <div class="title">
+          Current
+        </div>
         <div id="current-visualization" class="charts"></div>
       </div>
-      <div class="panel_subview"><div class="dragInstruction">Drag Circle Node Here To Visualize</div></div>
-      <div class="panel_subview"><div class="dragInstruction">Drag Circle Node Here To Visualize</div></div>          
+      <div class="panel_subview" style="position:relative">
+        <div class="dragInstruction" id="title-panel-2">
+          Drag Circle Node Here To Visualize
+        </div>
+        <div id="mon-panel-2" class="charts"></div>
+      </div>
+      <div class="panel_subview" style="position:relative">
+        <div class="dragInstruction" id="title-panel-3">
+          Drag Circle Node Here To Visualize
+        </div>
+        <div id="mon-panel-3" class="charts"></div>
+      </div>
     </div>
   </div>
 </body>
@@ -39,7 +52,7 @@
 </script>
 
 <script type="text/html" id='MonitorView-template'>
-  
+
 </script>
 
 <script type="text/html" id='FocalView-template'>
@@ -188,6 +201,7 @@
 <script src="/js/lib/lodash-stable-stringify.js"></script>
 <script src="/js/lib/jsnetworkx.js"></script>
 <script src="/js/lib/jquery-2.0.3.min.js"></script>
+<script src="/js/lib/jquery-ui-1.10.4.min.js"></script>
 <script src="/js/lib/backbone.js"></script>
 <script src="/js/lib/purl.js"></script>
 <script src="/js/lib/jquery.jsPlumb-1.5.2.js"></script>

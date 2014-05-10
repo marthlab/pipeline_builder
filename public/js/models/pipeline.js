@@ -16,9 +16,10 @@ function Pipeline(pl_cfg) {
 
     this._constructNodes(pl_cfg.inputs, pl_cfg.tasks);
 
-    this.on('add:tool add:input add:task change:task', function(task) {
-        this.trigger('change');
-    }, this);
+    this.on('add:tool add:input add:task change:task',
+            function(task) {
+                this.trigger('change');
+            }, this);
 
 }
 
@@ -172,7 +173,7 @@ _.extend(Pipeline.prototype, Backbone.Events, {
     },
 
     addTask: function(task_cfg) {
-	//console.log("addTask: ", task_cfg);
+        //console.log("addTask: ", task_cfg);
         var task = new Task(this, task_cfg);
         this.tasks.push(task);
         this.tasks.sort(_.sortById);
