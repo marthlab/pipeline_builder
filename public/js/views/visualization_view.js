@@ -37,7 +37,10 @@ var VisualizationView = Backbone.View.extend({
   },
 
   // add multiple charts
-  addCharts: function(data, task_id, tool_id) {
+  addCharts: function(data, task_run_info) {
+      var task_id = task_run_info["task_id"];
+      var tool_id = task_run_info["tool_id"];
+
       //console.log(this.el, task_id, tool_id);
       this.$el.empty();
       var me = this;

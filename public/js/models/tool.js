@@ -4,14 +4,14 @@
 function Tool(tool_cfg) {
 
     if (tool_cfg.id == "bammerger" || tool_cfg.id == "bamtools-filter") {
-	console.log(tool_cfg);
+        //console.log(tool_cfg);
     }
 
     // Are we operating where all the tools are already fully
     // configured??
     if (app.tool_library && app.tool_library._tools) {
-	var ot = app.tool_library.getTool(tool_cfg.id);
-	if (ot) { return ot; };
+        var ot = app.tool_library.getTool(tool_cfg.id);
+        if (ot) { return ot; };
     }
 
     // No, so do full tool construction
@@ -61,9 +61,9 @@ _.extend(Tool.prototype, {
             id: this.id,
 
             service_URL: this.service_URL,
-	    inputs_named: this.inputs_named,
-	    flags_have_value: this.flags_have_value,
-	    param_loc: this.param_loc,
+            inputs_named: this.inputs_named,
+            flags_have_value: this.flags_have_value,
+            param_loc: this.param_loc,
 
             options: _.transform(
                 _.groupBy(this.options, 'category'),
