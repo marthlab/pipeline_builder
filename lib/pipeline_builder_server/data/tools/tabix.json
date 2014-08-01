@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "id": "tabix",
+
+    "service_URL": "http://tabix.iobio.io/?cmd=",
+
+    "flags_have_value": false,
+    "inputs_named": false,
+    "param_loc": "after-input",
+
+    "options": {
+      "Input & Output": {  
+        "region": {
+          "description": "Define Region",
+          "type": "string"
+        }      
+      }
+    },
+
+    "inputs": {
+      "-in": {
+        "formats_whitelist": ["vcf", "gz", "bed", "sam", "gff"],
+        "required": true,
+        "accepts_multiple": false
+      }
+    },
+
+    "outputs": {
+      "-out": {
+        "available_formats": 
+	["vcf"]
+      }
+    }
+  }
+
+]

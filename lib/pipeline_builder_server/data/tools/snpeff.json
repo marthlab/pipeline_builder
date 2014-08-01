@@ -1,0 +1,32 @@
+[
+  {"id": "snpeff",
+   "service_URL": "http://0.0.0.0:8051/?cmd=",
+   
+   "inputs_named": false,
+   "flags_have_value": false,
+   "param_loc": "after-input",
+   
+   "options": {
+       "Output Options": {
+           "-updateRate": {
+               "description": "update rate in variants, defaults to every 500",
+               "type": "integer"
+           }	   
+       }
+   },
+
+   "inputs": {
+       "-in": {
+           "formats_whitelist": ["vcf","gz"],
+           "required": true,
+           "accepts_multiple": false
+       }
+   },
+
+   "outputs": {
+       "-out": {
+           "available_formats": ["vcf"]
+       }
+   }
+  }
+]

@@ -1,5 +1,11 @@
 var VisualizationView = Backbone.View.extend({
   template: _.template($('#VisualizationView-template').html()),
+
+  events: {
+    "click .x" : "handleRemoveChart",
+    "change .chartAdder" : "handleAddChart"
+  },
+
   initialize: function(options) {
     this.$el.html(this.template());
     this.pie_chart = donutD3().radius(61).outerRadius(45).innerRadius(0);
@@ -14,7 +20,7 @@ var VisualizationView = Backbone.View.extend({
   // add pie
   addPieChart: function(chart) {
     // create chart element
-    var $div = $('<div class="chart pie"><svg viewBox="0 0 150 150" ></svg></div>');
+    var $div = $('<div class="chart pie"><div class="x">X</div><svg viewBox="0 0 150 150" ></svg></div>');
 
     this.$el.append($div)
     var svg = $div.children('svg')[0];
@@ -26,7 +32,7 @@ var VisualizationView = Backbone.View.extend({
   // add a histogram chart
   addHistogramChart: function(chart) {
     // create chart element
-    var $div = $('<div class="chart histogram" style="flex-grow:2"><svg viewBox="0 0 300 150" ></svg></div>');
+    var $div = $('<div class="chart histogram" style="flex-grow:2"><div class="x">X</div><svg viewBox="0 0 300 150" ></svg></div>');
 
     this.$el.append($div)
     var svg = $div.children('svg')[0];
@@ -36,28 +42,47 @@ var VisualizationView = Backbone.View.extend({
     this.histogram_chart( selection, chart.options );
   },
 
+  // handle addChart event
+  handleAddChart : function(event) {
+    this.addChart( $(event.target).val() );
+  },
+
+  // add chart
+  addChart: function(chartId) {       
+    if ( this.data.charts[chartId].chartType == 'pie' )
+        this.addPieChart( this.data.charts[chartId] );
+    else if ( this.data.charts[chartId].chartType == 'histogram' )
+        this.addHistogramChart( this.data.charts[chartId] );
+  },
+
   // add multiple charts
-  addCharts: function(data, task_id, tool_id) {
+  initializeCharts: function(data, task_id, tool_id) {
       //console.log(this.el, task_id, tool_id);
-      this.$el.empty();
-      var me = this;
+      this.$el.empty();      
+      var me = this;      
       // parse data into visualization format if parser exists
       var parser = this.findParser(tool_id);
       if (!parser) {
-          this.$el.html(data);
+          this.$el.html(JSON.stringify(data));
           return;
       } else {
           var data = parser(data);
+          me.data = data;
+
+          // add selector for charts
+          var options = Object.keys(data.charts).map(function(id) { return "<option value='" + id + "'>" + id + "</option>"})
+          me.$el.append("<select class='chartAdder'><option>Add Chart</option>" + options + "</select>");
           // iterate through charts
           data.defaults.forEach(function (chartId) {
-              if ( data.charts[chartId].chartType == 'pie' )
-                  me.addPieChart( data.charts[chartId] );
-              else if ( data.charts[chartId].chartType == 'histogram' )
-                  me.addHistogramChart( data.charts[chartId] );
+              me.addChart(chartId);
           });
       };
   },
 
+  // handle removeChart event
+  handleRemoveChart : function(event) {
+    $(event.currentTarget).parent().remove();
+  },
 
   // parsers for converting task output to standard chart input
   findParser: function (tool_id) {
@@ -70,9 +95,9 @@ var VisualizationView = Backbone.View.extend({
       var total_reads = data['total_reads'];
       // list all metrics
       var metrics = ['mapped_reads', 'duplicates', 'singletons',
-                     'proper_pairs', 'both_pairs_mapped', 'forward_strand',
+                     'proper_pairs', 'both_mates_mapped', 'forward_strands',
                      'failed_qc', 'first_mates', 'last_read_position',
-                     'paired_end_reads', 'reverse_strand', 'second_mates'];
+                     'paired_end_reads', 'reverse_strands', 'second_mates'];
 
       var distributions = ['baseq_hist',  'coverage_hist', 'mapq_hist',
                            'length_hist', 'frag_hist',     'refAln_hist'];
@@ -103,6 +128,9 @@ var VisualizationView = Backbone.View.extend({
       })
 
       return viz_data;
+    },
+    'snpeffstats' : function(data) {
+
     }
   },
   tickFormatter: function(d) {
