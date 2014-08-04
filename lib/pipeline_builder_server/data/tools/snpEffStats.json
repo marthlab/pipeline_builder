@@ -1,5 +1,5 @@
 [
-  {"id": "snpeffStats",
+  {"id": "snpeffstats",
    "service_URL": "http://0.0.0.0:8051/?cmd=-onlyStats",
    
    "inputs_named": false,

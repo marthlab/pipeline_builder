@@ -8,7 +8,8 @@ var VisualizationView = Backbone.View.extend({
 
   initialize: function(options) {
     this.$el.html(this.template());
-    this.pie_chart = donutD3().radius(61).outerRadius(45).innerRadius(0);
+    this.donut_chart = donutD3().radius(61).outerRadius(45).innerRadius(35);
+    this.pie_chart = pieD3().radius(61).outerRadius(45).innerRadius(0);
     // setup length histrogram chart
     this.histogram_chart = histogramD3();
     this.histogram_chart.margin({top:10, right:30, bottom:20, left:40})
@@ -24,10 +25,22 @@ var VisualizationView = Backbone.View.extend({
 
     this.$el.append($div)
     var svg = $div.children('svg')[0];
+    // var pie = d3.layout.pie().sort(null);
+    var arc = d3.select(svg).selectAll(".arc")
+        .data( chart.data );
+    this.pie_chart(arc, chart.options);
+  },
+  // add donut
+  addDonutChart: function(chart) {
+    // create chart element
+    var $div = $('<div class="chart donut"><div class="x">X</div><svg viewBox="0 0 150 150" ></svg></div>');
+
+    this.$el.append($div)
+    var svg = $div.children('svg')[0];
     var pie = d3.layout.pie().sort(null);
     var arc = d3.select(svg).selectAll(".arc")
         .data( pie(chart.data) );
-    this.pie_chart(arc, chart.options);
+    this.donut_chart(arc, chart.options);
   },
   // add a histogram chart
   addHistogramChart: function(chart) {
@@ -53,6 +66,8 @@ var VisualizationView = Backbone.View.extend({
         this.addPieChart( this.data.charts[chartId] );
     else if ( this.data.charts[chartId].chartType == 'histogram' )
         this.addHistogramChart( this.data.charts[chartId] );
+    else if ( this.data.charts[chartId].chartType == 'donut' )
+        this.addDonutChart( this.data.charts[chartId] );
   },
 
   // add multiple charts
@@ -111,7 +126,7 @@ var VisualizationView = Backbone.View.extend({
       // reorganize data for metric pie charts
       metrics.forEach( function(chartId) {
         viz_data.charts[chartId] = {
-            'chartType' : 'pie',
+            'chartType' : 'donut',
             'data'      : [ data[chartId], total_reads-data[chartId] ],
             options     : {'title':chartId} }
       })
@@ -129,9 +144,63 @@ var VisualizationView = Backbone.View.extend({
 
       return viz_data;
     },
+    // snpeffstats parser
     'snpeffstats' : function(data) {
+      var total_reads = data['total_reads'];
+      // list all metrics
+      // seqStats.changeTypes => Number Changes By Type
+      // changeStats.countByImpact => Number of effects by Impact
+      // changeStats.countByFunctionalClass => Number of effects by Functional CLass
+      // changeStats.countByEffect => Number of effects by Type
+      // changeStats.countByGeneRegion => Number of effects by Region
+      // seqStats.tstv => TS/TV ratio
+      var metrics = ['seqStats.changeTypes', 'changeStats.countByImpact', 'changeStats.countByFunctionalClass',
+                     'changeStats.countByEffect', 'changeStats.countByGeneRegion', 'seqStats.tstv'
+      ];
+      // seqStats.indelHist => Indel length histogram
+      // vcfStats.alleleFrequencyStatsHisto => Frequency of alleles
+      //  => Changes by chromsome
+      var distributions = ['vcfStats.alleleFrequencyStatsHisto'];
+      var viz_data = { 'charts' : [] };
 
-    }
+      // defaults
+      viz_data.defaults = ['changeStats.countByImpact', 'vcfStats.alleleFrequencyStatsHisto'];
+
+      // reorganize data for metric pie charts
+      metrics.forEach( function(chartId) {
+        // account for nested data structuers
+        if (chartId.split(".").length > 1) {
+          var keys = chartId.split(".");
+          var d = data[keys[0]];
+          var c = keys[1];
+        } else { var d = data; var c = chartId;}
+
+        viz_data.charts[chartId] = {
+            'chartType' : 'pie',
+            'data'      : Object.keys( d[c] ).map(function(key) { return {name:key,number:d[c][key]} }),
+            options     : {'title':c} }
+      })
+
+      // reorganize data for distribution histogram charts
+      distributions.forEach( function(chartId) {
+        // account for nested data structuers
+        if (chartId.split(".").length > 1) {
+          var keys = chartId.split(".");
+          var d = data[keys[0]];
+          c = keys[1];
+        } else { var d = data; var c = chartId;}
+
+        // var orderedData = Object.keys(d[c])
+        //         .map(function(k) { return  [+k, +d[c][k]] });
+        var orderedData = d[c].values.map(function(v,i) { return [v,d[c].counts[i]]; });
+
+        viz_data.charts[chartId] = {
+            'chartType' : 'histogram',
+            'data'      : orderedData,
+            options     : {'title':c} }
+      })
+      return viz_data;
+    }    
   },
   tickFormatter: function(d) {
               if ((d / 1000000) >= 1)

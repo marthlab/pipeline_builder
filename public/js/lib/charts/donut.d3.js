@@ -45,7 +45,6 @@ function donutD3() {
          
       selection.select("path")
          .attr("d", arc)
-      
 
       selection.select(".percent")
          .text(function(d,i) { 
