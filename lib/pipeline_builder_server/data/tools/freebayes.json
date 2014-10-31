@@ -2,7 +2,7 @@
   {
     "id": "freebayes",
 
-    "service_URL": "http://freebayes.iobio.io/?cmd=",
+    "service_URL": "http://freebayes.iobio.io/?cmd=-f ./data/references/hs_ref_chr11.fa",
 
     "flags_have_value": false,
 

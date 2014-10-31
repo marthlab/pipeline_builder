@@ -53,6 +53,11 @@ function inputURL(input, pl_graph, pipeline) {
 
 function taskInputs(task, pl_graph, pipeline) {
     var inputs = task.input_src_assignments["-in"];
+    if (task.input_src_assignments["--bam"] != undefined) 
+      if (inputs == undefined)
+        inputs = task.input_src_assignments["--bam"] ;
+      else
+        inputs.concat( task.input_src_assignments["--bam"] );
     return _.map(inputs,
                  function(input) {
                      return inputURL(input, pl_graph, pipeline);
@@ -124,6 +129,8 @@ function constructTaskRunMap (task, pl_graph, pipeline) {
     task.task_ws_URL = wsurl;
 
     if (task.output_format_assignments["-out"] == "bam") {
+        if (pipeline.getTool('bamstatsalive') == undefined)
+          pipeline.addTool( app.tool_library.getTool('bamstatsalive') );
         pipeline.getTask(task.task_id).bamstats_urls =
             bamStatsURLs(task, pipeline);
     }
@@ -183,6 +190,10 @@ function wsRunPipeline (task_run_info) {
         var buffer = ""
         stream.on('data', function(data) {
               if (data == undefined) return;               
+              if (task_obj.id == 'freebayes') {
+                visualizeData(data, task_run_info);
+                return;
+              }               
                try {
                 var str = buffer + data;
                  var obj = json_parse_raw(str)
@@ -528,12 +539,9 @@ function visualizeData(data, task_run_info) {
         };
 
         if (out_fmt == "json") {
-            //console.log("**", parts);
-            //var data = JSON.parse(parts[0]);
-            // var data = JSON.parse("["+parts.join(',') +);
             app.viz_panels[panel].initializeCharts(data, task_id, tool_id);
         } else {
-            alert("Visulizing " + out_fmt + " not yet available");
+           // alert("Visulizing " + out_fmt + " not yet available");             
         };
     };
 }

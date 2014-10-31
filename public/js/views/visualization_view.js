@@ -164,7 +164,7 @@ var VisualizationView = Backbone.View.extend({
       var viz_data = { 'charts' : [] };
 
       // defaults
-      viz_data.defaults = ['changeStats.countByImpact', 'vcfStats.alleleFrequencyStatsHisto'];
+      viz_data.defaults = ['changeStats.countByImpact', 'changeStats.countByEffect', 'vcfStats.alleleFrequencyStatsHisto'];
 
       // reorganize data for metric pie charts
       metrics.forEach( function(chartId) {
