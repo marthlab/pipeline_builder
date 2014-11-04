@@ -12,36 +12,35 @@
 </head>
 
 <body lang="en">
-  <div id="left_container">
+  <div id="top_container">
     <div id="focal_container">
-
       <div id="focal"></div>
     </div>
-    <div id="global_container">
-      <div id="global"></div>
+    <div id="monitor">
+      <div style="height:100%">
+        <div class="panel_subview" style="position:relative">
+          <div class="title">
+            Current
+          </div>
+          <div id="current-visualization" class="charts"></div>
+        </div>
+        <div class="panel_subview" style="position:relative">
+          <div class="dragInstruction" id="title-panel-2">
+            Drag Circle Node Here To Visualize
+          </div>
+          <div id="mon-panel-2" class="charts"></div>
+        </div>
+        <div class="panel_subview" style="position:relative">
+          <div class="dragInstruction" id="title-panel-3">
+            Drag Circle Node Here To Visualize
+          </div>
+          <div id="mon-panel-3" class="charts"></div>
+        </div>
+      </div>
     </div>
   </div>
-  <div id="monitor">
-    <div style="height:100%">
-      <div class="panel_subview" style="position:relative">
-        <div class="title">
-          Current
-        </div>
-        <div id="current-visualization" class="charts"></div>
-      </div>
-      <div class="panel_subview" style="position:relative">
-        <div class="dragInstruction" id="title-panel-2">
-          Drag Circle Node Here To Visualize
-        </div>
-        <div id="mon-panel-2" class="charts"></div>
-      </div>
-      <div class="panel_subview" style="position:relative">
-        <div class="dragInstruction" id="title-panel-3">
-          Drag Circle Node Here To Visualize
-        </div>
-        <div id="mon-panel-3" class="charts"></div>
-      </div>
-    </div>
+  <div id="global_container">
+    <div id="global"></div>
   </div>
 </body>
 

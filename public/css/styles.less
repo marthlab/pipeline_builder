@@ -1,6 +1,8 @@
 @import "donut_chart";
 @import "histogram_chart";
 
+@global_container_height: 200px;
+
 .graph_view {position:absolute; top:5%; bottom:5%; left:5%; right:5%;
   .hw_accel;
   .resizer {position:relative; width:100%; height:100%;}
@@ -49,7 +51,8 @@
 * {box-sizing:border-box;}
 html {width:100%; height: 100%; overflow:hidden;}
   body {width:100%; height: 100%; overflow:hidden; display:flex; justify-content:space-between; font-family: Quicksand; font-weight: 300}
-    #left_container {display:flex; flex-direction: column; justify-content:space-between; flex-grow:3;}
+    #top_container { display:flex; flex-direction: row; justify-content:space-between; flex-grow:3; position:fixed; top:0px;left:0px;right:0px;bottom:@global_container_height}
+
       #focal_container {flex-grow:3; border-right:1px black solid; border-bottom:1px black solid; position:relative;}
         #focal {
           .graph_view;
@@ -73,26 +76,26 @@ html {width:100%; height: 100%; overflow:hidden;}
           }
           .node.available_format          {.text_node; color:#000; background:transparent; cursor: pointer;}
         }
-      #global_container {flex-grow:2; border-right:1px black solid; border-top:1px black solid; position:relative; }
-        #global {
-          .graph_view;
-          .graph_subviews {display:inline;}
-          z-index:3;
-          .dummy_node {position:absolute; width:0px; height:0px;}
-          .node {.text_node;}
-          .node.primary {font-size:12px; color:#000; background:#fff; border: 1px solid #000; padding:12px; border-radius:12px;}
-          .node.primary.focused { .focused_glow; }
-          .node.secondary {font-size:8px; color:#fff; background:#000; padding:8px; border-radius:8px;}
+    #global_container {flex-grow:2; border-right:1px black solid; border-top:1px black solid; position:fixed; bottom:0px;left:0px;right:0px;height:@global_container_height }
+      #global {
+        .graph_view;
+        .graph_subviews {display:inline;}
+        z-index:3;
+        .dummy_node {position:absolute; width:0px; height:0px;}
+        .node {.text_node;}
+        .node.primary {font-size:12px; color:#000; background:#fff; border: 1px solid #000; padding:12px; border-radius:12px;}
+        .node.primary.focused { .focused_glow; }
+        .node.secondary {font-size:8px; color:#fff; background:#000; padding:8px; border-radius:8px;}
+      }
+      #global.mode-TASK_SELECTION {
+        .node.primary {cursor: pointer;}
+      }
+      #global.mode-DATUM_SELECTION {
+        .node.secondary.selectable {
+          .selectable_glow;
+          cursor: pointer;
         }
-        #global.mode-TASK_SELECTION {
-          .node.primary {cursor: pointer;}
-        }
-        #global.mode-DATUM_SELECTION {
-          .node.secondary.selectable {
-            .selectable_glow;
-            cursor: pointer;
-          }
-        }
+      }
     #monitor {flex-grow:1; max-width:600px; border-left:1px black solid; margin:0 auto; height:100%;}
       .panel_subview:not(:last-child) {border-bottom: 1px solid rgb(80,80,80);}
       .panel_subview { height: 33.3%; text-align:center;}

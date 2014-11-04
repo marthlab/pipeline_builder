@@ -92,11 +92,16 @@ body {
   font-family: Quicksand;
   font-weight: 300;
 }
-#left_container {
+#top_container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   flex-grow: 3;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 200px;
 }
 #focal_container {
   flex-grow: 3;
@@ -254,7 +259,11 @@ body {
   flex-grow: 2;
   border-right: 1px black solid;
   border-top: 1px black solid;
-  position: relative;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 200px;
 }
 #global {
   position: absolute;
