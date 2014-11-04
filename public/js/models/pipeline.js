@@ -17,7 +17,10 @@ function Pipeline(pl_cfg) {
     this._constructNodes(pl_cfg.inputs, pl_cfg.tasks);
 
     this.on('add:tool add:input add:task change:task',
-            function(task) {
+            function(x) {
+                if (x instanceof Task) {
+                    console.log("", x);
+                };
                 this.trigger('change');
             }, this);
 
@@ -133,7 +136,8 @@ _.extend(Pipeline.prototype, Backbone.Events, {
     },
 
     getTool: function(tool_id) {
-        return _.find(this.tools, {id: tool_id});
+        return _.find(this.tools, {id: tool_id}) ||
+	       app.tool_library.getTool(tool_id);
     },
 
     getTask: function(task_id) {

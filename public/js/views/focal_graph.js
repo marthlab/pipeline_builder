@@ -779,6 +779,7 @@ var ModalTaskOptionsView =
 
         events: {
             'click .cancel': function() {this.teardown();},
+
             'click .save': function() {
                 this.task.setId(this.$id_input.val());
                 _.each(this.$option_inputs,

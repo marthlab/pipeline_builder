@@ -26,7 +26,7 @@ function Task(pipeline, task_cfg) {
     // building runable url.  It can be turned back to true if user
     // drags this task to a monitor area (=> run this and display
     // output), even if it is input to another task.
-    this.runit = true;
+    this.runit = false;
     this.in_display = false;
 
     this.inputs = _.map(
@@ -55,7 +55,7 @@ function Task(pipeline, task_cfg) {
             }, this);
 
     this.on("change",
-            function(){
+            function(task){
                 this.pipeline.trigger("change:task", this);
             }, this);
 

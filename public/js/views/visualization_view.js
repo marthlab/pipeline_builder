@@ -72,6 +72,7 @@ var VisualizationView = Backbone.View.extend({
 
   // add multiple charts
   initializeCharts: function(data, task_id, tool_id) {
+
       //console.log(this.el, task_id, tool_id);
       this.$el.empty();      
       var me = this;      
