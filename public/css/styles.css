@@ -104,10 +104,16 @@ body {
   bottom: 200px;
 }
 #focal_container {
-  flex-grow: 3;
-  border-right: 1px black solid;
-  border-bottom: 1px black solid;
+  flex-grow: 40;
   position: relative;
+  background: #e6e6e6;
+  -webkit-transition: flex-grow 1s;
+}
+#focal_container #focal_trigger {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 10;
 }
 #focal {
   position: absolute;
@@ -256,7 +262,7 @@ body {
   cursor: pointer;
 }
 #global_container {
-  flex-grow: 2;
+  flex-grow: 1;
   border-right: 1px black solid;
   border-top: 1px black solid;
   position: fixed;
@@ -340,8 +346,7 @@ body {
   cursor: pointer;
 }
 #monitor {
-  flex-grow: 1;
-  max-width: 600px;
+  flex-grow: 10;
   border-left: 1px black solid;
   margin: 0 auto;
   height: 100%;
@@ -358,7 +363,6 @@ body {
   color: #646464;
 }
 .dragInstruction {
-  padding-top: 18%;
   font-size: 1.2em;
   color: #bebebe;
 }

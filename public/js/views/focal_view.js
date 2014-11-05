@@ -1,5 +1,8 @@
 var FocalView = Backbone.View.extend({
   template: _.template($('#FocalView-template').html()),
+  events: {        
+        'click .focal_trigger': 'toggle'
+  },
 
   initialize: function(options) {
     this.$el.html(this.template());
@@ -75,6 +78,20 @@ var FocalView = Backbone.View.extend({
                           this.translate_x + "px," +
                           this.translate_y + "px)"});
     this.jsPlumb.setZoom(this.scale);
+  },
+
+  toggle: function() {    
+    this.$resizer_el.css('transition', 'transform 1s');
+    
+    if (this.$el.children('.focal_trigger').html() == 'Hide') {              
+      this.$resizer_el.css('transform', 'translate(-210px, 42px)');
+      this.$el.parent().css('flex-grow', '1');
+      this.$el.children('.focal_trigger').html('Show')
+    } else {
+      this.$resizer_el.css('transform', 'translate(299px, 42px)');
+      this.$el.parent().css('flex-grow', '40');
+      this.$el.children('.focal_trigger').html('Hide')
+    }      
   },
 
   blockUI: function() {

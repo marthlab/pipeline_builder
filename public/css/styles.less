@@ -5,7 +5,7 @@
 
 .graph_view {position:absolute; top:5%; bottom:5%; left:5%; right:5%;
   .hw_accel;
-  .resizer {position:relative; width:100%; height:100%;}
+  .resizer {position:relative; width:100%; height:100%; }
     .graph_subviews {position:relative;}
       .node {position:absolute; z-index:2; text-align:center;}
       .edge {position:absolute; z-index:1; }
@@ -52,8 +52,13 @@
 html {width:100%; height: 100%; overflow:hidden;}
   body {width:100%; height: 100%; overflow:hidden; display:flex; justify-content:space-between; font-family: Quicksand; font-weight: 300}
     #top_container { display:flex; flex-direction: row; justify-content:space-between; flex-grow:3; position:fixed; top:0px;left:0px;right:0px;bottom:@global_container_height}
-
-      #focal_container {flex-grow:3; border-right:1px black solid; border-bottom:1px black solid; position:relative;}
+      #focal_container {flex-grow:40; position:relative; background: rgb(230, 230, 230); 
+        #focal_trigger {position:absolute; top:5px; left:5px;z-index:10;}
+        // left: 0px;
+        -webkit-transition: flex-grow 1s;
+        // -webkit-transition: left 5s;
+        // transition: left 5s;
+      }
         #focal {
           .graph_view;
           z-index:2;
@@ -76,7 +81,7 @@ html {width:100%; height: 100%; overflow:hidden;}
           }
           .node.available_format          {.text_node; color:#000; background:transparent; cursor: pointer;}
         }
-    #global_container {flex-grow:2; border-right:1px black solid; border-top:1px black solid; position:fixed; bottom:0px;left:0px;right:0px;height:@global_container_height }
+    #global_container {flex-grow:1; border-right:1px black solid; border-top:1px black solid; position:fixed; bottom:0px;left:0px;right:0px;height:@global_container_height }
       #global {
         .graph_view;
         .graph_subviews {display:inline;}
@@ -96,11 +101,11 @@ html {width:100%; height: 100%; overflow:hidden;}
           cursor: pointer;
         }
       }
-    #monitor {flex-grow:1; max-width:600px; border-left:1px black solid; margin:0 auto; height:100%;}
+    #monitor {flex-grow:10; border-left:1px black solid; margin:0 auto; height:100%;}
       .panel_subview:not(:last-child) {border-bottom: 1px solid rgb(80,80,80);}
       .panel_subview { height: 33.3%; text-align:center;}
         .title {font-size: 1.5em; color: rgb(100,100,100);}
-        .dragInstruction {padding-top: 18%; font-size: 1.2em; color: rgb(190,190,190);}
+        .dragInstruction { font-size: 1.2em; color: rgb(190,190,190);}
         .charts {
           position:absolute;
           top: 1.8em;

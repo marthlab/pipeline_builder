@@ -28,7 +28,7 @@ var GlobalView = Backbone.View.extend({
       .run();
 
     _.methodEach(nodes, 'applyLayout');
-    this.resizeContents();
+   this.resizeContents();
     _.methodEach(edges, 'draw');
 
   },
@@ -56,6 +56,7 @@ var GlobalView = Backbone.View.extend({
     this.translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
     this.translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
     this.$resizer_el.css({"transform": "scale("+this.scale+","+this.scale+") translate("+this.translate_x+"px,"+this.translate_y+"px)"});
+
     this.jsPlumb.setZoom(this.scale);
   },
   setMode: function(mode, options) {
