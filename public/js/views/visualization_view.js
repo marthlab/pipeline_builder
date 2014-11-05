@@ -102,6 +102,7 @@ var VisualizationView = Backbone.View.extend({
 
   // parsers for converting task output to standard chart input
   findParser: function (tool_id) {
+      if (tool_id == 'bammerger') tool_id = 'bamstatsalive';
       return this.parsers[tool_id];
   },
 

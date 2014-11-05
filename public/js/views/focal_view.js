@@ -83,8 +83,8 @@ var FocalView = Backbone.View.extend({
   toggle: function() {    
     this.$resizer_el.css('transition', 'transform 1s');
     
-    if (this.$el.children('.focal_trigger').html() == 'Hide') {              
-      this.$resizer_el.css('transform', 'translate(-210px, 42px)');
+    if (this.$el.children('.focal_trigger').html() == 'Hide') {
+      this.$resizer_el.css('transform', 'translate(-350px, 42px)');
       this.$el.parent().css('flex-grow', '1');
       this.$el.children('.focal_trigger').html('Show')
     } else {
