@@ -150,6 +150,18 @@ _.extend(Task.prototype, Backbone.Events, {
                           return task_input.tool_input.id === id; });
     },
 
+    getNextTasks: function() {
+      var me = this;
+      return _.filter(this.pipeline.tasks, function(task) {
+                return _.some(task.inputs, function(taskInput) {
+                  return _.some(taskInput.sources, function(source) {
+                    if (source instanceof TaskOutput)
+                      return source.task.id == me.id;
+                  })
+                })
+             })
+    },
+
     setId: function(id) {
         if(this.id !== id) {
             this.id = id;
@@ -261,9 +273,7 @@ _.extend(TaskInput.prototype, Backbone.Events, {
   compatibleWithMultiplicityOf: function(datum) {
     return this.acceptsMultiple() || !datum.providesMultiple();
   },
-  getPotentialSources: function() {
-    if(this.isSaturated()) return [];
-
+  getValidSources: function() {
     return _.union(
         this.task.pipeline.inputs,
         this.task.pipeline.getFinalizedTaskOutputs()).filter(function(datum){
@@ -272,6 +282,11 @@ _.extend(TaskInput.prototype, Backbone.Events, {
                     this.compatibleWithMultiplicityOf(datum) &&
                     !datum.dependsOnTask(this.task));
     }, this);
+  },
+  getPotentialSources: function() {
+    if(this.isSaturated()) return [];
+
+    return this.getValidSources();
 
   },
   hasPotentialSources: function() {
@@ -326,6 +341,14 @@ function TaskOutput(task, tool_output, format) {
 _.extend(TaskOutput.prototype, Backbone.Events, {
   isAssignedFormat: function() {
     return !_.isUndefined(this.format); // format set to null counts as defined
+  },
+  isUsedAsSource: function() {
+    var next_tasks = this.task.getNextTasks();
+    return _.methodSome(_.flatten(_.pluck(next_tasks, 'inputs')),
+                        'hasAsSource', this);
+  },
+  isNotUsedAsSource: function() {
+    return !this.isUsedAsSource();
   },
   getAvailableFormats: function() {
     return this.tool_output.available_formats;

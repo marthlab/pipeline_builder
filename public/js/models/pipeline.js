@@ -16,7 +16,7 @@ function Pipeline(pl_cfg) {
 
     this._constructNodes(pl_cfg.inputs, pl_cfg.tasks);
 
-    this.on('add:tool add:input add:task change:task',
+    this.on('add:tool add:input add:task remove:task change:task',
             function(x) {
                 if (x instanceof Task) {
                     console.log("", x);
@@ -176,12 +176,17 @@ _.extend(Pipeline.prototype, Backbone.Events, {
         return new Task (ctx, cfg);
     },
 
-    addTask: function(task_cfg) {
-        //console.log("addTask: ", task_cfg);
+    addTask: function(task_cfg) {        
         var task = new Task(this, task_cfg);
         this.tasks.push(task);
         this.tasks.sort(_.sortById);
         this.trigger("add:task", task);
+    },
+
+    removeTask: function(task_id) {
+        var task = _.find(this.tasks, function(t) { return t.id == task_id; });
+        this.tasks = _.reject(this.tasks, function(t) { return (t.id == task_id); });
+        this.trigger("remove:task", task);
     },
 
     getFinalizedTasks: function() {

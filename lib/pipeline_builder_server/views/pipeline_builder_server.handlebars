@@ -91,7 +91,9 @@
     <div class="modal-body">
       <form>
       <fieldset>
-        <legend>Task ID</legend>
+        <legend><span class="task_label">Task ID</span> <span class="btn btn-danger delete">Delete</span>
+          <div style="clear:both"></div>
+        </legend>
         <input type="text" class="form-control task_id" value="<%- id %>">
       </fieldset>
       <% if(nonrequired_inputs.length > 0){ %>

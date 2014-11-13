@@ -35,7 +35,6 @@
   transform: translatez(0);
 }
 .graph_view .resizer {
-  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -104,9 +103,8 @@ body {
   bottom: 200px;
 }
 #focal_container {
-  flex-grow: 40;
+  flex-grow: 50;
   position: relative;
-  background: #e6e6e6;
   -webkit-transition: flex-grow 1s;
 }
 #focal_container #focal_trigger {
@@ -129,7 +127,6 @@ body {
   z-index: 2;
 }
 #focal .resizer {
-  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -261,6 +258,15 @@ body {
   background: transparent;
   cursor: pointer;
 }
+.modal legend {
+  padding-bottom: 4px;
+}
+.modal .task_label {
+  float: left;
+}
+.modal .delete {
+  float: right;
+}
 #global_container {
   flex-grow: 1;
   border-right: 1px black solid;
@@ -285,7 +291,6 @@ body {
   z-index: 3;
 }
 #global .resizer {
-  position: relative;
   width: 100%;
   height: 100%;
 }

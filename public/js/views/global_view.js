@@ -53,9 +53,18 @@ var GlobalView = Backbone.View.extend({
     var graph_bbox = $(_.pluck(this.graph.getNodes(), 'el')).bounds();
     var el_bbox = {width: this.$el.width(), height: this.$el.height()};
     this.scale = Math.min(Math.min(el_bbox.width/graph_bbox.width, el_bbox.height/graph_bbox.height), 1);
-    this.translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
-    this.translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
-    this.$resizer_el.css({"transform": "scale("+this.scale+","+this.scale+") translate("+this.translate_x+"px,"+this.translate_y+"px)"});
+    // this.translate_x = Math.round((el_bbox.width-graph_bbox.width)/2);
+    // this.translate_y = Math.round((el_bbox.height-graph_bbox.height)/2);
+    //this.$resizer_el.css({"transform": "scale("+this.scale+","+this.scale+") translate("+this.translate_x+"px,"+this.translate_y+"px)"});
+    var graphW = graph_bbox.right-graph_bbox.left;
+    var graphH = graph_bbox.bottom-graph_bbox.top;
+    var resizeW = this.$resizer_el.width();
+    var resizeH = this.$resizer_el.height();
+    var leftPadding = resizeW/2 - graphW/2;
+    var topPadding = resizeH/2 - graphH/2;
+
+    this.$resizer_el.css('padding-left', leftPadding + 'px')
+    this.$resizer_el.css('padding-top', topPadding + 'px')
 
     this.jsPlumb.setZoom(this.scale);
   },

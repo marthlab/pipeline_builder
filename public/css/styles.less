@@ -5,7 +5,7 @@
 
 .graph_view {position:absolute; top:5%; bottom:5%; left:5%; right:5%;
   .hw_accel;
-  .resizer {position:relative; width:100%; height:100%; }
+  .resizer { width:100%; height:100%; }
     .graph_subviews {position:relative;}
       .node {position:absolute; z-index:2; text-align:center;}
       .edge {position:absolute; z-index:1; }
@@ -52,7 +52,7 @@
 html {width:100%; height: 100%; overflow:hidden;}
   body {width:100%; height: 100%; overflow:hidden; display:flex; justify-content:space-between; font-family: Quicksand; font-weight: 300}
     #top_container { display:flex; flex-direction: row; justify-content:space-between; flex-grow:3; position:fixed; top:0px;left:0px;right:0px;bottom:@global_container_height}
-      #focal_container {flex-grow:40; position:relative; background: rgb(230, 230, 230); 
+      #focal_container {flex-grow:50; position:relative;  
         #focal_trigger {position:absolute; top:5px; left:5px;z-index:10;}
         // left: 0px;
         -webkit-transition: flex-grow 1s;
@@ -80,7 +80,15 @@ html {width:100%; height: 100%; overflow:hidden;}
             } 
           }
           .node.available_format          {.text_node; color:#000; background:transparent; cursor: pointer;}
+
+          
         }
+    .modal {
+      legend { padding-bottom: 4px;}
+      .task_label {float:left}
+      // .delete {background:#b70105; border-radius:4px;display:inline;float:right; padding: 2px 10px; font-size: 19px; font-weight: 400; color: white}
+      .delete {float:right;}
+    }
     #global_container {flex-grow:1; border-right:1px black solid; border-top:1px black solid; position:fixed; bottom:0px;left:0px;right:0px;height:@global_container_height }
       #global {
         .graph_view;

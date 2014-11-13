@@ -766,7 +766,7 @@ var FocalTaskNodeView =
 
         doOptionsModal: function() {
             var options_modal_view = new ModalTaskOptionsView(
-                {task: this.task});
+                {task: this.task});            
         }
     });
 
@@ -779,6 +779,39 @@ var ModalTaskOptionsView =
 
         events: {
             'click .cancel': function() {this.teardown();},
+
+            'click .delete': function() {              
+              //    var handle_selected = (function(selected_datum) {
+              //     this.task_input.addSource(selected_datum);
+              //     app.global_view.setMode("TASK_SELECTION");
+              //     app.focal_view.unblockUI();;
+              // }).bind(this);
+
+              this.teardown();
+              
+
+              app.focal_view.blockUI();
+              var nextTasks = this.task.getNextTasks();              
+
+              var handle_selected = (function(selected_datum) {
+                  //outputTasks[0].inputs[0].addSource(selected_datum);                 
+                  app.pipeline.removeTask(this.task.id);
+                  app.global_view.setMode("TASK_SELECTION");
+                  app.focal_view.unblockUI();;
+              }).bind(this);
+
+              if (this.task.getNextTasks().length > 0) {
+                var s = nextTasks[0].inputs[0].getValidSources()
+                app.global_view.setMode(
+                  "DATUM_SELECTION",                  
+                   {
+                    selectable_data: s,
+                   on_datum_selected: handle_selected});                
+              } else {                
+                app.pipeline.removeTask(this.task.id);                
+                app.focal_view.unblockUI();
+              }
+            },
 
             'click .save': function() {
                 this.task.setId(this.$id_input.val());

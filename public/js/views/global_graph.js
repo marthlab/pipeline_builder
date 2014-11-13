@@ -66,6 +66,57 @@ function GlobalGraph(pipeline) {
             this.trigger("change");
         }
     });
+
+    this.listenTo(this.pipeline, {
+        "remove:task": function(task) {  
+            // remove task nodes
+            //
+            var task_node = _.find(this.task_nodes, function(t) { return t.task.id == task.id });   
+            // remove task nodes from internal array
+            this.task_nodes = _.reject(this.task_nodes, function(t) { return t.task.id == task.id });     
+            // remove task nodes from graph
+            task_node.remove();            
+
+            // remove output_tasks
+            //
+            // grab output tasks that are not being used
+            var output_tasks_to_remove = _.methodFilter(task_node.task.outputs, 'isNotUsedAsSource');
+            // find output nodes that correspond with output task
+            var output_nodes_to_remove = this.getSecondaryNodes().filter( function(node) {
+                return _.some(output_tasks_to_remove, function(task_output) { return _.isEqual(task_output, node.task_output) })
+            });
+            // remove output nodes from internal array
+            this.task_output_nodes = _.reject(this.task_output_nodes, function(oNode) { 
+                    return _.some(output_nodes_to_remove, function(oNodeToRemove) { return _.isEqual(oNode, oNodeToRemove); })
+                })
+            // remove output nodes from graph
+            _.methodEach(output_nodes_to_remove, 'remove');
+
+        
+            // remove task to task edges
+            //
+            // determine edges to remove
+            var edges_to_remove = _.union(this.task_to_task_output_edges,this.dummy_to_input_edges,this.secondary_to_task_edges)
+                                    .filter(function(edge) { 
+                                        return ((edge.source.task && edge.source.task.id == task.id) || 
+                                                (edge.target.task && edge.target.task.id == task.id));
+                                    });
+            // remove task_to_task edges
+            this.task_to_task_output_edges = _.reject(this.task_to_task_output_edges, function(edge) { 
+                    return _.some(edges_to_remove, function(edge_tr) { return _.isEqual(edge, edge_tr); })
+                })
+            // remove dummy edges
+            this.dummy_to_input_edges = _.reject(this.dummy_to_input_edges, function(edge) { 
+                    return _.some(edges_to_remove, function(edge_tr) { return _.isEqual(edge, edge_tr); })
+                })
+            // remove secondary edges
+            this.secondary_to_task_edges = _.reject(this.secondary_to_task_edges, function(edge) { 
+                    return _.some(edges_to_remove, function(edge_tr) { return _.isEqual(edge, edge_tr); })
+                })
+
+            this.trigger("change");
+        }
+    });
 }
 
 _.extend(GlobalGraph.prototype, Backbone.Events, {
@@ -239,6 +290,9 @@ var AbstractGlobalNodeView = Backbone.View.extend({
         this.undelegateEvents();
         this.events = this.constructor.mode_events[app.global_view.mode];
         this.delegateEvents();
+    },
+    remove: function() {
+        app.global_view.jsPlumb.remove(this.$el);
     }
 });
 
